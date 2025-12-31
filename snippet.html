@@ -192,11 +192,17 @@
     </div>
     <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
     <button id="run">▶ Run</button>
-    <button id="share">📋 Share</button>
+    <div class="actions">
+        <button id="share">🔗 Share URL</button>
+    </div>
 </header>
 <textarea id="editor" spellcheck="false" placeholder="Write your code here..."></textarea>
 <iframe id="output" sandbox="allow-scripts allow-modals"></iframe>
 <div class="toast" id="toast">Link copied!</div>
+<footer style="text-align:center; margin-top:40px; padding:20px; opacity:0.5; font-size:12px;">
+    <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
+</footer>
+
 <script>
     const editor = document.getElementById('editor'), output = document.getElementById('output'), toast = document.getElementById('toast'), tabs = document.querySelectorAll('.tab')
     let mode = 'html'
