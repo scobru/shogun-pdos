@@ -10,9 +10,9 @@
     }
 
     html {
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
         color: #e0e0e0;
-        min-height: 100vh
+        min-height: 100vh;
     }
 
     body {
@@ -21,26 +21,50 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        min-height: 100vh
+        min-height: 100vh;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 450px;
+        margin-bottom: 24px;
+    }
+
+    .home-link {
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .home-link:hover {
+        opacity: 1;
     }
 
     h1 {
-        margin-bottom: 24px
+        flex: 1;
+        text-align: center;
+        margin: 0;
+        font-size: 24px;
     }
 
     .card {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 20px;
         padding: 24px;
         width: 100%;
         max-width: 450px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .card h2 {
         font-size: 14px;
         opacity: 0.7;
-        margin-bottom: 12px
+        margin-bottom: 12px;
     }
 
     input,
@@ -52,24 +76,24 @@
         background: rgba(255, 255, 255, 0.1);
         color: inherit;
         font: inherit;
-        margin-bottom: 12px
+        margin-bottom: 12px;
     }
 
     input:focus,
     textarea:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.15)
+        background: rgba(255, 255, 255, 0.15);
     }
 
     textarea {
         height: 80px;
-        resize: vertical
+        resize: vertical;
     }
 
     .date-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px
+        gap: 12px;
     }
 
     button {
@@ -80,58 +104,54 @@
         font: inherit;
         font-weight: 600;
         cursor: pointer;
-        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        background: linear-gradient(135deg, #8b5cf6, #22c55e);
         color: white;
-        margin-bottom: 12px
+        margin-bottom: 12px;
     }
 
     button:hover {
-        opacity: 0.9
-    }
-
-    .secondary {
-        background: rgba(255, 255, 255, 0.1)
+        opacity: 0.9;
     }
 
     .preview {
         padding: 20px;
         background: rgba(139, 92, 246, 0.15);
         border-radius: 16px;
-        text-align: center
+        text-align: center;
     }
 
     .preview-title {
         font-size: 24px;
         font-weight: 700;
-        margin-bottom: 8px
+        margin-bottom: 8px;
     }
 
     .preview-date {
         font-size: 18px;
         color: #c4b5fd;
-        margin-bottom: 4px
+        margin-bottom: 4px;
     }
 
     .preview-time {
-        opacity: 0.7
+        opacity: 0.7;
     }
 
     .preview-desc {
         font-size: 14px;
         opacity: 0.7;
-        margin-top: 12px
+        margin-top: 12px;
     }
 
     .countdown {
         font-size: 32px;
         font-weight: 700;
         color: #22c55e;
-        margin: 16px 0
+        margin: 16px 0;
     }
 
     .countdown-label {
         font-size: 12px;
-        opacity: 0.5
+        opacity: 0.5;
     }
 
     .add-to-cal {
@@ -139,7 +159,7 @@
         gap: 8px;
         flex-wrap: wrap;
         justify-content: center;
-        margin-top: 16px
+        margin-top: 16px;
     }
 
     .cal-btn {
@@ -154,11 +174,11 @@
         font-size: 13px;
         cursor: pointer;
         text-decoration: none;
-        text-align: center
+        text-align: center;
     }
 
     .cal-btn:hover {
-        background: rgba(255, 255, 255, 0.2)
+        background: rgba(255, 255, 255, 0.2);
     }
 
     .toast {
@@ -166,20 +186,27 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        padding: 12px 24px;
-        background: #333;
+        padding: 8px 16px;
+        background: #22c55e;
         color: white;
-        border-radius: 10px;
+        border-radius: 20px;
+        font-size: 14px;
         opacity: 0;
-        transition: all 0.3s
+        transition: all 0.3s;
+        pointer-events: none;
     }
 
     .toast.show {
         transform: translateX(-50%) translateY(0);
-        opacity: 1
+        opacity: 1;
     }
 </style>
-<h1>📅 Event</h1>
+
+<div class="header-bar">
+    <a href="index.html" class="home-link" title="Home">🏠</a>
+    <h1>📅 Event</h1>
+    <div style="width: 24px"></div>
+</div>
 
 <div class="card" id="editor-view">
     <h2>Create event</h2>
@@ -189,7 +216,7 @@
         <input type="time" id="time" value="18:00">
     </div>
     <textarea id="desc" placeholder="Description (optional)"></textarea>
-    <button id="create">📅 Crea e Share</button>
+    <button id="create">📅 Create & Share</button>
 </div>
 
 <div class="card" id="preview-view" style="display:none">
@@ -204,7 +231,7 @@
     <div class="add-to-cal">
         <a class="cal-btn" id="gcal" target="_blank">📆 Google</a>
         <a class="cal-btn" id="ical" download="event.ics">📥 iCal</a>
-        <button class="cal-btn" id="share">📋 Copia link</button>
+        <button class="cal-btn" id="share">🔗 Copy Link</button>
     </div>
 </div>
 

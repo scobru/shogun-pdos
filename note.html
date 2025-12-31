@@ -10,22 +10,22 @@
   }
 
   html {
-    color-scheme: light dark;
-    background-color: #fff;
-    color: #161616;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+    color: #e0e0e0;
+    min-height: 100vh;
+  }
 
-    @media (prefers-color-scheme: dark) {
-      background-color: #000;
-      color: #fff;
-    }
+  body {
+    font: 18px / 1.5 system-ui;
   }
 
   article {
     outline: none;
-    padding: 18px max(18px, calc(50vw - 400px));
+    padding: 20px max(20px, calc(50vw - 400px));
+    padding-bottom: 80px;
+    /* Space for toolbar */
     width: 100%;
     min-height: 100vh;
-    font: 18px / 1.5 system-ui;
     tab-size: 4;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -33,13 +33,123 @@
     text-wrap-style: pretty;
     overflow-wrap: break-word;
   }
+
+  .toolbar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 8px 16px;
+    border-radius: 50px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+    transition: opacity 0.3s;
+  }
+
+  .toolbar:hover {
+    opacity: 1;
+  }
+
+  /* Fade out toolbar when typing if desired, but for now keep visible or simple opacity hover */
+
+  .btn {
+    background: transparent;
+    border: none;
+    color: #e0e0e0;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    text-decoration: none;
+    font-size: 20px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #8b5cf6, #22c55e);
+    color: white;
+  }
+
+  .status {
+    font-size: 12px;
+    opacity: 0.5;
+    margin: 0 8px;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 8px 16px;
+    background: #22c55e;
+    color: white;
+    border-radius: 20px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
 </style>
+
 <article contenteditable="plaintext-only" spellcheck></article>
+
+<div class="toolbar">
+  <a href="index.html" class="btn" title="Home">🏠</a>
+  <div class="status" id="status">Saved</div>
+  <button class="btn btn-primary" id="share" title="Share URL">🔗</button>
+</div>
+
+<div class="toast" id="toast">Link copied!</div>
+
 <script>
   const article = document.querySelector('article')
-  article.addEventListener('input', debounce(500, save))
+  const statusEl = document.getElementById('status')
+  const toastEl = document.getElementById('toast')
+
+  article.addEventListener('input', () => {
+    statusEl.textContent = 'Typing...'
+    debounce(500, save)()
+  })
+
   addEventListener('DOMContentLoaded', load)
   addEventListener('hashchange', load)
+
+  document.getElementById('share').addEventListener('click', async () => {
+    await save()
+    try {
+      await navigator.clipboard.writeText(location.href)
+      showToast()
+    } catch (e) {
+      statusEl.textContent = 'Copy failed'
+    }
+  })
+
+  function showToast() {
+    toastEl.classList.add('show')
+    setTimeout(() => toastEl.classList.remove('show'), 2000)
+  }
 
   async function load() {
     try {
@@ -61,13 +171,19 @@
     const hash = await get()
     if (location.hash !== hash) history.replaceState({}, '', hash)
     try { localStorage.setItem('hash', hash) } catch (e) { }
+    statusEl.textContent = 'Saved'
     updateTitle()
   }
 
   async function set(hash) {
-    const [content, style] = (await decompress(hash.slice(1))).split('\x00')
-    article.textContent = content
-    if (style) article.setAttribute('style', style)
+    if (!hash || hash === '#') return
+    try {
+      const [content, style] = (await decompress(hash.slice(1))).split('\x00')
+      article.textContent = content
+      if (style) article.setAttribute('style', style)
+    } catch (e) {
+      console.error('Decompress failed', e)
+    }
   }
 
   async function get() {
@@ -78,7 +194,7 @@
 
   function updateTitle() {
     const match = article.textContent.match(/^\n*#(.+)\n/)
-    document.title = match?.[1] ?? 'Textarea'
+    document.title = match?.[1] ?? 'Shogun Note'
   }
 
   async function compress(string) {

@@ -10,99 +10,130 @@
     }
 
     html {
-        background: #0f0f0f;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
         color: #e0e0e0;
-        min-height: 100vh
+        min-height: 100vh;
     }
 
     body {
         padding: 20px;
         font: 16px/1.5 system-ui;
+        max-width: 500px;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
-        align-items: center
+        align-items: center;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 24px;
+    }
+
+    .home-link {
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .home-link:hover {
+        opacity: 1;
     }
 
     h1 {
-        margin-bottom: 24px
+        flex: 1;
+        text-align: center;
+        margin: 0;
+        font-size: 24px;
     }
 
     .tabs {
         display: flex;
         gap: 4px;
-        background: #1a1a1a;
+        background: rgba(255, 255, 255, 0.05);
         padding: 4px;
         border-radius: 12px;
-        margin-bottom: 24px
+        margin-bottom: 24px;
+        width: 100%;
     }
 
     .tab {
-        padding: 10px 20px;
+        flex: 1;
+        padding: 10px;
         border: none;
         border-radius: 10px;
         font: inherit;
         cursor: pointer;
         background: transparent;
         color: #e0e0e0;
-        opacity: 0.6
+        opacity: 0.6;
     }
 
     .tab.active {
-        background: #333;
-        opacity: 1
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        font-weight: 600;
     }
 
     .input-area {
         width: 100%;
-        max-width: 400px;
-        margin-bottom: 24px
+        margin-bottom: 24px;
     }
 
     textarea,
-    input {
+    input,
+    select {
         width: 100%;
         padding: 14px;
-        border: 2px solid #333;
+        border: none;
         border-radius: 12px;
         font: inherit;
-        background: #1a1a1a;
+        background: rgba(255, 255, 255, 0.1);
         color: #e0e0e0;
-        margin-bottom: 12px
+        margin-bottom: 12px;
     }
 
     textarea {
         height: 100px;
-        resize: vertical
+        resize: vertical;
     }
 
     textarea:focus,
-    input:focus {
+    input:focus,
+    select:focus {
         outline: none;
-        border-color: #8b5cf6
+        background: rgba(255, 255, 255, 0.15);
     }
 
     .wifi-fields {
-        display: none
+        display: none;
     }
 
     .wifi-fields.active {
-        display: block
+        display: block;
     }
 
     #qr-container {
         background: white;
         padding: 20px;
         border-radius: 16px;
-        margin-bottom: 24px
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
     #qr {
-        display: block
+        display: block;
     }
 
     .actions {
         display: flex;
-        gap: 8px
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
     }
 
     button {
@@ -112,17 +143,18 @@
         font: inherit;
         font-weight: 600;
         cursor: pointer;
-        background: #333;
-        color: #e0e0e0
+        background: rgba(255, 255, 255, 0.1);
+        color: #e0e0e0;
+        flex: 1;
     }
 
     button:hover {
-        background: #444
+        background: rgba(255, 255, 255, 0.2);
     }
 
     .primary {
         background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-        color: white
+        color: white;
     }
 
     .toast {
@@ -130,20 +162,27 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        padding: 12px 24px;
-        background: #333;
+        padding: 8px 16px;
+        background: #22c55e;
         color: white;
-        border-radius: 10px;
+        border-radius: 20px;
+        font-size: 14px;
         opacity: 0;
-        transition: all 0.3s
+        transition: all 0.3s;
+        pointer-events: none;
     }
 
     .toast.show {
         transform: translateX(-50%) translateY(0);
-        opacity: 1
+        opacity: 1;
     }
 </style>
-<h1>📱 QR</h1>
+
+<div class="header-bar">
+    <a href="index.html" class="home-link" title="Home">🏠</a>
+    <h1>📱 QR</h1>
+    <div style="width: 24px"></div>
+</div>
 <div class="tabs">
     <button class="tab active" data-type="text">Testo</button>
     <button class="tab" data-type="url">URL</button>

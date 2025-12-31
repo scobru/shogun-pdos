@@ -10,21 +10,41 @@
     }
 
     html {
-        background: linear-gradient(135deg, #0f1a0f, #1a2e1a);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
         color: #e0e0e0;
-        min-height: 100vh
+        min-height: 100vh;
     }
 
     body {
         padding: 20px;
         font: 16px/1.5 system-ui;
         max-width: 500px;
-        margin: 0 auto
+        margin: 0 auto;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .home-link {
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .home-link:hover {
+        opacity: 1;
     }
 
     h1 {
+        flex: 1;
         text-align: center;
-        margin-bottom: 24px
+        margin: 0;
+        font-size: 24px;
     }
 
     .add-row {
@@ -40,11 +60,12 @@
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.1);
         color: inherit;
-        font: inherit
+        font: inherit;
     }
 
     .add-row input:focus {
-        outline: none
+        outline: none;
+        background: rgba(255, 255, 255, 0.15);
     }
 
     .add-row button {
@@ -55,7 +76,11 @@
         color: white;
         font: inherit;
         font-weight: 600;
-        cursor: pointer
+        cursor: pointer;
+    }
+
+    .add-row button:hover {
+        opacity: 0.9;
     }
 
     .habits {
@@ -65,12 +90,13 @@
     }
 
     .habit {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 16px;
         padding: 16px;
         display: flex;
         align-items: center;
-        gap: 12px
+        gap: 12px;
     }
 
     .check {
@@ -84,12 +110,12 @@
         justify-content: center;
         font-size: 20px;
         transition: all 0.2s;
-        flex-shrink: 0
+        flex-shrink: 0;
     }
 
     .check.done {
         background: #22c55e;
-        border-color: #22c55e
+        border-color: #22c55e;
     }
 
     .habit-info {
@@ -98,16 +124,16 @@
 
     .habit-name {
         font-weight: 600;
-        margin-bottom: 2px
+        margin-bottom: 2px;
     }
 
     .streak {
         font-size: 13px;
-        opacity: 0.7
+        opacity: 0.7;
     }
 
     .streak span {
-        color: #f59e0b
+        color: #f59e0b;
     }
 
     .del {
@@ -117,11 +143,11 @@
         color: #ef4444;
         cursor: pointer;
         opacity: 0.5;
-        font-size: 18px
+        font-size: 18px;
     }
 
     .habit:hover .del {
-        opacity: 1
+        opacity: 1;
     }
 
     .calendar {
@@ -139,15 +165,15 @@
         font-size: 10px;
         display: flex;
         align-items: center;
-        justify-content: center
+        justify-content: center;
     }
 
     .day.done {
-        background: #22c55e
+        background: #22c55e;
     }
 
     .day.today {
-        border: 2px solid #8b5cf6
+        border: 2px solid #8b5cf6;
     }
 
     .stats {
@@ -157,22 +183,43 @@
         margin-top: 24px;
         padding: 16px;
         background: rgba(255, 255, 255, 0.05);
-        border-radius: 12px
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .stat {
-        text-align: center
+        text-align: center;
     }
 
     .stat-value {
         font-size: 24px;
         font-weight: 700;
-        color: #22c55e
+        color: #22c55e;
     }
 
     .stat-label {
         font-size: 12px;
-        opacity: 0.6
+        opacity: 0.6;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 24px;
+    }
+
+    #share-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: #e0e0e0;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    #share-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
     }
 
     .toast {
@@ -180,26 +227,37 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        padding: 12px 24px;
-        background: #333;
+        padding: 8px 16px;
+        background: #22c55e;
         color: white;
-        border-radius: 10px;
+        border-radius: 20px;
+        font-size: 14px;
         opacity: 0;
-        transition: all 0.3s
+        transition: all 0.3s;
+        pointer-events: none;
     }
 
     .toast.show {
         transform: translateX(-50%) translateY(0);
-        opacity: 1
+        opacity: 1;
     }
 </style>
-<h1>✅ Habit</h1>
+
+<div class="header-bar">
+    <a href="index.html" class="home-link" title="Home">🏠</a>
+    <h1>✅ Habit</h1>
+    <div style="width: 24px"></div>
+</div>
+
 <div class="add-row">
     <input type="text" id="input" placeholder="New habit...">
     <button id="add">+</button>
 </div>
 <div class="habits" id="habits"></div>
 <div class="stats" id="stats"></div>
+<div class="actions">
+    <button id="share-btn">🔗 Share</button>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -276,5 +334,16 @@
     async function load() { try { let h = location.hash.slice(1); if (!h) h = localStorage.getItem('habit-hash'); if (h) habits = JSON.parse(await decompress(h)) } catch { } render() }
     async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
     async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
+    function showToast(m) {
+        document.getElementById('toast').innerText = m
+        document.getElementById('toast').classList.add('show')
+        setTimeout(() => document.getElementById('toast').classList.remove('show'), 2000)
+    }
+
+    document.getElementById('share-btn').addEventListener('click', async () => {
+        await save()
+        try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { }
+    })
+
     addEventListener('DOMContentLoaded', load)
 </script>

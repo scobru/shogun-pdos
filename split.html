@@ -10,39 +10,56 @@
     }
 
     html {
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
         color: #e0e0e0;
-        min-height: 100vh
+        min-height: 100vh;
     }
 
     body {
         padding: 20px;
-        font: 16px/1.5 system-ui
+        font: 16px/1.5 system-ui;
+        max-width: 500px;
+        margin: 0 auto;
     }
 
-    .container {
-        max-width: 500px;
-        margin: 0 auto
+    .header-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .home-link {
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .home-link:hover {
+        opacity: 1;
     }
 
     h1 {
+        flex: 1;
         text-align: center;
-        margin-bottom: 8px;
-        font-size: 28px
+        margin: 0;
+        font-size: 24px;
     }
 
     .subtitle {
         text-align: center;
         opacity: 0.7;
-        margin-bottom: 24px
+        margin-bottom: 24px;
+        font-size: 14px;
     }
 
     .card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 16px;
         padding: 20px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .card h2 {
@@ -51,18 +68,14 @@
         margin-bottom: 12px;
         display: flex;
         justify-content: space-between;
-        align-items: center
-    }
-
-    .items {
-        margin-bottom: 16px
+        align-items: center;
     }
 
     .item {
         display: flex;
         gap: 8px;
         margin-bottom: 8px;
-        align-items: center
+        align-items: center;
     }
 
     .item input {
@@ -72,18 +85,18 @@
         border-radius: 8px;
         font: inherit;
         background: rgba(255, 255, 255, 0.1);
-        color: inherit
+        color: inherit;
     }
 
     .item input:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.15)
+        background: rgba(255, 255, 255, 0.15);
     }
 
     .item input.price {
         width: 100px;
         flex: none;
-        text-align: right
+        text-align: right;
     }
 
     .item .del {
@@ -92,7 +105,7 @@
         border: none;
         border-radius: 8px;
         color: #ef4444;
-        cursor: pointer
+        cursor: pointer;
     }
 
     .add-btn {
@@ -104,19 +117,19 @@
         color: inherit;
         font: inherit;
         cursor: pointer;
-        opacity: 0.7
+        opacity: 0.7;
     }
 
     .add-btn:hover {
         border-color: rgba(255, 255, 255, 0.4);
-        opacity: 1
+        opacity: 1;
     }
 
     .people {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-        margin-bottom: 12px
+        margin-bottom: 12px;
     }
 
     .person {
@@ -125,7 +138,7 @@
         gap: 8px;
         padding: 8px 12px;
         background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px
+        border-radius: 8px;
     }
 
     .person input {
@@ -135,11 +148,11 @@
         border-radius: 4px;
         background: rgba(255, 255, 255, 0.1);
         color: inherit;
-        font: inherit
+        font: inherit;
     }
 
     .person input:focus {
-        outline: none
+        outline: none;
     }
 
     .person .remove {
@@ -148,30 +161,30 @@
         border: none;
         color: #ef4444;
         cursor: pointer;
-        font-size: 18px
+        font-size: 18px;
     }
 
     .result {
         background: rgba(139, 92, 246, 0.2);
         border-radius: 16px;
         padding: 24px;
-        text-align: center
+        text-align: center;
     }
 
     .result h3 {
         font-size: 14px;
         opacity: 0.7;
-        margin-bottom: 8px
+        margin-bottom: 8px;
     }
 
     .total {
         font-size: 40px;
         font-weight: 700;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .breakdown {
-        text-align: left
+        text-align: left;
     }
 
     .breakdown-item {
@@ -180,22 +193,22 @@
         padding: 12px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 8px;
-        margin-bottom: 8px
+        margin-bottom: 8px;
     }
 
     .breakdown-item .name {
-        font-weight: 600
+        font-weight: 600;
     }
 
     .breakdown-item .amount {
         color: #22c55e;
-        font-weight: 700
+        font-weight: 700;
     }
 
     .tip-row {
         display: flex;
         gap: 8px;
-        margin-top: 12px
+        margin-top: 12px;
     }
 
     .tip-btn {
@@ -206,19 +219,19 @@
         background: transparent;
         color: inherit;
         font: inherit;
-        cursor: pointer
+        cursor: pointer;
     }
 
     .tip-btn.active {
         background: rgba(139, 92, 246, 0.3);
-        border-color: #8b5cf6
+        border-color: #8b5cf6;
     }
 
     .actions {
         display: flex;
         gap: 8px;
         justify-content: center;
-        margin-top: 20px
+        margin-top: 20px;
     }
 
     button {
@@ -229,15 +242,16 @@
         font-weight: 600;
         cursor: pointer;
         background: rgba(255, 255, 255, 0.1);
-        color: inherit
+        color: inherit;
     }
 
     button:hover {
-        background: rgba(255, 255, 255, 0.2)
+        background: rgba(255, 255, 255, 0.2);
     }
 
     .primary {
-        background: linear-gradient(135deg, #8b5cf6, #6d28d9)
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
     }
 
     .mode-toggle {
@@ -245,7 +259,7 @@
         background: rgba(255, 255, 255, 0.1);
         border-radius: 10px;
         padding: 4px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .mode-btn {
@@ -257,22 +271,22 @@
         color: inherit;
         font: inherit;
         cursor: pointer;
-        opacity: 0.6
+        opacity: 0.6;
     }
 
     .mode-btn.active {
         background: rgba(255, 255, 255, 0.15);
-        opacity: 1
+        opacity: 1;
     }
 
     .simple-mode,
     .advanced-mode {
-        display: none
+        display: none;
     }
 
     .simple-mode.active,
     .advanced-mode.active {
-        display: block
+        display: block;
     }
 
     .simple-input {
@@ -283,11 +297,11 @@
         border: none;
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.1);
-        color: inherit
+        color: inherit;
     }
 
     .simple-input:focus {
-        outline: none
+        outline: none;
     }
 
     .people-row {
@@ -295,7 +309,7 @@
         align-items: center;
         justify-content: center;
         gap: 16px;
-        margin: 24px 0
+        margin: 24px 0;
     }
 
     .people-btn {
@@ -306,32 +320,14 @@
         font-size: 24px;
         cursor: pointer;
         background: rgba(255, 255, 255, 0.2);
-        color: inherit
+        color: inherit;
     }
 
     .people-count {
         font-size: 48px;
         font-weight: 700;
         min-width: 80px;
-        text-align: center
-    }
-
-    .toast {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%) translateY(100px);
-        padding: 12px 24px;
-        background: #333;
-        color: white;
-        border-radius: 10px;
-        opacity: 0;
-        transition: all 0.3s
-    }
-
-    .toast.show {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1
+        text-align: center;
     }
 
     .currency-select {
@@ -340,76 +336,99 @@
         border-radius: 6px;
         background: rgba(255, 255, 255, 0.1);
         color: inherit;
-        font: inherit
+        font: inherit;
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 8px 16px;
+        background: #22c55e;
+        color: white;
+        border-radius: 20px;
+        font-size: 14px;
+        opacity: 0;
+        transition: all 0.3s;
+        pointer-events: none;
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
     }
 </style>
-<div class="container">
+
+<div class="header-bar">
+    <a href="index.html" class="home-link" title="Home">🏠</a>
     <h1>💰 Split</h1>
-    <p class="subtitle">Split bills easily</p>
+    <div style="width: 24px"></div>
+</div>
+<p class="subtitle">Split bills easily</p>
 
-    <div class="mode-toggle">
-        <button class="mode-btn active" data-mode="simple">Simple</button>
-        <button class="mode-btn" data-mode="advanced">Advanced</button>
-    </div>
+<div class="mode-toggle">
+    <button class="mode-btn active" data-mode="simple">Simple</button>
+    <button class="mode-btn" data-mode="advanced">Advanced</button>
+</div>
 
-    <!-- SIMPLE MODE -->
-    <div class="simple-mode active" id="simple-mode">
-        <div class="card">
-            <h2>Totale <select class="currency-select" id="currency">
-                    <option>€</option>
-                    <option>$</option>
-                    <option>£</option>
-                </select></h2>
-            <input type="number" class="simple-input" id="simple-total" placeholder="0.00" step="0.01">
+<!-- SIMPLE MODE -->
+<div class="simple-mode active" id="simple-mode">
+    <div class="card">
+        <h2>Totale <select class="currency-select" id="currency">
+                <option>€</option>
+                <option>$</option>
+                <option>£</option>
+            </select></h2>
+        <input type="number" class="simple-input" id="simple-total" placeholder="0.00" step="0.01">
 
-            <h2 style="margin-top:20px">People</h2>
-            <div class="people-row">
-                <button class="people-btn" id="minus">−</button>
-                <div class="people-count" id="simple-people">2</div>
-                <button class="people-btn" id="plus">+</button>
-            </div>
-
-            <h2>Tip</h2>
-            <div class="tip-row">
-                <button class="tip-btn" data-tip="0">0%</button>
-                <button class="tip-btn" data-tip="10">10%</button>
-                <button class="tip-btn active" data-tip="15">15%</button>
-                <button class="tip-btn" data-tip="20">20%</button>
-            </div>
+        <h2 style="margin-top:20px">People</h2>
+        <div class="people-row">
+            <button class="people-btn" id="minus">−</button>
+            <div class="people-count" id="simple-people">2</div>
+            <button class="people-btn" id="plus">+</button>
         </div>
 
-        <div class="result">
-            <h3>Each pays</h3>
-            <div class="total" id="simple-result">€ 0.00</div>
+        <h2>Tip</h2>
+        <div class="tip-row">
+            <button class="tip-btn" data-tip="0">0%</button>
+            <button class="tip-btn" data-tip="10">10%</button>
+            <button class="tip-btn active" data-tip="15">15%</button>
+            <button class="tip-btn" data-tip="20">20%</button>
         </div>
     </div>
 
-    <!-- ADVANCED MODE -->
-    <div class="advanced-mode" id="advanced-mode">
-        <div class="card">
-            <h2>Participants <button class="add-btn"
-                    style="width:auto;padding:4px 12px;border:none;background:rgba(255,255,255,0.1)" id="add-person">+
-                    Add</button></h2>
-            <div class="people" id="people-list"></div>
-        </div>
+    <div class="result">
+        <h3>Each pays</h3>
+        <div class="total" id="simple-result">€ 0.00</div>
+    </div>
+</div>
 
-        <div class="card">
-            <h2>Expenses <button class="add-btn"
-                    style="width:auto;padding:4px 12px;border:none;background:rgba(255,255,255,0.1)" id="add-item">+
-                    Add</button></h2>
-            <div class="items" id="items-list"></div>
-        </div>
-
-        <div class="result">
-            <h3>Who owes what</h3>
-            <div class="breakdown" id="breakdown"></div>
-        </div>
+<!-- ADVANCED MODE -->
+<div class="advanced-mode" id="advanced-mode">
+    <div class="card">
+        <h2>Participants <button class="add-btn"
+                style="width:auto;padding:4px 12px;border:none;background:rgba(255,255,255,0.1)" id="add-person">+
+                Add</button></h2>
+        <div class="people" id="people-list"></div>
     </div>
 
-    <div class="actions">
-        <button class="primary" id="share">📋 Share</button>
-        <button id="reset">🔄 Reset</button>
+    <div class="card">
+        <h2>Expenses <button class="add-btn"
+                style="width:auto;padding:4px 12px;border:none;background:rgba(255,255,255,0.1)" id="add-item">+
+                Add</button></h2>
+        <div class="items" id="items-list"></div>
     </div>
+
+    <div class="result">
+        <h3>Who owes what</h3>
+        <div class="breakdown" id="breakdown"></div>
+    </div>
+</div>
+
+<div class="actions">
+    <button class="primary" id="share">📋 Share</button>
+    <button id="reset">🔄 Reset</button>
 </div>
 <div class="toast" id="toast"></div>
 

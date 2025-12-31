@@ -10,34 +10,56 @@
     }
 
     html {
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
         color: #e0e0e0;
-        min-height: 100vh
+        min-height: 100vh;
     }
 
     body {
         padding: 20px;
         font: 16px/1.5 system-ui;
         max-width: 600px;
-        margin: 0 auto
+        margin: 0 auto;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .home-link {
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .home-link:hover {
+        opacity: 1;
     }
 
     h1 {
+        flex: 1;
         text-align: center;
-        margin-bottom: 8px
+        margin: 0;
+        font-size: 24px;
     }
 
     .subtitle {
         text-align: center;
         opacity: 0.7;
-        margin-bottom: 24px
+        margin-bottom: 24px;
+        font-size: 14px;
     }
 
     .card {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 16px;
         padding: 20px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     h2 {
@@ -45,29 +67,34 @@
         opacity: 0.7;
         margin-bottom: 12px;
         display: flex;
-        justify-content: space-between
+        justify-content: space-between;
     }
 
     .my-time {
         display: flex;
         gap: 8px;
         align-items: center;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .my-time select,
-    .my-time input {
+    .my-time input,
+    .zone input,
+    .zone select {
         padding: 12px;
         border: none;
         border-radius: 8px;
         background: rgba(255, 255, 255, 0.1);
         color: inherit;
-        font: inherit
+        font: inherit;
     }
 
     .my-time select:focus,
-    .my-time input:focus {
-        outline: none
+    .my-time input:focus,
+    .zone input:focus,
+    .zone select:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.15);
     }
 
     .zones {
@@ -78,18 +105,13 @@
         display: flex;
         gap: 8px;
         margin-bottom: 8px;
-        align-items: center
+        align-items: center;
     }
 
     .zone input,
     .zone select {
         flex: 1;
         padding: 10px;
-        border: none;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.1);
-        color: inherit;
-        font: inherit
     }
 
     .zone .del {
@@ -98,7 +120,7 @@
         border: none;
         border-radius: 8px;
         color: #ef4444;
-        cursor: pointer
+        cursor: pointer;
     }
 
     .add-btn {
@@ -110,7 +132,7 @@
         color: inherit;
         font: inherit;
         cursor: pointer;
-        opacity: 0.7
+        opacity: 0.7;
     }
 
     .results {
@@ -124,7 +146,7 @@
         padding: 12px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 8px;
-        margin-bottom: 8px
+        margin-bottom: 8px;
     }
 
     .result-name {
@@ -159,10 +181,10 @@
         display: flex;
         gap: 8px;
         justify-content: center;
-        margin-top: 16px
+        margin-top: 16px;
     }
 
-    button {
+    button#share {
         padding: 12px 24px;
         border: none;
         border-radius: 10px;
@@ -170,7 +192,11 @@
         font-weight: 600;
         cursor: pointer;
         background: rgba(255, 255, 255, 0.1);
-        color: inherit
+        color: inherit;
+    }
+
+    button#share:hover {
+        background: rgba(255, 255, 255, 0.2);
     }
 
     .toast {
@@ -178,20 +204,27 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        padding: 12px 24px;
-        background: #333;
+        padding: 8px 16px;
+        background: #22c55e;
         color: white;
-        border-radius: 10px;
+        border-radius: 20px;
+        font-size: 14px;
         opacity: 0;
-        transition: all 0.3s
+        transition: all 0.3s;
+        pointer-events: none;
     }
 
     .toast.show {
         transform: translateX(-50%) translateY(0);
-        opacity: 1
+        opacity: 1;
     }
 </style>
-<h1>🌍 Meet</h1>
+
+<div class="header-bar">
+    <a href="index.html" class="home-link" title="Home">🏠</a>
+    <h1>🌍 Meet</h1>
+    <div style="width: 24px"></div>
+</div>
 <p class="subtitle">Find the perfect meeting time across timezones</p>
 
 <div class="card" style="text-align:center">
@@ -220,7 +253,7 @@
 </div>
 
 <div class="actions">
-    <button id="share">📋 Share</button>
+    <button id="share">🔗 Share</button>
 </div>
 <div class="toast" id="toast"></div>
 

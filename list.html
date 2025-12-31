@@ -10,21 +10,41 @@
     }
 
     html {
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
         color: #e0e0e0;
-        min-height: 100vh
+        min-height: 100vh;
     }
 
     body {
         padding: 20px;
         font: 16px/1.5 system-ui;
         max-width: 500px;
-        margin: 0 auto
+        margin: 0 auto;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .home-link {
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .home-link:hover {
+        opacity: 1;
     }
 
     h1 {
+        flex: 1;
         text-align: center;
-        margin-bottom: 24px
+        margin: 0;
+        font-size: 24px;
     }
 
     .input-row {
@@ -40,11 +60,12 @@
         border-radius: 12px;
         font: inherit;
         background: rgba(255, 255, 255, 0.1);
-        color: inherit
+        color: inherit;
     }
 
     input:focus {
-        outline: none
+        outline: none;
+        background: rgba(255, 255, 255, 0.15);
     }
 
     button {
@@ -54,33 +75,38 @@
         font: inherit;
         font-weight: 600;
         cursor: pointer;
-        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-        color: white
+        background: linear-gradient(135deg, #8b5cf6, #22c55e);
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.9;
     }
 
     .list {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
         border-radius: 16px;
-        overflow: hidden
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .item {
         display: flex;
         align-items: center;
         padding: 16px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1)
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .item:last-child {
-        border: none
+        border: none;
     }
 
     .item.done {
-        opacity: 0.5
+        opacity: 0.5;
     }
 
     .item.done span {
-        text-decoration: line-through
+        text-decoration: line-through;
     }
 
     .check {
@@ -92,45 +118,45 @@
         cursor: pointer;
         display: flex;
         align-items: center;
-        justify-content: center
+        justify-content: center;
     }
 
     .item.done .check {
         background: #22c55e;
-        border-color: #22c55e
+        border-color: #22c55e;
     }
 
     span {
         flex: 1;
-        word-break: break-word
+        word-break: break-word;
     }
 
     .del {
         padding: 8px;
         background: transparent;
         color: #ef4444;
-        opacity: 0
+        opacity: 0;
     }
 
     .item:hover .del {
-        opacity: 1
+        opacity: 1;
     }
 
     .empty {
         padding: 48px;
         text-align: center;
-        opacity: 0.5
+        opacity: 0.5;
     }
 
     .actions {
         display: flex;
         gap: 8px;
         justify-content: center;
-        margin-top: 16px
+        margin-top: 16px;
     }
 
     .actions button {
-        background: rgba(255, 255, 255, 0.1)
+        background: rgba(255, 255, 255, 0.1);
     }
 
     .toast {
@@ -138,28 +164,34 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        padding: 12px 24px;
-        background: #333;
+        padding: 8px 16px;
+        background: #22c55e;
         color: white;
-        border-radius: 10px;
+        border-radius: 20px;
+        font-size: 14px;
         opacity: 0;
-        transition: all 0.3s
+        transition: all 0.3s;
+        pointer-events: none;
     }
 
     .toast.show {
         transform: translateX(-50%) translateY(0);
-        opacity: 1
+        opacity: 1;
     }
 </style>
 <div class="container">
-    <h1>📝 List</h1>
+    <div class="header-bar">
+        <a href="index.html" class="home-link" title="Home">🏠</a>
+        <h1>📝 List</h1>
+        <div style="width: 24px"></div> <!-- Spacer for balance -->
+    </div>
     <div class="input-row">
         <input type="text" id="input" placeholder="Add item..." autofocus>
         <button id="add">+</button>
     </div>
     <div class="list" id="list"></div>
     <div class="actions">
-        <button id="share">📋 Share</button>
+        <button id="share">🔗 Share</button>
         <button id="clear">🧹 Clear done</button>
     </div>
 </div>

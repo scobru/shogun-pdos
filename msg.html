@@ -10,9 +10,9 @@
     }
 
     html {
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
         color: #e0e0e0;
-        min-height: 100vh
+        min-height: 100vh;
     }
 
     body {
@@ -21,20 +21,44 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        min-height: 100vh
+        min-height: 100vh;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 500px;
+        margin-bottom: 24px;
+    }
+
+    .home-link {
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .home-link:hover {
+        opacity: 1;
     }
 
     h1 {
-        margin-bottom: 24px
+        flex: 1;
+        text-align: center;
+        margin: 0;
+        font-size: 24px;
     }
 
     .card {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 20px;
         padding: 24px;
         width: 100%;
         max-width: 500px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .field {
@@ -47,7 +71,7 @@
         opacity: 0.7;
         margin-bottom: 6px;
         text-transform: uppercase;
-        letter-spacing: 1px
+        letter-spacing: 1px;
     }
 
     input,
@@ -58,40 +82,40 @@
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.1);
         color: inherit;
-        font: inherit
+        font: inherit;
     }
 
     input:focus,
     textarea:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.15)
+        background: rgba(255, 255, 255, 0.15);
     }
 
     textarea {
         min-height: 150px;
-        resize: vertical
+        resize: vertical;
     }
 
     .toggle {
         display: flex;
         align-items: center;
         gap: 12px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .toggle input[type=checkbox] {
         width: 20px;
         height: 20px;
-        accent-color: #8b5cf6
+        accent-color: #8b5cf6;
     }
 
     .password-field {
         display: none;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .password-field.show {
-        display: block
+        display: block;
     }
 
     button {
@@ -104,56 +128,63 @@
         cursor: pointer;
         background: linear-gradient(135deg, #8b5cf6, #6d28d9);
         color: white;
-        margin-bottom: 12px
+        margin-bottom: 12px;
+    }
+
+    button:hover {
+        opacity: 0.9;
     }
 
     .secondary {
-        background: rgba(255, 255, 255, 0.1)
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
     }
 
     .letter {
         background: rgba(255, 255, 255, 0.05);
         border-radius: 16px;
         padding: 24px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
-    .letter-to {
-        font-size: 14px;
-        opacity: 0.7;
-        margin-bottom: 4px
-    }
-
+    .letter-to,
     .letter-from {
         font-size: 14px;
         opacity: 0.7;
-        margin-bottom: 16px
+        margin-bottom: 4px;
+    }
+
+    .letter-from {
+        margin-bottom: 16px;
     }
 
     .letter-content {
         font-size: 18px;
         line-height: 1.8;
-        white-space: pre-wrap
+        white-space: pre-wrap;
     }
 
     .locked {
         text-align: center;
-        padding: 40px
+        padding: 40px;
     }
 
     .locked-icon {
         font-size: 48px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .locked input {
         max-width: 300px;
         margin: 0 auto 16px;
-        text-align: center
+        text-align: center;
     }
 
     .locked button {
-        max-width: 300px
+        max-width: 300px;
     }
 
     .toast {
@@ -161,24 +192,31 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        padding: 12px 24px;
-        background: #333;
+        padding: 8px 16px;
+        background: #22c55e;
         color: white;
-        border-radius: 10px;
+        border-radius: 20px;
+        font-size: 14px;
         opacity: 0;
-        transition: all 0.3s
+        transition: all 0.3s;
+        pointer-events: none;
     }
 
     .toast.show {
         transform: translateX(-50%) translateY(0);
-        opacity: 1
+        opacity: 1;
     }
 
     .error {
-        color: #fca5a5
+        color: #fca5a5;
     }
 </style>
-<h1>✉️ Message</h1>
+
+<div class="header-bar">
+    <a href="index.html" class="home-link" title="Home">🏠</a>
+    <h1>✉️ Message</h1>
+    <div style="width: 24px"></div>
+</div>
 
 <div class="card" id="compose">
     <div class="field">
