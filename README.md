@@ -38,7 +38,7 @@ A suite of minimalist, serverless web tools that live entirely in your browser. 
 
 This repository contains a suite of minimalist, local-first web tools:
 
-- **[Textarea](index.html)**: The main tool. A minimal text editor with URL storage.
+- **[Textarea](note.html)**: The main tool. A minimal text editor with URL storage.
 - **[Event](event.html)**: Event countdown/tracker.
 - **[Habit](habit.html)**: Habit tracker.
 - **[List](list.html)**: Simple checklist.
