@@ -14,7 +14,7 @@ A suite of minimalist, serverless web tools that live entirely in your browser. 
 
 ## How to use
 
-1. Open [textarea.my](https://textarea.my)
+1. Open [textarnoea.my](https://textarea.my)
 2. Type stuff
 3. Marvel at the URL getting longer
 4. Try to share it

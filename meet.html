@@ -3,16 +3,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Meet</title>
 <style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        --text-color: #e0e0e0;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --input-bg: rgba(255, 255, 255, 0.1);
+        --input-focus-bg: rgba(255, 255, 255, 0.15);
+        --result-bg: rgba(255, 255, 255, 0.05);
+        --del-btn-bg: rgba(239, 68, 68, 0.2);
+        --add-btn-border: rgba(255, 255, 255, 0.2);
+        --share-bg: rgba(255, 255, 255, 0.1);
+        --share-hover: rgba(255, 255, 255, 0.2);
+        --meeting-name-bg: rgba(139, 92, 246, 0.2);
+    }
+
+    [data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        --text-color: #102a43;
+        --card-bg: rgba(255, 255, 255, 0.6);
+        --card-border: rgba(0, 0, 0, 0.05);
+        --input-bg: rgba(0, 0, 0, 0.05);
+        --input-focus-bg: rgba(0, 0, 0, 0.08);
+        --result-bg: rgba(255, 255, 255, 0.4);
+        --del-btn-bg: rgba(239, 68, 68, 0.1);
+        --add-btn-border: rgba(0, 0, 0, 0.2);
+        --share-bg: rgba(0, 0, 0, 0.05);
+        --share-hover: rgba(0, 0, 0, 0.1);
+        --meeting-name-bg: rgba(139, 92, 246, 0.1);
+    }
+
     * {
         margin: 0;
         padding: 0;
-        box-sizing: border-box
+        box-sizing: border-box;
     }
 
     html {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        color: #e0e0e0;
+        background: var(--bg-gradient);
+        color: var(--text-color);
         min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
     }
 
     body {
@@ -47,6 +78,21 @@
         font-size: 24px;
     }
 
+    .theme-toggle {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 0 0 0 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .theme-toggle:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
     .subtitle {
         text-align: center;
         opacity: 0.7;
@@ -55,8 +101,8 @@
     }
 
     .card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
         border-radius: 16px;
         padding: 20px;
         margin-bottom: 16px;
@@ -84,7 +130,7 @@
         padding: 12px;
         border: none;
         border-radius: 8px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--input-bg);
         color: inherit;
         font: inherit;
     }
@@ -94,11 +140,11 @@
     .zone input:focus,
     .zone select:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.15);
+        background: var(--input-focus-bg);
     }
 
     .zones {
-        margin-top: 12px
+        margin-top: 12px;
     }
 
     .zone {
@@ -116,7 +162,7 @@
 
     .zone .del {
         padding: 10px;
-        background: rgba(239, 68, 68, 0.2);
+        background: var(--del-btn-bg);
         border: none;
         border-radius: 8px;
         color: #ef4444;
@@ -126,7 +172,7 @@
     .add-btn {
         width: 100%;
         padding: 10px;
-        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border: 2px dashed var(--add-btn-border);
         border-radius: 8px;
         background: transparent;
         color: inherit;
@@ -136,7 +182,7 @@
     }
 
     .results {
-        margin-top: 16px
+        margin-top: 16px;
     }
 
     .result-row {
@@ -144,37 +190,37 @@
         grid-template-columns: 1fr 100px 60px;
         gap: 12px;
         padding: 12px;
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--result-bg);
         border-radius: 8px;
         margin-bottom: 8px;
     }
 
     .result-name {
-        font-weight: 600
+        font-weight: 600;
     }
 
     .result-time {
         font-size: 20px;
         font-weight: 700;
-        text-align: right
+        text-align: right;
     }
 
     .result-diff {
         font-size: 12px;
         opacity: 0.6;
-        text-align: right
+        text-align: right;
     }
 
     .good {
-        color: #22c55e
+        color: #22c55e;
     }
 
     .bad {
-        color: #ef4444
+        color: #ef4444;
     }
 
     .warn {
-        color: #f59e0b
+        color: #f59e0b;
     }
 
     .actions {
@@ -191,12 +237,12 @@
         font: inherit;
         font-weight: 600;
         cursor: pointer;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--share-bg);
         color: inherit;
     }
 
     button#share:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: var(--share-hover);
     }
 
     .toast {
@@ -223,13 +269,13 @@
 <div class="header-bar">
     <a href="index.html" class="home-link" title="Home">🏠</a>
     <h1>🌍 Meet</h1>
-    <div style="width: 24px"></div>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
 </div>
 <p class="subtitle">Find the perfect meeting time across timezones</p>
 
 <div class="card" style="text-align:center">
     <input type="text" id="meeting-name" placeholder="Meeting name (es: Standup call)"
-        style="width:100%;padding:14px;border:none;border-radius:10px;background:rgba(139,92,246,0.2);color:inherit;font:inherit;font-size:18px;font-weight:600;text-align:center;margin-bottom:8px">
+        style="width:100%;padding:14px;border:none;border-radius:10px;background:var(--meeting-name-bg);color:inherit;font:inherit;font-size:18px;font-weight:600;text-align:center;margin-bottom:8px">
 </div>
 
 <div class="card">
@@ -241,8 +287,8 @@
 </div>
 
 <div class="card">
-    <h2>Participants <button class="add-btn"
-            style="width:auto;padding:4px 12px;border:none;background:rgba(255,255,255,0.1)" id="add-zone">+
+    <h2>Participants <button class="add-btn" style="width:auto;padding:4px 12px;border:none;background:var(--input-bg)"
+            id="add-zone">+
             Add</button></h2>
     <div class="zones" id="zones"></div>
 </div>
@@ -269,6 +315,20 @@
 
     const myZoneSelect = document.getElementById('my-zone'), myTimeInput = document.getElementById('my-time'), meetingNameInput = document.getElementById('meeting-name'), zonesEl = document.getElementById('zones'), resultsEl = document.getElementById('results'), toast = document.getElementById('toast')
 
+    // Theme logic
+    const toggle = document.getElementById('theme-toggle');
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    toggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
     // Populate zone selects
     ZONES.forEach(z => { const opt = document.createElement('option'); opt.value = z.name; opt.textContent = `${z.name} (UTC${z.offset >= 0 ? '+' : ''}${z.offset})`; myZoneSelect.appendChild(opt) })
 

@@ -3,16 +3,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Where</title>
 <style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        --text-color: #e0e0e0;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --shared-bg: rgba(139, 92, 246, 0.2);
+        --input-bg: rgba(255, 255, 255, 0.1);
+        --input-focus-bg: rgba(255, 255, 255, 0.15);
+        --btn-secondary-bg: rgba(255, 255, 255, 0.1);
+        --btn-secondary-hover: rgba(255, 255, 255, 0.2);
+    }
+
+    [data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        --text-color: #102a43;
+        --card-bg: rgba(255, 255, 255, 0.6);
+        --card-border: rgba(0, 0, 0, 0.05);
+        --shared-bg: rgba(139, 92, 246, 0.15);
+        --input-bg: rgba(0, 0, 0, 0.05);
+        --input-focus-bg: rgba(0, 0, 0, 0.08);
+        --btn-secondary-bg: rgba(0, 0, 0, 0.05);
+        --btn-secondary-hover: rgba(0, 0, 0, 0.1);
+    }
+
     * {
         margin: 0;
         padding: 0;
-        box-sizing: border-box
+        box-sizing: border-box;
     }
 
     html {
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
-        color: #e0e0e0;
-        min-height: 100vh
+        background: var(--bg-gradient);
+        color: var(--text-color);
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
     }
 
     body {
@@ -21,34 +46,73 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        min-height: 100vh
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 24px;
+    }
+
+    .home-link {
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .home-link:hover {
+        opacity: 1;
     }
 
     h1 {
-        margin-bottom: 8px
+        flex: 1;
+        text-align: center;
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .theme-toggle {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 0 0 0 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .theme-toggle:hover {
+        opacity: 1;
+        transform: scale(1.1);
     }
 
     .subtitle {
         opacity: 0.7;
         margin-bottom: 24px;
-        text-align: center
+        text-align: center;
+        font-size: 14px;
     }
 
     .card {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
         border-radius: 20px;
         padding: 24px;
         width: 100%;
-        max-width: 400px;
         margin-bottom: 16px;
-        text-align: center
+        text-align: center;
     }
 
     .coords {
         font-size: 14px;
         opacity: 0.7;
         margin-bottom: 16px;
-        font-family: monospace
+        font-family: monospace;
     }
 
     .map-link {
@@ -59,11 +123,12 @@
         border-radius: 12px;
         text-decoration: none;
         font-weight: 600;
-        margin-bottom: 16px
+        margin-bottom: 16px;
+        transition: opacity 0.2s;
     }
 
     .map-link:hover {
-        opacity: 0.9
+        opacity: 0.9;
     }
 
     button {
@@ -77,44 +142,50 @@
         background: linear-gradient(135deg, #8b5cf6, #6d28d9);
         color: white;
         width: 100%;
-        margin-bottom: 12px
+        margin-bottom: 12px;
     }
 
     button:hover {
-        transform: scale(1.02)
+        transform: scale(1.02);
     }
 
     .secondary {
-        background: rgba(255, 255, 255, 0.1)
+        background: var(--btn-secondary-bg);
+        color: inherit;
+    }
+
+    .secondary:hover {
+        background: var(--btn-secondary-hover);
+        transform: none;
     }
 
     .status {
         padding: 12px;
         border-radius: 10px;
         margin-bottom: 16px;
-        font-size: 14px
+        font-size: 14px;
     }
 
     .status.error {
         background: rgba(239, 68, 68, 0.2);
-        color: #fca5a5
+        color: #fca5a5;
     }
 
     .status.success {
         background: rgba(34, 197, 94, 0.2);
-        color: #86efac
+        color: #86efac;
     }
 
     .shared-info {
         padding: 16px;
-        background: rgba(139, 92, 246, 0.2);
+        background: var(--shared-bg);
         border-radius: 12px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .shared-info h3 {
         font-size: 14px;
-        margin-bottom: 8px
+        margin-bottom: 8px;
     }
 
     .name-input {
@@ -122,21 +193,21 @@
         padding: 12px;
         border: none;
         border-radius: 10px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--input-bg);
         color: inherit;
         font: inherit;
         text-align: center;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .name-input:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.15)
+        background: var(--input-focus-bg);
     }
 
     .icon {
         font-size: 48px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     .toast {
@@ -144,26 +215,33 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        padding: 12px 24px;
-        background: #333;
+        padding: 8px 16px;
+        background: #22c55e;
         color: white;
-        border-radius: 10px;
+        border-radius: 20px;
+        font-size: 14px;
         opacity: 0;
-        transition: all 0.3s
+        transition: all 0.3s;
+        pointer-events: none;
     }
 
     .toast.show {
         transform: translateX(-50%) translateY(0);
-        opacity: 1
+        opacity: 1;
     }
 
     .time {
         font-size: 12px;
         opacity: 0.5;
-        margin-top: 8px
+        margin-top: 8px;
     }
 </style>
-<h1>📍 Where</h1>
+
+<div class="header-bar">
+    <a href="index.html" class="home-link" title="Home">🏠</a>
+    <h1>📍 Where</h1>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
+</div>
 <p class="subtitle">Share your location</p>
 
 <div class="card" id="get-location">
@@ -200,19 +278,20 @@
     const toast = document.getElementById('toast')
     let myLat, myLng, myName = ''
 
-    // Check if viewing shared location
-    if (location.hash.length > 1) {
-        loadShared()
+    // Theme logic
+    const toggle = document.getElementById('theme-toggle');
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
     }
-
-    document.getElementById('locate').addEventListener('click', getLocation)
-    document.getElementById('share-mine').addEventListener('click', shareLocation)
-    document.getElementById('refresh').addEventListener('click', getLocation)
-    document.getElementById('share').addEventListener('click', async () => {
-        try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { }
-    })
-    document.getElementById('name').addEventListener('input', e => myName = e.target.value)
-
+    toggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
     function getLocation() {
         const status = document.getElementById('status')
         status.style.display = 'block'

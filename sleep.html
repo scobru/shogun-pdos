@@ -3,44 +3,112 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sleep</title>
 <style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        --text-color: #e0e0e0;
+        --tabs-bg: rgba(255, 255, 255, 0.05);
+        --tab-active-bg: rgba(255, 255, 255, 0.15);
+        --input-bg: rgba(255, 255, 255, 0.1);
+        --input-focus-bg: rgba(255, 255, 255, 0.2);
+        --card-bg: rgba(255, 255, 255, 0.1);
+        --card-hover-bg: rgba(255, 255, 255, 0.15);
+        --rec-card-bg: rgba(139, 92, 246, 0.3);
+        --rec-card-border: #8b5cf6;
+        --tip-bg: rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        --text-color: #102a43;
+        --tabs-bg: rgba(255, 255, 255, 0.4);
+        --tab-active-bg: rgba(255, 255, 255, 0.8);
+        --input-bg: rgba(0, 0, 0, 0.05);
+        --input-focus-bg: rgba(0, 0, 0, 0.08);
+        --card-bg: rgba(255, 255, 255, 0.5);
+        --card-hover-bg: rgba(255, 255, 255, 0.7);
+        --rec-card-bg: rgba(139, 92, 246, 0.15);
+        --rec-card-border: #8b5cf6;
+        --tip-bg: rgba(255, 255, 255, 0.4);
+    }
+
     * {
         margin: 0;
         padding: 0;
-        box-sizing: border-box
+        box-sizing: border-box;
     }
 
     html {
-        background: linear-gradient(135deg, #0f0a1e, #1a1a2e);
-        color: #e0e0e0;
-        min-height: 100vh
+        background: var(--bg-gradient);
+        color: var(--text-color);
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
     }
 
     body {
         padding: 20px;
         font: 16px/1.5 system-ui;
+        max-width: 500px;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 100vh
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 24px;
+    }
+
+    .home-link {
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .home-link:hover {
+        opacity: 1;
     }
 
     h1 {
-        margin-bottom: 8px
+        flex: 1;
+        text-align: center;
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .theme-toggle {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 0 0 0 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .theme-toggle:hover {
+        opacity: 1;
+        transform: scale(1.1);
     }
 
     .subtitle {
         opacity: 0.7;
         margin-bottom: 32px;
-        text-align: center
+        text-align: center;
+        font-size: 14px;
     }
 
     .tabs {
         display: flex;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--tabs-bg);
         padding: 4px;
         border-radius: 12px;
-        margin-bottom: 32px
+        margin-bottom: 32px;
     }
 
     .tab {
@@ -51,21 +119,23 @@
         color: inherit;
         font: inherit;
         cursor: pointer;
-        opacity: 0.6
+        opacity: 0.6;
     }
 
     .tab.active {
-        background: rgba(255, 255, 255, 0.15);
-        opacity: 1
+        background: var(--tab-active-bg);
+        opacity: 1;
+        font-weight: 600;
     }
 
     .section {
         display: none;
-        text-align: center
+        text-align: center;
+        width: 100%;
     }
 
     .section.active {
-        display: block
+        display: block;
     }
 
     .time-input {
@@ -73,7 +143,7 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        margin-bottom: 24px
+        margin-bottom: 24px;
     }
 
     .time-input input {
@@ -83,24 +153,24 @@
         text-align: center;
         border: none;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.1);
-        color: inherit
+        background: var(--input-bg);
+        color: inherit;
     }
 
     .time-input input:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.2)
+        background: var(--input-focus-bg);
     }
 
     .time-input span {
         font-size: 32px;
-        opacity: 0.5
+        opacity: 0.5;
     }
 
     .info {
         font-size: 14px;
         opacity: 0.6;
-        margin-bottom: 24px
+        margin-bottom: 24px;
     }
 
     .results {
@@ -108,57 +178,51 @@
         flex-wrap: wrap;
         gap: 12px;
         justify-content: center;
-        max-width: 400px
     }
 
     .result-card {
         padding: 20px 24px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--card-bg);
         border-radius: 16px;
         text-align: center;
         min-width: 120px;
         transition: all 0.2s;
-        cursor: default
+        cursor: default;
+        border: 2px solid transparent;
     }
 
     .result-card:hover {
-        background: rgba(255, 255, 255, 0.15);
-        transform: translateY(-2px)
+        background: var(--card-hover-bg);
+        transform: translateY(-2px);
     }
 
     .result-card.recommended {
-        background: rgba(139, 92, 246, 0.3);
-        border: 2px solid #8b5cf6
+        background: var(--rec-card-bg);
+        border-color: var(--rec-card-border);
     }
 
     .result-time {
         font-size: 24px;
         font-weight: 700;
-        margin-bottom: 4px
+        margin-bottom: 4px;
     }
 
     .result-cycles {
         font-size: 12px;
-        opacity: 0.7
+        opacity: 0.7;
     }
 
     .result-quality {
         font-size: 11px;
-        margin-top: 4px
+        margin-top: 4px;
     }
 
     .good {
-        color: #22c55e
+        color: #22c55e;
     }
 
     .ok {
-        color: #f59e0b
-    }
-
-    h2 {
-        font-size: 16px;
-        opacity: 0.7;
-        margin-bottom: 16px
+        color: #f59e0b;
     }
 
     .now-btn {
@@ -170,24 +234,35 @@
         font: inherit;
         font-weight: 600;
         cursor: pointer;
-        margin-bottom: 24px
+        margin-bottom: 24px;
+        width: 100%;
+    }
+
+    .now-btn:hover {
+        opacity: 0.9;
     }
 
     .tip {
         margin-top: 32px;
         padding: 16px;
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--tip-bg);
         border-radius: 12px;
-        max-width: 400px;
         font-size: 14px;
-        opacity: 0.7
+        opacity: 0.7;
+        max-width: 400px;
+        text-align: center;
     }
 
     .tip strong {
-        color: #8b5cf6
+        color: #8b5cf6;
     }
 </style>
-<h1>😴 Sleep</h1>
+
+<div class="header-bar">
+    <a href="index.html" class="home-link" title="Home">🏠</a>
+    <h1>😴 Sleep</h1>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
+</div>
 <p class="subtitle">Calculate the perfect time to sleep/wake</p>
 <div class="tabs">
     <button class="tab active" data-tab="wake">I need to wake up at...</button>
@@ -222,6 +297,21 @@
 
 <script>
     const CYCLE = 90, FALL_ASLEEP = 15 // minutes
+
+    // Theme logic
+    const toggle = document.getElementById('theme-toggle');
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    toggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
 
     document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'))

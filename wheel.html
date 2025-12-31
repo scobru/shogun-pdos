@@ -3,16 +3,54 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wheel</title>
 <style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        --text-color: #e0e0e0;
+        --wheel-shadow: rgba(139, 92, 246, 0.2);
+        --pointer-shadow: rgba(0, 0, 0, 0.5);
+        --result-color: #22c55e;
+        --options-bg: rgba(255, 255, 255, 0.05);
+        --input-bg: rgba(255, 255, 255, 0.1);
+        --input-focus-bg: rgba(255, 255, 255, 0.15);
+        --btn-border: rgba(255, 255, 255, 0.2);
+        --btn-hover-border: rgba(255, 255, 255, 0.4);
+        --btn-action-bg: rgba(255, 255, 255, 0.1);
+        --btn-action-hover: rgba(255, 255, 255, 0.2);
+        --del-bg: rgba(239, 68, 68, 0.2);
+        --del-color: #ef4444;
+        --center-dot: #1a1a2e;
+    }
+
+    [data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        --text-color: #102a43;
+        --wheel-shadow: rgba(139, 92, 246, 0.4);
+        --pointer-shadow: rgba(0, 0, 0, 0.2);
+        --result-color: #059669;
+        --options-bg: rgba(255, 255, 255, 0.5);
+        --input-bg: rgba(0, 0, 0, 0.05);
+        --input-focus-bg: rgba(0, 0, 0, 0.08);
+        --btn-border: rgba(0, 0, 0, 0.2);
+        --btn-hover-border: rgba(0, 0, 0, 0.4);
+        --btn-action-bg: rgba(0, 0, 0, 0.05);
+        --btn-action-hover: rgba(0, 0, 0, 0.1);
+        --del-bg: rgba(239, 68, 68, 0.1);
+        --del-color: #d946ef;
+        /* More visible on light */
+        --center-dot: #fff;
+    }
+
     * {
         margin: 0;
         padding: 0;
-        box-sizing: border-box
+        box-sizing: border-box;
     }
 
     html {
-        background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
-        color: #e0e0e0;
-        min-height: 100vh
+        background: var(--bg-gradient);
+        color: var(--text-color);
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
     }
 
     body {
@@ -20,21 +58,60 @@
         font: 16px/1.5 system-ui;
         display: flex;
         flex-direction: column;
-        align-items: center
+        align-items: center;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 24px;
+    }
+
+    .home-link {
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .home-link:hover {
+        opacity: 1;
     }
 
     h1 {
-        margin-bottom: 24px
+        flex: 1;
+        text-align: center;
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .theme-toggle {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 0 0 0 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .theme-toggle:hover {
+        opacity: 1;
+        transform: scale(1.1);
     }
 
     .wheel-container {
         position: relative;
-        margin-bottom: 32px
+        margin-bottom: 32px;
+        filter: drop-shadow(0 0 20px var(--wheel-shadow));
     }
 
     #wheel {
         border-radius: 50%;
-        box-shadow: 0 0 40px rgba(139, 92, 246, 0.3)
     }
 
     .pointer {
@@ -43,7 +120,8 @@
         left: 50%;
         transform: translateX(-50%);
         font-size: 40px;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))
+        filter: drop-shadow(0 2px 4px var(--pointer-shadow));
+        z-index: 10;
     }
 
     .result {
@@ -52,25 +130,27 @@
         margin-bottom: 32px;
         min-height: 48px;
         text-align: center;
-        color: #22c55e
+        color: var(--result-color);
     }
 
     .options-container {
         width: 100%;
-        max-width: 400px;
-        margin-bottom: 24px
+        margin-bottom: 24px;
+        background: var(--options-bg);
+        padding: 20px;
+        border-radius: 16px;
     }
 
     .options-container h2 {
         font-size: 14px;
         opacity: 0.7;
-        margin-bottom: 12px
+        margin-bottom: 12px;
     }
 
     .option {
         display: flex;
         gap: 8px;
-        margin-bottom: 8px
+        margin-bottom: 8px;
     }
 
     .option input {
@@ -78,40 +158,40 @@
         padding: 12px;
         border: none;
         border-radius: 8px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--input-bg);
         color: inherit;
-        font: inherit
+        font: inherit;
     }
 
     .option input:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.15)
+        background: var(--input-focus-bg);
     }
 
     .option .del {
         padding: 12px;
-        background: rgba(239, 68, 68, 0.2);
+        background: var(--del-bg);
         border: none;
         border-radius: 8px;
-        color: #ef4444;
-        cursor: pointer
+        color: var(--del-color);
+        cursor: pointer;
     }
 
     .add-btn {
         width: 100%;
         padding: 12px;
-        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border: 2px dashed var(--btn-border);
         border-radius: 8px;
         background: transparent;
         color: inherit;
         font: inherit;
         cursor: pointer;
-        opacity: 0.7
+        opacity: 0.7;
     }
 
     .add-btn:hover {
         opacity: 1;
-        border-color: rgba(255, 255, 255, 0.4)
+        border-color: var(--btn-hover-border);
     }
 
     button {
@@ -121,33 +201,40 @@
         font: inherit;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s
+        transition: all 0.2s;
     }
 
     .spin-btn {
         background: linear-gradient(135deg, #8b5cf6, #6d28d9);
         color: white;
         font-size: 20px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
+        width: 100%;
     }
 
     .spin-btn:hover {
-        transform: scale(1.05)
+        transform: scale(1.02);
     }
 
     .spin-btn:disabled {
         opacity: 0.5;
-        transform: none
+        transform: none;
     }
 
     .actions {
         display: flex;
-        gap: 8px
+        gap: 8px;
+        width: 100%;
     }
 
     .actions button {
-        background: rgba(255, 255, 255, 0.1);
-        color: inherit
+        flex: 1;
+        background: var(--btn-action-bg);
+        color: inherit;
+    }
+
+    .actions button:hover {
+        background: var(--btn-action-hover);
     }
 
     .toast {
@@ -155,20 +242,27 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        padding: 12px 24px;
-        background: #333;
+        padding: 8px 16px;
+        background: #22c55e;
         color: white;
-        border-radius: 10px;
+        border-radius: 20px;
+        font-size: 14px;
         opacity: 0;
-        transition: all 0.3s
+        transition: all 0.3s;
+        pointer-events: none;
     }
 
     .toast.show {
         transform: translateX(-50%) translateY(0);
-        opacity: 1
+        opacity: 1;
     }
 </style>
-<h1>🎡 Wheel</h1>
+
+<div class="header-bar">
+    <a href="index.html" class="home-link" title="Home">🏠</a>
+    <h1>🎡 Wheel</h1>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
+</div>
 <div class="wheel-container">
     <div class="pointer">▼</div>
     <canvas id="wheel" width="300" height="300"></canvas>
@@ -191,6 +285,23 @@
     let spinning = false, rotation = 0
 
     const canvas = document.getElementById('wheel'), ctx = canvas.getContext('2d'), resultEl = document.getElementById('result'), optionsEl = document.getElementById('options'), toast = document.getElementById('toast')
+
+    // Theme logic
+    const toggle = document.getElementById('theme-toggle');
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    toggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        // Redraw wheel to update center dot color (if needed, though it is usually covered or set)
+        drawWheel();
+    });
 
     document.getElementById('spin').addEventListener('click', spin)
     document.getElementById('add').addEventListener('click', () => { options.push('Opzione ' + (options.length + 1)); render(); save() })
@@ -220,7 +331,8 @@
             ctx.restore()
         })
         // Center
-        ctx.beginPath(); ctx.arc(r, r, 20, 0, 2 * Math.PI); ctx.fillStyle = '#1a1a2e'; ctx.fill()
+        const centerColor = getComputedStyle(document.documentElement).getPropertyValue('--center-dot').trim();
+        ctx.beginPath(); ctx.arc(r, r, 20, 0, 2 * Math.PI); ctx.fillStyle = centerColor || '#1a1a2e'; ctx.fill()
     }
 
     function spin() {

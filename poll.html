@@ -3,16 +3,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Poll</title>
 <style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        --text-color: #e0e0e0;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --input-bg: rgba(255, 255, 255, 0.1);
+        --input-focus-bg: rgba(255, 255, 255, 0.15);
+        --del-btn-bg: rgba(239, 68, 68, 0.2);
+        --add-btn-border: rgba(255, 255, 255, 0.2);
+        --btn-secondary-bg: rgba(255, 255, 255, 0.1);
+        --btn-secondary-hover: rgba(255, 255, 255, 0.2);
+        --vote-option-bg: rgba(255, 255, 255, 0.05);
+        --vote-option-hover: rgba(255, 255, 255, 0.1);
+        --vote-selected-bg: rgba(139, 92, 246, 0.2);
+        --vote-bar-bg: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        --text-color: #102a43;
+        --card-bg: rgba(255, 255, 255, 0.6);
+        --card-border: rgba(0, 0, 0, 0.05);
+        --input-bg: rgba(0, 0, 0, 0.05);
+        --input-focus-bg: rgba(0, 0, 0, 0.08);
+        --del-btn-bg: rgba(239, 68, 68, 0.1);
+        --add-btn-border: rgba(0, 0, 0, 0.2);
+        --btn-secondary-bg: rgba(0, 0, 0, 0.05);
+        --btn-secondary-hover: rgba(0, 0, 0, 0.1);
+        --vote-option-bg: rgba(0, 0, 0, 0.05);
+        --vote-option-hover: rgba(0, 0, 0, 0.1);
+        --vote-selected-bg: rgba(139, 92, 246, 0.1);
+        --vote-bar-bg: rgba(0, 0, 0, 0.05);
+    }
+
     * {
         margin: 0;
         padding: 0;
-        box-sizing: border-box
+        box-sizing: border-box;
     }
 
     html {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        color: #e0e0e0;
+        background: var(--bg-gradient);
+        color: var(--text-color);
         min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
     }
 
     body {
@@ -47,9 +82,24 @@
         font-size: 24px;
     }
 
+    .theme-toggle {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 0 0 0 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .theme-toggle:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
     .card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
         border-radius: 20px;
         padding: 24px;
         margin-bottom: 16px;
@@ -67,7 +117,7 @@
         padding: 14px;
         border: none;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--input-bg);
         color: inherit;
         font: inherit;
         margin-bottom: 12px;
@@ -76,7 +126,7 @@
     input:focus,
     textarea:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.15);
+        background: var(--input-focus-bg);
     }
 
     .option-row {
@@ -91,7 +141,7 @@
 
     .del {
         padding: 14px;
-        background: rgba(239, 68, 68, 0.2);
+        background: var(--del-btn-bg);
         border: none;
         border-radius: 12px;
         color: #ef4444;
@@ -101,7 +151,7 @@
     .add-btn {
         width: 100%;
         padding: 12px;
-        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border: 2px dashed var(--add-btn-border);
         border-radius: 12px;
         background: transparent;
         color: inherit;
@@ -133,11 +183,12 @@
     }
 
     .secondary {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--btn-secondary-bg);
+        color: var(--text-color);
     }
 
     .secondary:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: var(--btn-secondary-hover);
     }
 
     .poll-title {
@@ -149,7 +200,7 @@
 
     .vote-option {
         padding: 16px;
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--vote-option-bg);
         border: 2px solid transparent;
         border-radius: 12px;
         margin-bottom: 10px;
@@ -161,12 +212,12 @@
     }
 
     .vote-option:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--vote-option-hover);
     }
 
     .vote-option.selected {
         border-color: #8b5cf6;
-        background: rgba(139, 92, 246, 0.2);
+        background: var(--vote-selected-bg);
     }
 
     .vote-option.voted {
@@ -175,7 +226,7 @@
 
     .vote-bar {
         height: 8px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--vote-bar-bg);
         border-radius: 4px;
         margin-top: 8px;
         overflow: hidden;
@@ -224,7 +275,7 @@
 <div class="header-bar">
     <a href="index.html" class="home-link" title="Home">🏠</a>
     <h1>🗳️ Poll</h1>
-    <div style="width: 24px"></div>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
 </div>
 
 <div class="card" id="create-view">
@@ -251,6 +302,20 @@
     const toast = document.getElementById('toast')
     let pollData = null, hasVoted = false, votedIndex = -1
 
+    // Theme logic
+    const toggle = document.getElementById('theme-toggle');
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    toggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
     document.getElementById('add-option').addEventListener('click', () => {
         const div = document.createElement('div')
         div.className = 'option-row'

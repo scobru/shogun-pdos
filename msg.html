@@ -3,16 +3,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Message</title>
 <style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        --text-color: #e0e0e0;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --input-bg: rgba(255, 255, 255, 0.1);
+        --input-focus-bg: rgba(255, 255, 255, 0.15);
+        --btn-secondary-bg: rgba(255, 255, 255, 0.1);
+        --btn-secondary-hover: rgba(255, 255, 255, 0.2);
+        --letter-bg: rgba(255, 255, 255, 0.05);
+        --letter-bg: rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        --text-color: #102a43;
+        --card-bg: rgba(255, 255, 255, 0.6);
+        --card-border: rgba(0, 0, 0, 0.05);
+        --input-bg: rgba(0, 0, 0, 0.05);
+        --input-focus-bg: rgba(0, 0, 0, 0.08);
+        --btn-secondary-bg: rgba(0, 0, 0, 0.05);
+        --btn-secondary-hover: rgba(0, 0, 0, 0.1);
+        --letter-bg: rgba(255, 255, 255, 0.4);
+    }
+
     * {
         margin: 0;
         padding: 0;
-        box-sizing: border-box
+        box-sizing: border-box;
     }
 
     html {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        color: #e0e0e0;
+        background: var(--bg-gradient);
+        color: var(--text-color);
         min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
     }
 
     body {
@@ -51,9 +77,24 @@
         font-size: 24px;
     }
 
+    .theme-toggle {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 0 0 0 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .theme-toggle:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
     .card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
         border-radius: 20px;
         padding: 24px;
         width: 100%;
@@ -62,7 +103,7 @@
     }
 
     .field {
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     label {
@@ -80,7 +121,7 @@
         padding: 14px;
         border: none;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--input-bg);
         color: inherit;
         font: inherit;
     }
@@ -88,7 +129,7 @@
     input:focus,
     textarea:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.15);
+        background: var(--input-focus-bg);
     }
 
     textarea {
@@ -136,15 +177,16 @@
     }
 
     .secondary {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--btn-secondary-bg);
+        color: var(--text-color);
     }
 
     .secondary:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: var(--btn-secondary-hover);
     }
 
     .letter {
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--letter-bg);
         border-radius: 16px;
         padding: 24px;
         margin-bottom: 16px;
@@ -215,7 +257,7 @@
 <div class="header-bar">
     <a href="index.html" class="home-link" title="Home">🏠</a>
     <h1>✉️ Message</h1>
-    <div style="width: 24px"></div>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
 </div>
 
 <div class="card" id="compose">
@@ -266,6 +308,20 @@
     const toast = document.getElementById('toast')
     let encryptedData = null
 
+    // Theme logic
+    const toggle = document.getElementById('theme-toggle');
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    toggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
     document.getElementById('encrypt-toggle').addEventListener('change', e => {
         document.getElementById('password-field').classList.toggle('show', e.target.checked)
     })

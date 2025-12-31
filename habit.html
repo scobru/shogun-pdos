@@ -3,16 +3,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Habit</title>
 <style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        --text-color: #e0e0e0;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --input-bg: rgba(255, 255, 255, 0.1);
+        --input-focus-bg: rgba(255, 255, 255, 0.15);
+        --day-bg: rgba(255, 255, 255, 0.1);
+        --check-border: rgba(255, 255, 255, 0.3);
+        --stat-bg: rgba(255, 255, 255, 0.05);
+        --share-btn-bg: rgba(255, 255, 255, 0.1);
+        --share-btn-hover: rgba(255, 255, 255, 0.2);
+    }
+
+    [data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        --text-color: #102a43;
+        --card-bg: rgba(255, 255, 255, 0.6);
+        --card-border: rgba(0, 0, 0, 0.05);
+        --input-bg: rgba(0, 0, 0, 0.05);
+        --input-focus-bg: rgba(0, 0, 0, 0.08);
+        --day-bg: rgba(0, 0, 0, 0.05);
+        --check-border: rgba(0, 0, 0, 0.2);
+        --stat-bg: rgba(255, 255, 255, 0.5);
+        --share-btn-bg: rgba(0, 0, 0, 0.05);
+        --share-btn-hover: rgba(0, 0, 0, 0.1);
+    }
+
     * {
         margin: 0;
         padding: 0;
-        box-sizing: border-box
+        box-sizing: border-box;
     }
 
     html {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        color: #e0e0e0;
+        background: var(--bg-gradient);
+        color: var(--text-color);
         min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
     }
 
     body {
@@ -47,10 +76,25 @@
         font-size: 24px;
     }
 
+    .theme-toggle {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 0 0 0 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .theme-toggle:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
     .add-row {
         display: flex;
         gap: 8px;
-        margin-bottom: 24px
+        margin-bottom: 24px;
     }
 
     .add-row input {
@@ -58,14 +102,14 @@
         padding: 14px;
         border: none;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--input-bg);
         color: inherit;
         font: inherit;
     }
 
     .add-row input:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.15);
+        background: var(--input-focus-bg);
     }
 
     .add-row button {
@@ -86,12 +130,12 @@
     .habits {
         display: flex;
         flex-direction: column;
-        gap: 12px
+        gap: 12px;
     }
 
     .habit {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
         border-radius: 16px;
         padding: 16px;
         display: flex;
@@ -102,7 +146,7 @@
     .check {
         width: 40px;
         height: 40px;
-        border: 3px solid rgba(255, 255, 255, 0.3);
+        border: 3px solid var(--check-border);
         border-radius: 50%;
         cursor: pointer;
         display: flex;
@@ -119,7 +163,7 @@
     }
 
     .habit-info {
-        flex: 1
+        flex: 1;
     }
 
     .habit-name {
@@ -154,14 +198,14 @@
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         gap: 4px;
-        margin-top: 8px
+        margin-top: 8px;
     }
 
     .day {
         width: 100%;
         aspect-ratio: 1;
         border-radius: 4px;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--day-bg);
         font-size: 10px;
         display: flex;
         align-items: center;
@@ -170,6 +214,7 @@
 
     .day.done {
         background: #22c55e;
+        color: white;
     }
 
     .day.today {
@@ -182,9 +227,9 @@
         justify-content: center;
         margin-top: 24px;
         padding: 16px;
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--stat-bg);
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--card-border);
     }
 
     .stat {
@@ -209,8 +254,8 @@
     }
 
     #share-btn {
-        background: rgba(255, 255, 255, 0.1);
-        color: #e0e0e0;
+        background: var(--share-btn-bg);
+        color: var(--text-color);
         border: none;
         padding: 8px 16px;
         border-radius: 8px;
@@ -219,7 +264,7 @@
     }
 
     #share-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: var(--share-btn-hover);
     }
 
     .toast {
@@ -246,7 +291,7 @@
 <div class="header-bar">
     <a href="index.html" class="home-link" title="Home">🏠</a>
     <h1>✅ Habit</h1>
-    <div style="width: 24px"></div>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
 </div>
 
 <div class="add-row">
@@ -263,6 +308,21 @@
 <script>
     let habits = []
     const today = new Date().toISOString().split('T')[0]
+
+    // Theme logic
+    const toggle = document.getElementById('theme-toggle');
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    toggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
 
     document.getElementById('add').addEventListener('click', addHabit)
     document.getElementById('input').addEventListener('keypress', e => { if (e.key === 'Enter') addHabit() })

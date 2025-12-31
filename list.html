@@ -3,16 +3,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>List</title>
 <style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        --text-color: #e0e0e0;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --input-bg: rgba(255, 255, 255, 0.1);
+        --input-focus-bg: rgba(255, 255, 255, 0.15);
+        --item-border: rgba(255, 255, 255, 0.1);
+        --btn-secondary-bg: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        --text-color: #102a43;
+        --card-bg: rgba(255, 255, 255, 0.6);
+        --card-border: rgba(0, 0, 0, 0.05);
+        --input-bg: rgba(0, 0, 0, 0.05);
+        --input-focus-bg: rgba(0, 0, 0, 0.08);
+        --item-border: rgba(0, 0, 0, 0.05);
+        --btn-secondary-bg: rgba(0, 0, 0, 0.05);
+    }
+
     * {
         margin: 0;
         padding: 0;
-        box-sizing: border-box
+        box-sizing: border-box;
     }
 
     html {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        color: #e0e0e0;
+        background: var(--bg-gradient);
+        color: var(--text-color);
         min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
     }
 
     body {
@@ -47,10 +70,25 @@
         font-size: 24px;
     }
 
+    .theme-toggle {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 0 0 0 16px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .theme-toggle:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
     .input-row {
         display: flex;
         gap: 8px;
-        margin-bottom: 16px
+        margin-bottom: 16px;
     }
 
     input {
@@ -59,13 +97,13 @@
         border: none;
         border-radius: 12px;
         font: inherit;
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--input-bg);
         color: inherit;
     }
 
     input:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.15);
+        background: var(--input-focus-bg);
     }
 
     button {
@@ -84,17 +122,17 @@
     }
 
     .list {
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--card-bg);
         border-radius: 16px;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--card-border);
     }
 
     .item {
         display: flex;
         align-items: center;
         padding: 16px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid var(--item-border);
     }
 
     .item:last-child {
@@ -112,7 +150,8 @@
     .check {
         width: 24px;
         height: 24px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        border: 2px solid var(--text-color);
+        opacity: 0.3;
         border-radius: 6px;
         margin-right: 12px;
         cursor: pointer;
@@ -124,6 +163,7 @@
     .item.done .check {
         background: #22c55e;
         border-color: #22c55e;
+        opacity: 1;
     }
 
     span {
@@ -156,7 +196,8 @@
     }
 
     .actions button {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--btn-secondary-bg);
+        color: inherit;
     }
 
     .toast {
@@ -183,7 +224,7 @@
     <div class="header-bar">
         <a href="index.html" class="home-link" title="Home">🏠</a>
         <h1>📝 List</h1>
-        <div style="width: 24px"></div> <!-- Spacer for balance -->
+        <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
     </div>
     <div class="input-row">
         <input type="text" id="input" placeholder="Add item..." autofocus>
@@ -199,6 +240,22 @@
 <script>
     let items = []
     const input = document.getElementById('input'), listEl = document.getElementById('list'), toast = document.getElementById('toast')
+
+    // Theme logic
+    const toggle = document.getElementById('theme-toggle');
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    toggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+
     input.addEventListener('keypress', e => { if (e.key === 'Enter' && input.value.trim()) { items.push({ text: input.value.trim(), done: false, id: Date.now() }); input.value = ''; render(); save() } })
     document.getElementById('add').addEventListener('click', () => { if (input.value.trim()) { items.push({ text: input.value.trim(), done: false, id: Date.now() }); input.value = ''; render(); save() } })
     document.getElementById('share').addEventListener('click', async () => { await save(); try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { showToast('Copy URL') } })
