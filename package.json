@@ -1,0 +1,23 @@
+{
+  "name": "textarea",
+  "version": "1.0.0",
+  "description": "A suite of **17 minimalist, serverless web tools** that live entirely in your URL. \r Zero backend, zero tracking, 100% local.",
+  "homepage": "https://github.com/scobru/shogun-nobackend#readme",
+  "bugs": {
+    "url": "https://github.com/scobru/shogun-nobackend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scobru/shogun-nobackend.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "vercel": "^50.1.3"
+  }
+}

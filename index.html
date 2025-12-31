@@ -150,10 +150,31 @@
     font-size: 11px;
     margin-bottom: 32px
   }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .logo {
+    width: 56px;
+    height: 56px;
+    transition: transform 0.3s;
+  }
+
+  .logo:hover {
+    transform: scale(1.1) rotate(5deg);
+  }
 </style>
 <div class="container">
   <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
-  <h1>⚡ Shogun NoBackend</h1>
+  <div class="header">
+    <img src="logo.svg" alt="Shogun Logo" class="logo">
+    <h1>Shogun NoBackend</h1>
+  </div>
   <p class="subtitle">Minimalist tools that live in the URL</p>
   <p style="text-align:center"><span class="badge">17 tools • No backend • 100% shareable</span></p>
 
