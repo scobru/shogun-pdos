@@ -423,7 +423,7 @@
                     ${faviconUrl ? `<img src="${faviconUrl}" class="favicon" alt="icon">` : '<div class="favicon">🔗</div>'}
                     <div class="link-info">
                         <div class="link-label" contenteditable="true" onblur="updateLink('${link.id}', 'label', this.textContent)">${link.label}</div>
-                        <a href="${link.url}" target="_blank" class="link-url">${link.url}</a>
+                        <a href="${link.url}" target="_blank" class="link-url" title="${link.url}">${hostname || link.url.slice(0, 30)}</a>
                     </div>
                     <div class="actions">
                         <button class="action-btn" onclick="openLink('${link.url}')" title="Open">↗️</button>
