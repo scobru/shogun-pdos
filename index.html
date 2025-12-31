@@ -252,7 +252,7 @@
 </div>
 
 <script>
-  const toggle = document.getElementById('theme-toggle');
+  const themeToggle = document.getElementById('theme-toggle');
   const storedTheme = localStorage.getItem('theme');
 
   if (storedTheme) {
@@ -261,7 +261,7 @@
     document.documentElement.setAttribute('data-theme', 'light');
   }
 
-  toggle.addEventListener('click', () => {
+  themeToggle.addEventListener('click', () => {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', newTheme);
