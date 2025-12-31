@@ -251,6 +251,17 @@
     <div class="status" id="status" style="display:none"></div>
 </div>
 
+<div class="card" id="my-location" style="display:none">
+    <div class="icon">📍</div>
+    <div class="shared-info">
+        <h3>Your Location</h3>
+        <div class="coords" id="my-coords"></div>
+    </div>
+    <a class="map-link" id="my-map-link" target="_blank">🗺️ Open in Google Maps</a>
+    <input type="text" class="name-input" id="my-name" placeholder="Your name (optional)">
+    <button id="share-my">📋 Copy shareable link</button>
+</div>
+
 <div class="card" id="show-location" style="display:none">
     <div class="icon">📍</div>
     <div class="shared-info">
@@ -314,7 +325,7 @@
         }
 
         async function shareLocation() {
-            myName = document.getElementById('name').value
+            myName = document.getElementById('my-name').value
             const data = { lat: myLat, lng: myLng, name: myName, time: Date.now() }
             const hash = await compress(JSON.stringify(data))
             const url = location.origin + location.pathname + '#' + hash
@@ -322,9 +333,22 @@
                 await navigator.clipboard.writeText(url)
                 showToast('Link copied!')
             } catch {
-                prompt('Copia questo link:', url)
+                prompt('Copy this link:', url)
             }
         }
+
+        // Event listeners
+        document.getElementById('locate').addEventListener('click', getLocation)
+        document.getElementById('share-my').addEventListener('click', shareLocation)
+        document.getElementById('share').addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(location.href)
+                showToast('Link copied!')
+            } catch { }
+        })
+
+        // Load shared location on page load
+        if (location.hash) loadShared()
 
         async function loadShared() {
             try {
