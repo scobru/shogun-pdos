@@ -308,6 +308,13 @@
     document.getElementById('share').addEventListener('click', async () => {
         try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { }
     })
+    document.getElementById('clear').addEventListener('click', () => {
+        document.getElementById('title').value = ''
+        document.getElementById('date').valueAsDate = new Date()
+        document.getElementById('time').value = '18:00'
+        document.getElementById('desc').value = ''
+        history.replaceState({}, '', location.pathname)
+    })
 
     async function createEvent() {
         const title = document.getElementById('title').value || 'Evento'

@@ -300,7 +300,7 @@
 
 <div class="actions">
     <button id="share">🔗 Share</button>
-    <button id="clear">🧹 Clear done</button>
+    <button id="reset">🔄 Reset</button>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -342,6 +342,15 @@
     meetingNameInput.addEventListener('input', () => { meetingName = meetingNameInput.value; document.title = meetingName ? `${meetingName} - Meet` : 'Meet'; save() })
     document.getElementById('add-zone').addEventListener('click', () => { participants.push({ id: Date.now(), name: 'Nuovo', zone: 'Londra' }); render(); save() })
     document.getElementById('share').addEventListener('click', async () => { await save(); try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { } })
+    document.getElementById('reset').addEventListener('click', () => {
+        meetingName = ''; myZone = 'Roma'; myTime = '14:00'
+        participants = [{ id: 1, name: 'Team US', zone: 'New York' }, { id: 2, name: 'Team Asia', zone: 'Tokyo' }]
+        meetingNameInput.value = ''; myZoneSelect.value = 'Roma'; myTimeInput.value = '14:00'
+        document.title = 'Meet'
+        history.replaceState({}, '', location.pathname)
+        try { localStorage.removeItem('meet-hash') } catch { }
+        render()
+    })
 
     window.updateParticipant = (id, field, val) => { const p = participants.find(x => x.id === id); if (p) p[field] = val; calc(); save() }
     window.removeParticipant = id => { participants = participants.filter(p => p.id !== id); render(); save() }

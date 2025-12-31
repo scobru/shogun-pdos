@@ -286,17 +286,14 @@
         <div class="option-row"><input type="text" placeholder="Option 2" value="No"></div>
     </div>
     <button class="add-btn" id="add-option">+ Aggiungi Option</button>
-    <button id="create" style="margin-top:16px">🗳️ Create Poll</button>
-    <div class="actions">
-        <button id="share">🔗 Share URL</button>
-    </div>
+    <button id="create" style="margin-top:16px">🗳️ Create & Share Poll</button>
 </div>
 
 <div class="card" id="vote-view" style="display:none">
     <div class="poll-title" id="poll-question"></div>
     <div id="vote-options"></div>
     <div class="total" id="total-votes"></div>
-    <button class="secondary" id="share" style="margin-top:16px">📋 Share</button>
+    <button class="secondary" id="share-vote" style="margin-top:16px">📋 Share</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -330,8 +327,11 @@
         document.getElementById('options').appendChild(div)
     })
 
-    document.getElementById('create').addEventListener('click', createPoll)
-    document.getElementById('share').addEventListener('click', async () => {
+    document.getElementById('create').addEventListener('click', async () => {
+        await createPoll()
+        try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { }
+    })
+    document.getElementById('share-vote').addEventListener('click', async () => {
         try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { }
     })
 
