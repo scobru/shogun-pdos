@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poll</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+    }
+
+    html {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        color: #e0e0e0;
+        min-height: 100vh
+    }
+
+    body {
+        padding: 20px;
+        font: 16px/1.5 system-ui;
+        max-width: 500px;
+        margin: 0 auto
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 24px
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 16px
+    }
+
+    h2 {
+        font-size: 14px;
+        opacity: 0.7;
+        margin-bottom: 12px
+    }
+
+    input,
+    textarea {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit;
+        font: inherit;
+        margin-bottom: 12px
+    }
+
+    input:focus,
+    textarea:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.15)
+    }
+
+    .option-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px
+    }
+
+    .option-row input {
+        margin: 0
+    }
+
+    .del {
+        padding: 14px;
+        background: rgba(239, 68, 68, 0.2);
+        border: none;
+        border-radius: 12px;
+        color: #ef4444;
+        cursor: pointer
+    }
+
+    .add-btn {
+        width: 100%;
+        padding: 12px;
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        opacity: 0.7
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
+        margin-bottom: 12px
+    }
+
+    .secondary {
+        background: rgba(255, 255, 255, 0.1)
+    }
+
+    .poll-title {
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 20px
+    }
+
+    .vote-option {
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center
+    }
+
+    .vote-option:hover {
+        background: rgba(255, 255, 255, 0.1)
+    }
+
+    .vote-option.selected {
+        border-color: #8b5cf6;
+        background: rgba(139, 92, 246, 0.2)
+    }
+
+    .vote-option.voted {
+        cursor: default
+    }
+
+    .vote-bar {
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        margin-top: 8px;
+        overflow: hidden
+    }
+
+    .vote-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #8b5cf6, #22c55e);
+        border-radius: 4px;
+        transition: width 0.5s
+    }
+
+    .vote-count {
+        font-size: 14px;
+        opacity: 0.7
+    }
+
+    .total {
+        text-align: center;
+        font-size: 14px;
+        opacity: 0.5;
+        margin-top: 16px
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 12px 24px;
+        background: #333;
+        color: white;
+        border-radius: 10px;
+        opacity: 0;
+        transition: all 0.3s
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1
+    }
+</style>
+<h1>🗳️ Poll</h1>
+
+<div class="card" id="create-view">
+    <h2>Create poll</h2>
+    <input type="text" id="question" placeholder="Your question...">
+    <div id="options">
+        <div class="option-row"><input type="text" placeholder="Option 1" value="Sì"></div>
+        <div class="option-row"><input type="text" placeholder="Option 2" value="No"></div>
+    </div>
+    <button class="add-btn" id="add-option">+ Aggiungi Option</button>
+    <button id="create" style="margin-top:16px">🗳️ Create Poll</button>
+</div>
+
+<div class="card" id="vote-view" style="display:none">
+    <div class="poll-title" id="poll-question"></div>
+    <div id="vote-options"></div>
+    <div class="total" id="total-votes"></div>
+    <button class="secondary" id="share" style="margin-top:16px">📋 Share</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const toast = document.getElementById('toast')
+    let pollData = null, hasVoted = false, votedIndex = -1
+
+    document.getElementById('add-option').addEventListener('click', () => {
+        const div = document.createElement('div')
+        div.className = 'option-row'
+        div.innerHTML = `<input type="text" placeholder="Option..."><button class="del" onclick="this.parentElement.remove()">×</button>`
+        document.getElementById('options').appendChild(div)
+    })
+
+    document.getElementById('create').addEventListener('click', createPoll)
+    document.getElementById('share').addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { }
+    })
+
+    // Check for existing poll
+    if (location.hash.length > 1) loadPoll()
+
+    async function createPoll() {
+        const question = document.getElementById('question').value || 'Sondaggio'
+        const inputs = document.querySelectorAll('#options input')
+        const options = [...inputs].map(i => i.value).filter(v => v.trim())
+        if (options.length < 2) { showToast('Need at least 2 options'); return }
+
+        pollData = { q: question, o: options.map(o => ({ t: o, v: 0 })), id: Date.now() }
+        await savePoll()
+        showPoll()
+    }
+
+    async function savePoll() {
+        const hash = await compress(JSON.stringify(pollData))
+        history.replaceState({}, '', '#' + hash)
+    }
+
+    async function loadPoll() {
+        try {
+            pollData = JSON.parse(await decompress(location.hash.slice(1)))
+            // Check if already voted
+            const voted = localStorage.getItem('poll-' + pollData.id)
+            if (voted !== null) { hasVoted = true; votedIndex = parseInt(voted) }
+            showPoll()
+        } catch { }
+    }
+
+    function showPoll() {
+        document.getElementById('create-view').style.display = 'none'
+        document.getElementById('vote-view').style.display = 'block'
+        document.getElementById('poll-question').textContent = pollData.q
+        document.title = pollData.q + ' - Poll'
+        renderOptions()
+    }
+
+    function renderOptions() {
+        const total = pollData.o.reduce((s, o) => s + o.v, 0)
+        const el = document.getElementById('vote-options')
+        el.innerHTML = pollData.o.map((o, i) => {
+            const pct = total ? Math.round(o.v / total * 100) : 0
+            const selected = votedIndex === i ? 'selected' : ''
+            const voted = hasVoted ? 'voted' : ''
+            return `<div class="vote-option ${selected} ${voted}" onclick="vote(${i})">
+      <span>${o.t}</span>
+      <span class="vote-count">${hasVoted ? `${pct}% (${o.v})` : ''}</span>
+      ${hasVoted ? `<div class="vote-bar"><div class="vote-fill" style="width:${pct}%"></div></div>` : ''}
+    </div>`
+        }).join('')
+        document.getElementById('total-votes').textContent = hasVoted ? `${total} total votes` : ''
+    }
+
+    window.vote = async (i) => {
+        if (hasVoted) return
+        hasVoted = true; votedIndex = i
+        pollData.o[i].v++
+        localStorage.setItem('poll-' + pollData.id, i)
+        await savePoll()
+        renderOptions()
+        showToast('Vote recorded!')
+    }
+
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
+    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
+</script>

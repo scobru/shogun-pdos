@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Snippet</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+    }
+
+    html {
+        background: #0a0a0a;
+        color: #e0e0e0
+    }
+
+    body {
+        display: grid;
+        grid-template-rows: auto 1fr 1fr;
+        height: 100vh;
+        font: 14px/1.4 ui-monospace, monospace
+    }
+
+    header {
+        display: flex;
+        gap: 8px;
+        padding: 8px 12px;
+        border-bottom: 1px solid #333;
+        background: linear-gradient(180deg, #1a1a1a, #0f0f0f);
+        align-items: center
+    }
+
+    h1 {
+        font-size: 14px;
+        font-weight: 600;
+        opacity: 0.7;
+        margin-right: auto
+    }
+
+    button {
+        padding: 6px 16px;
+        border: none;
+        border-radius: 6px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s
+    }
+
+    #run {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white
+    }
+
+    #run:hover {
+        transform: translateY(-1px)
+    }
+
+    #share {
+        background: #333;
+        color: #e0e0e0
+    }
+
+    .tabs {
+        display: flex;
+        gap: 2px
+    }
+
+    .tab {
+        padding: 4px 12px;
+        background: transparent;
+        opacity: 0.5;
+        font-size: 12px
+    }
+
+    .tab.active {
+        opacity: 1;
+        background: #333;
+        border-radius: 4px
+    }
+
+    #editor {
+        outline: none;
+        padding: 12px 16px;
+        width: 100%;
+        height: 100%;
+        resize: none;
+        border: none;
+        border-bottom: 1px solid #333;
+        font: inherit;
+        tab-size: 2;
+        background: #0a0a0a;
+        color: #e0e0e0;
+        overflow: auto
+    }
+
+    #output {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: white
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 10px 20px;
+        background: #333;
+        color: white;
+        border-radius: 8px;
+        opacity: 0;
+        transition: all 0.3s
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1
+    }
+</style>
+<header>
+    <h1>⚡ Snippet</h1>
+    <div class="tabs">
+        <button class="tab active" data-mode="html">HTML</button>
+        <button class="tab" data-mode="js">JS</button>
+    </div>
+    <button id="run">▶ Run</button>
+    <button id="share">📋 Share</button>
+</header>
+<textarea id="editor" spellcheck="false" placeholder="Write your code here..."></textarea>
+<iframe id="output" sandbox="allow-scripts allow-modals"></iframe>
+<div class="toast" id="toast">Link copied!</div>
+<script>
+    const editor = document.getElementById('editor'), output = document.getElementById('output'), toast = document.getElementById('toast'), tabs = document.querySelectorAll('.tab')
+    let mode = 'html'
+    tabs.forEach(t => t.addEventListener('click', () => { tabs.forEach(x => x.classList.remove('active')); t.classList.add('active'); mode = t.dataset.mode; save() }))
+    document.getElementById('run').addEventListener('click', run)
+    editor.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run() }
+        if (e.key === 'Tab') { e.preventDefault(); const s = editor.selectionStart, en = editor.selectionEnd; editor.value = editor.value.substring(0, s) + '  ' + editor.value.substring(en); editor.selectionStart = editor.selectionEnd = s + 2 }
+    })
+    editor.addEventListener('input', debounce(500, save))
+    document.getElementById('share').addEventListener('click', async () => { await save(); try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { showToast('Copy URL') } })
+    addEventListener('DOMContentLoaded', load); addEventListener('hashchange', load)
+    function run() {
+        const code = editor.value; let html
+        if (mode === 'html') html = code
+        else html = `<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{font:14px/1.6 monospace;padding:12px;background:#1a1a1a;color:#e0e0e0}.log{padding:4px 0;border-bottom:1px solid #333}.error{color:#f87171}.warn{color:#fbbf24}</style></head><body><script>const _log=console.log,_error=console.error,_warn=console.warn;const out=(cls,...args)=>{const div=document.createElement('div');div.className='log '+cls;div.textContent=args.map(a=>typeof a==='object'?JSON.stringify(a,null,2):a).join(' ');document.body.appendChild(div)};console.log=(...a)=>{_log(...a);out('',...a)};console.error=(...a)=>{_error(...a);out('error',...a)};console.warn=(...a)=>{_warn(...a);out('warn',...a)};try{${code}}catch(e){console.error(e.message)}<\/script></body></html>`
+        output.srcdoc = html
+    }
+    async function save() { const d = JSON.stringify({ code: editor.value, mode }); const h = await compress(d); history.replaceState({}, '', '#' + h); try { localStorage.setItem('snippet-hash', h) } catch { } }
+    async function load() { try { let h = location.hash.slice(1); if (!h) h = localStorage.getItem('snippet-hash'); if (h) { const d = JSON.parse(await decompress(h)); editor.value = d.code || ''; mode = d.mode || 'html'; tabs.forEach(t => t.classList.toggle('active', t.dataset.mode === mode)) } else editor.value = getDefault() } catch { editor.value = getDefault() } editor.focus(); run() }
+    function getDefault() { return `<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body {\n      font-family: system-ui;\n      display: grid;\n      place-items: center;\n      min-height: 100vh;\n      margin: 0;\n      background: linear-gradient(135deg, #667eea, #764ba2);\n      color: white;\n    }\n    h1 { font-size: 3rem; animation: pulse 2s infinite; }\n    @keyframes pulse {\n      0%, 100% { transform: scale(1); }\n      50% { transform: scale(1.05); }\n    }\n  </style>\n</head>\n<body>\n  <h1>⚡ Hello Snippet!</h1>\n</body>\n</html>` }
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
+    function debounce(ms, fn) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms) } }
+    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
+</script>

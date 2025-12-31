@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timer</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        background: #0f0f0f;
+        color: #e0e0e0;
+    }
+
+    body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        font: 16px/1.5 system-ui;
+    }
+
+    h1 {
+        font-size: 20px;
+        margin-bottom: 24px;
+        opacity: 0.7;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 32px;
+        background: #1a1a1a;
+        padding: 4px;
+        border-radius: 12px;
+    }
+
+    .tab {
+        padding: 10px 24px;
+        border: none;
+        border-radius: 10px;
+        font: inherit;
+        cursor: pointer;
+        background: transparent;
+        color: #e0e0e0;
+        opacity: 0.6;
+        transition: all 0.2s;
+    }
+
+    .tab.active {
+        background: #333;
+        opacity: 1;
+    }
+
+    .timer-display {
+        font-size: 96px;
+        font-weight: 200;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -4px;
+        margin-bottom: 32px;
+        transition: color 0.3s;
+    }
+
+    .timer-display.warning {
+        color: #f59e0b;
+    }
+
+    .timer-display.danger {
+        color: #ef4444;
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .presets {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .preset {
+        padding: 10px 20px;
+        border: 2px solid #333;
+        border-radius: 10px;
+        background: transparent;
+        color: #e0e0e0;
+        font: inherit;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .preset:hover {
+        border-color: #8b5cf6;
+    }
+
+    .custom-input {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+        align-items: center;
+    }
+
+    input {
+        width: 70px;
+        padding: 10px;
+        border: 2px solid #333;
+        border-radius: 8px;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        font: inherit;
+        text-align: center;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #8b5cf6;
+    }
+
+    .controls {
+        display: flex;
+        gap: 12px;
+    }
+
+    button {
+        padding: 16px 32px;
+        border: none;
+        border-radius: 12px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .start {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        min-width: 120px;
+    }
+
+    .start:hover {
+        transform: scale(1.05);
+    }
+
+    .start.running {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .reset {
+        background: #333;
+        color: #e0e0e0;
+    }
+
+    .pomodoro-info {
+        margin-top: 32px;
+        text-align: center;
+        opacity: 0.6;
+    }
+
+    .pomodoro-count {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+
+    .stopwatch {
+        display: none;
+    }
+
+    .stopwatch.active {
+        display: block;
+    }
+
+    .timer-mode {
+        display: none;
+    }
+
+    .timer-mode.active {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .lap-list {
+        margin-top: 24px;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .lap {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 12px;
+        border-bottom: 1px solid #333;
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 12px 24px;
+        background: #333;
+        color: white;
+        border-radius: 10px;
+        opacity: 0;
+        transition: all 0.3s;
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+</style>
+
+<h1>⏱️ Timer</h1>
+
+<div class="tabs">
+    <button class="tab active" data-mode="timer">Timer</button>
+    <button class="tab" data-mode="pomodoro">Pomodoro</button>
+    <button class="tab" data-mode="stopwatch">Stopwatch</button>
+</div>
+
+<div class="timer-mode active" id="timer-view">
+    <div class="timer-display" id="timer-display">00:00</div>
+
+    <div class="presets">
+        <button class="preset" data-secs="60">1 min</button>
+        <button class="preset" data-secs="180">3 min</button>
+        <button class="preset" data-secs="300">5 min</button>
+        <button class="preset" data-secs="600">10 min</button>
+        <button class="preset" data-secs="900">15 min</button>
+    </div>
+
+    <div class="custom-input">
+        <input type="number" id="custom-min" placeholder="min" min="0" max="99">
+        <span>:</span>
+        <input type="number" id="custom-sec" placeholder="sec" min="0" max="59">
+        <button class="preset" id="set-custom">Set</button>
+    </div>
+
+    <div class="controls">
+        <button class="start" id="timer-start">▶ Start</button>
+        <button class="reset" id="timer-reset">↺ Reset</button>
+    </div>
+</div>
+
+<div class="timer-mode" id="pomodoro-view">
+    <div class="timer-display" id="pomo-display">25:00</div>
+
+    <div class="controls">
+        <button class="start" id="pomo-start">▶ Start</button>
+        <button class="reset" id="pomo-reset">↺ Reset</button>
+    </div>
+
+    <div class="pomodoro-info">
+        <div class="pomodoro-count">🍅 <span id="pomo-count">0</span></div>
+        <div>25 min work, 5 min break</div>
+    </div>
+</div>
+
+<div class="timer-mode" id="stopwatch-view">
+    <div class="timer-display" id="sw-display">00:00.00</div>
+
+    <div class="controls">
+        <button class="start" id="sw-start">▶ Start</button>
+        <button class="reset" id="sw-lap">⏱ Lap</button>
+        <button class="reset" id="sw-reset">↺ Reset</button>
+    </div>
+
+    <div class="lap-list" id="laps"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<audio id="alarm" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAABgA=" type="audio/wav">
+</audio>
+
+<script>
+    const tabs = document.querySelectorAll('.tab')
+    const views = document.querySelectorAll('.timer-mode')
+
+    // Tab switching
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'))
+            tab.classList.add('active')
+            const mode = tab.dataset.mode
+            views.forEach(v => v.classList.toggle('active', v.id === `${mode}-view`))
+        })
+    })
+
+    // === TIMER ===
+    let timerSeconds = 0
+    let timerRunning = false
+    let timerInterval = null
+    const timerDisplay = document.getElementById('timer-display')
+    const timerStartBtn = document.getElementById('timer-start')
+
+    document.querySelectorAll('.preset[data-secs]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            timerSeconds = parseInt(btn.dataset.secs)
+            updateTimerDisplay()
+        })
+    })
+
+    document.getElementById('set-custom').addEventListener('click', () => {
+        const min = parseInt(document.getElementById('custom-min').value) || 0
+        const sec = parseInt(document.getElementById('custom-sec').value) || 0
+        timerSeconds = min * 60 + sec
+        updateTimerDisplay()
+    })
+
+    timerStartBtn.addEventListener('click', () => {
+        if (timerRunning) {
+            stopTimer()
+        } else {
+            startTimer()
+        }
+    })
+
+    document.getElementById('timer-reset').addEventListener('click', () => {
+        stopTimer()
+        timerSeconds = 0
+        updateTimerDisplay()
+    })
+
+    function startTimer() {
+        if (timerSeconds <= 0) return
+        timerRunning = true
+        timerStartBtn.textContent = '⏸ Pause'
+        timerStartBtn.classList.add('running')
+        timerInterval = setInterval(() => {
+            timerSeconds--
+            updateTimerDisplay()
+            if (timerSeconds <= 0) {
+                stopTimer()
+                playAlarm()
+                showToast('⏰ Time is up!')
+            }
+        }, 1000)
+    }
+
+    function stopTimer() {
+        timerRunning = false
+        timerStartBtn.textContent = '▶ Start'
+        timerStartBtn.classList.remove('running')
+        clearInterval(timerInterval)
+    }
+
+    function updateTimerDisplay() {
+        const min = Math.floor(timerSeconds / 60)
+        const sec = timerSeconds % 60
+        timerDisplay.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`
+        timerDisplay.classList.toggle('warning', timerSeconds <= 60 && timerSeconds > 10)
+        timerDisplay.classList.toggle('danger', timerSeconds <= 10 && timerSeconds > 0)
+    }
+
+    // === POMODORO ===
+    let pomoSeconds = 25 * 60
+    let pomoRunning = false
+    let pomoInterval = null
+    let pomoCount = 0
+    let isBreak = false
+    const pomoDisplay = document.getElementById('pomo-display')
+    const pomoStartBtn = document.getElementById('pomo-start')
+    const pomoCountEl = document.getElementById('pomo-count')
+
+    pomoStartBtn.addEventListener('click', () => {
+        if (pomoRunning) {
+            stopPomo()
+        } else {
+            startPomo()
+        }
+    })
+
+    document.getElementById('pomo-reset').addEventListener('click', () => {
+        stopPomo()
+        pomoSeconds = 25 * 60
+        isBreak = false
+        updatePomoDisplay()
+    })
+
+    function startPomo() {
+        pomoRunning = true
+        pomoStartBtn.textContent = '⏸ Pause'
+        pomoStartBtn.classList.add('running')
+        pomoInterval = setInterval(() => {
+            pomoSeconds--
+            updatePomoDisplay()
+            if (pomoSeconds <= 0) {
+                stopPomo()
+                playAlarm()
+                if (!isBreak) {
+                    pomoCount++
+                    pomoCountEl.textContent = pomoCount
+                    isBreak = true
+                    pomoSeconds = 5 * 60
+                    showToast('🍅 Pomodoro complete! 5 min break')
+                } else {
+                    isBreak = false
+                    pomoSeconds = 25 * 60
+                    showToast('☕ Break over! Ready for another?')
+                }
+                updatePomoDisplay()
+            }
+        }, 1000)
+    }
+
+    function stopPomo() {
+        pomoRunning = false
+        pomoStartBtn.textContent = '▶ Start'
+        pomoStartBtn.classList.remove('running')
+        clearInterval(pomoInterval)
+    }
+
+    function updatePomoDisplay() {
+        const min = Math.floor(pomoSeconds / 60)
+        const sec = pomoSeconds % 60
+        pomoDisplay.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`
+        pomoDisplay.classList.toggle('warning', pomoSeconds <= 60 && pomoSeconds > 10)
+        pomoDisplay.classList.toggle('danger', pomoSeconds <= 10 && pomoSeconds > 0)
+    }
+
+    // === STOPWATCH ===
+    let swMs = 0
+    let swRunning = false
+    let swInterval = null
+    let laps = []
+    const swDisplay = document.getElementById('sw-display')
+    const swStartBtn = document.getElementById('sw-start')
+    const lapsEl = document.getElementById('laps')
+
+    swStartBtn.addEventListener('click', () => {
+        if (swRunning) {
+            stopSW()
+        } else {
+            startSW()
+        }
+    })
+
+    document.getElementById('sw-lap').addEventListener('click', () => {
+        if (swRunning) {
+            laps.push(swMs)
+            updateLaps()
+        }
+    })
+
+    document.getElementById('sw-reset').addEventListener('click', () => {
+        stopSW()
+        swMs = 0
+        laps = []
+        updateSWDisplay()
+        lapsEl.innerHTML = ''
+    })
+
+    function startSW() {
+        swRunning = true
+        swStartBtn.textContent = '⏸ Pause'
+        swStartBtn.classList.add('running')
+        const startTime = Date.now() - swMs
+        swInterval = setInterval(() => {
+            swMs = Date.now() - startTime
+            updateSWDisplay()
+        }, 10)
+    }
+
+    function stopSW() {
+        swRunning = false
+        swStartBtn.textContent = '▶ Start'
+        swStartBtn.classList.remove('running')
+        clearInterval(swInterval)
+    }
+
+    function updateSWDisplay() {
+        const min = Math.floor(swMs / 60000)
+        const sec = Math.floor((swMs % 60000) / 1000)
+        const ms = Math.floor((swMs % 1000) / 10)
+        swDisplay.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(ms).padStart(2, '0')}`
+    }
+
+    function updateLaps() {
+        lapsEl.innerHTML = laps.map((lap, i) => {
+            const min = Math.floor(lap / 60000)
+            const sec = Math.floor((lap % 60000) / 1000)
+            const ms = Math.floor((lap % 1000) / 10)
+            return `<div class="lap"><span>Lap ${i + 1}</span><span>${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(ms).padStart(2, '0')}</span></div>`
+        }).reverse().join('')
+    }
+
+    // === UTILS ===
+    function playAlarm() {
+        // Generate beep with Web Audio API
+        const ctx = new (window.AudioContext || window.webkitAudioContext)()
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                const osc = ctx.createOscillator()
+                const gain = ctx.createGain()
+                osc.connect(gain)
+                gain.connect(ctx.destination)
+                osc.frequency.value = 800
+                gain.gain.setValueAtTime(0.3, ctx.currentTime)
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3)
+                osc.start()
+                osc.stop(ctx.currentTime + 0.3)
+            }, i * 400)
+        }
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast')
+        toast.textContent = msg
+        toast.classList.add('show')
+        setTimeout(() => toast.classList.remove('show'), 3000)
+    }
+</script>

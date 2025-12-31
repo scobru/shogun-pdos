@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+    }
+
+    html {
+        background: #0f0f0f;
+        color: #e0e0e0;
+        min-height: 100vh
+    }
+
+    body {
+        padding: 20px;
+        font: 16px/1.5 system-ui;
+        display: flex;
+        flex-direction: column;
+        align-items: center
+    }
+
+    h1 {
+        margin-bottom: 24px
+    }
+
+    .tabs {
+        display: flex;
+        gap: 4px;
+        background: #1a1a1a;
+        padding: 4px;
+        border-radius: 12px;
+        margin-bottom: 24px
+    }
+
+    .tab {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        font: inherit;
+        cursor: pointer;
+        background: transparent;
+        color: #e0e0e0;
+        opacity: 0.6
+    }
+
+    .tab.active {
+        background: #333;
+        opacity: 1
+    }
+
+    .input-area {
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 24px
+    }
+
+    textarea,
+    input {
+        width: 100%;
+        padding: 14px;
+        border: 2px solid #333;
+        border-radius: 12px;
+        font: inherit;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        margin-bottom: 12px
+    }
+
+    textarea {
+        height: 100px;
+        resize: vertical
+    }
+
+    textarea:focus,
+    input:focus {
+        outline: none;
+        border-color: #8b5cf6
+    }
+
+    .wifi-fields {
+        display: none
+    }
+
+    .wifi-fields.active {
+        display: block
+    }
+
+    #qr-container {
+        background: white;
+        padding: 20px;
+        border-radius: 16px;
+        margin-bottom: 24px
+    }
+
+    #qr {
+        display: block
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px
+    }
+
+    button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        background: #333;
+        color: #e0e0e0
+    }
+
+    button:hover {
+        background: #444
+    }
+
+    .primary {
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 12px 24px;
+        background: #333;
+        color: white;
+        border-radius: 10px;
+        opacity: 0;
+        transition: all 0.3s
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1
+    }
+</style>
+<h1>📱 QR</h1>
+<div class="tabs">
+    <button class="tab active" data-type="text">Testo</button>
+    <button class="tab" data-type="url">URL</button>
+    <button class="tab" data-type="wifi">WiFi</button>
+</div>
+<div class="input-area">
+    <textarea id="text-input" placeholder="Scrivi il testo..."></textarea>
+    <div class="wifi-fields" id="wifi-fields">
+        <input type="text" id="wifi-ssid" placeholder="Network name (SSID)">
+        <input type="Password" id="wifi-pass" placeholder="Password">
+        <select id="wifi-type"
+            style="width:100%;padding:14px;border:2px solid #333;border-radius:12px;background:#1a1a1a;color:#e0e0e0">
+            <option value="WPA">WPA/WPA2</option>
+            <option value="WEP">WEP</option>
+            <option value="nopass">Nessuna Password</option>
+        </select>
+    </div>
+</div>
+<div id="qr-container"><canvas id="qr" width="200" height="200"></canvas></div>
+<div class="actions">
+    <button class="primary" id="download">💾 Download PNG</button>
+    <button id="share">📋 Share</button>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+    let mode = 'text'
+    const textInput = document.getElementById('text-input'), wifiFields = document.getElementById('wifi-fields'), canvas = document.getElementById('qr'), ctx = canvas.getContext('2d'), toast = document.getElementById('toast')
+    document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); mode = t.dataset.type; textInput.style.display = mode === 'wifi' ? 'none' : 'block'; wifiFields.classList.toggle('active', mode === 'wifi'); textInput.placeholder = mode === 'url' ? 'https://...' : 'Scrivi il testo...'; Generatete() }))
+    textInput.addEventListener('input', debounce(300, Generatete))
+    document.getElementById('wifi-ssid').addEventListener('input', debounce(300, Generatete))
+    document.getElementById('wifi-pass').addEventListener('input', debounce(300, Generatete))
+    document.getElementById('wifi-type').addEventListener('change', Generatete)
+    document.getElementById('download').addEventListener('click', () => { const a = document.createElement('a'); a.download = 'qr-code.png'; a.href = canvas.toDataURL('image/png'); a.click(); showToast('PNG scaricato!') })
+    document.getElementById('share').addEventListener('click', async () => { await save(); try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { showToast('Copia URL') } })
+    function getData() { if (mode === 'wifi') { const s = document.getElementById('wifi-ssid').value, p = document.getElementById('wifi-pass').value, t = document.getElementById('wifi-type').value; return `WIFI:T:${t};S:${s};P:${p};;` } return textInput.value }
+    function Generatete() {
+        const data = getData(); if (!data) { ctx.clearRect(0, 0, 200, 200); return }
+        const qr = GenerateteQR(data); drawQR(qr); save()
+    }
+    function GenerateteQR(data) {
+        const size = 21 + 4 * Math.min(Math.floor(data.length / 10), 20); const matrix = []; for (let i = 0; i < size; i++) { matrix[i] = []; for (let j = 0; j < size; j++)matrix[i][j] = 0 }
+        addFinderPattern(matrix, 0, 0); addFinderPattern(matrix, size - 7, 0); addFinderPattern(matrix, 0, size - 7); for (let i = 0; i < 8; i++)for (let j = 0; j < 8; j++) { if (i < 7 && j < 7) continue; matrix[i][j] = 0; matrix[size - 8 + i] && (matrix[size - 8 + i][j] = 0); matrix[i][size - 8 + j] = 0 }
+        for (let i = 8; i < size - 8; i++) { matrix[6][i] = (i % 2 === 0) ? 1 : 0; matrix[i][6] = (i % 2 === 0) ? 1 : 0 }
+        const bits = []; for (let i = 0; i < data.length; i++) { const c = data.charCodeAt(i); bits.push((c >> 7) & 1, (c >> 6) & 1, (c >> 5) & 1, (c >> 4) & 1, (c >> 3) & 1, (c >> 2) & 1, (c >> 1) & 1, c & 1) }
+        let bi = 0; for (let col = size - 1; col > 0; col -= 2) { if (col === 6) col--; for (let row = 0; row < size; row++) { for (let c = 0; c < 2; c++) { const x = col - c, y = (((col + 1) / 2 | 0) % 2 === 0) ? size - 1 - row : row; if (matrix[y][x] === 0 && y >= 0 && y < size && x >= 0 && x < size) { matrix[y][x] = bi < bits.length ? bits[bi++] : (Math.random() > 0.5 ? 1 : 0) } } } }
+        return matrix
+    }
+    function addFinderPattern(m, x, y) { for (let i = 0; i < 7; i++)for (let j = 0; j < 7; j++) { const outer = i === 0 || i === 6 || j === 0 || j === 6; const inner = i >= 2 && i <= 4 && j >= 2 && j <= 4; m[y + i][x + j] = (outer || inner) ? 1 : 0 } }
+    function drawQR(matrix) { const size = matrix.length, cellSize = 200 / size; ctx.fillStyle = 'white'; ctx.fillRect(0, 0, 200, 200); ctx.fillStyle = 'black'; for (let i = 0; i < size; i++)for (let j = 0; j < size; j++)if (matrix[i][j]) ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize) }
+    async function save() { const d = { mode, text: textInput.value, ssid: document.getElementById('wifi-ssid').value, pass: document.getElementById('wifi-pass').value, type: document.getElementById('wifi-type').value }; const h = await compress(JSON.stringify(d)); history.replaceState({}, '', '#' + h); try { localStorage.setItem('qr-hash', h) } catch { } }
+    async function load() { try { let h = location.hash.slice(1); if (!h) h = localStorage.getItem('qr-hash'); if (h) { const d = JSON.parse(await decompress(h)); mode = d.mode || 'text'; textInput.value = d.text || ''; document.getElementById('wifi-ssid').value = d.ssid || ''; document.getElementById('wifi-pass').value = d.pass || ''; document.getElementById('wifi-type').value = d.type || 'WPA'; document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.type === mode)); textInput.style.display = mode === 'wifi' ? 'none' : 'block'; wifiFields.classList.toggle('active', mode === 'wifi') } } catch { } Generatete() }
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
+    function debounce(ms, fn) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms) } }
+    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
+    addEventListener('DOMContentLoaded', load)
+</script>

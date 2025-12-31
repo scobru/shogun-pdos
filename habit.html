@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Habit</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+    }
+
+    html {
+        background: linear-gradient(135deg, #0f1a0f, #1a2e1a);
+        color: #e0e0e0;
+        min-height: 100vh
+    }
+
+    body {
+        padding: 20px;
+        font: 16px/1.5 system-ui;
+        max-width: 500px;
+        margin: 0 auto
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 24px
+    }
+
+    .add-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px
+    }
+
+    .add-row input {
+        flex: 1;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit;
+        font: inherit
+    }
+
+    .add-row input:focus {
+        outline: none
+    }
+
+    .add-row button {
+        padding: 14px 20px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer
+    }
+
+    .habits {
+        display: flex;
+        flex-direction: column;
+        gap: 12px
+    }
+
+    .habit {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px
+    }
+
+    .check {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        transition: all 0.2s;
+        flex-shrink: 0
+    }
+
+    .check.done {
+        background: #22c55e;
+        border-color: #22c55e
+    }
+
+    .habit-info {
+        flex: 1
+    }
+
+    .habit-name {
+        font-weight: 600;
+        margin-bottom: 2px
+    }
+
+    .streak {
+        font-size: 13px;
+        opacity: 0.7
+    }
+
+    .streak span {
+        color: #f59e0b
+    }
+
+    .del {
+        padding: 8px 12px;
+        background: transparent;
+        border: none;
+        color: #ef4444;
+        cursor: pointer;
+        opacity: 0.5;
+        font-size: 18px
+    }
+
+    .habit:hover .del {
+        opacity: 1
+    }
+
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        margin-top: 8px
+    }
+
+    .day {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center
+    }
+
+    .day.done {
+        background: #22c55e
+    }
+
+    .day.today {
+        border: 2px solid #8b5cf6
+    }
+
+    .stats {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-top: 24px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px
+    }
+
+    .stat {
+        text-align: center
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #22c55e
+    }
+
+    .stat-label {
+        font-size: 12px;
+        opacity: 0.6
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 12px 24px;
+        background: #333;
+        color: white;
+        border-radius: 10px;
+        opacity: 0;
+        transition: all 0.3s
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1
+    }
+</style>
+<h1>✅ Habit</h1>
+<div class="add-row">
+    <input type="text" id="input" placeholder="New habit...">
+    <button id="add">+</button>
+</div>
+<div class="habits" id="habits"></div>
+<div class="stats" id="stats"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+    let habits = []
+    const today = new Date().toISOString().split('T')[0]
+
+    document.getElementById('add').addEventListener('click', addHabit)
+    document.getElementById('input').addEventListener('keypress', e => { if (e.key === 'Enter') addHabit() })
+
+    function addHabit() {
+        const input = document.getElementById('input'), name = input.value.trim()
+        if (!name) return
+        habits.push({ id: Date.now(), name, days: {} })
+        input.value = ''; render(); save()
+    }
+
+    window.toggleDay = (id) => {
+        const h = habits.find(x => x.id === id)
+        if (!h) return
+        if (h.days[today]) delete h.days[today]
+        else h.days[today] = true
+        render(); save()
+    }
+
+    window.removeHabit = id => { habits = habits.filter(h => h.id !== id); render(); save() }
+
+    function getStreak(habit) {
+        let streak = 0, date = new Date()
+        for (let i = 0; i < 365; i++) {
+            const d = date.toISOString().split('T')[0]
+            if (habit.days[d]) streak++
+            else if (i > 0) break // Allow today to be unchecked
+            date.setDate(date.getDate() - 1)
+        }
+        return streak
+    }
+
+    function getLast7Days() {
+        const days = []
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date(); d.setDate(d.getDate() - i)
+            days.push(d.toISOString().split('T')[0])
+        }
+        return days
+    }
+
+    function render() {
+        const last7 = getLast7Days()
+        document.getElementById('habits').innerHTML = habits.map(h => {
+            const streak = getStreak(h)
+            const isDone = h.days[today]
+            const calendar = last7.map(d => `<div class="day ${h.days[d] ? 'done' : ''} ${d === today ? 'today' : ''}">${new Date(d).getDate()}</div>`).join('')
+            return `<div class="habit">
+      <div class="check ${isDone ? 'done' : ''}" onclick="toggleDay(${h.id})">${isDone ? '✓' : ''}</div>
+      <div class="habit-info">
+        <div class="habit-name">${h.name}</div>
+        <div class="streak">🔥 <span>${streak}</span> days</div>
+        <div class="calendar">${calendar}</div>
+      </div>
+      <button class="del" onclick="removeHabit(${h.id})">×</button>
+    </div>`
+        }).join('') || '<p style="text-align:center;opacity:0.5">Add your first habit! 🌱</p>'
+
+        // Stats
+        const totalStreak = habits.reduce((sum, h) => sum + getStreak(h), 0)
+        const todayDone = habits.filter(h => h.days[today]).length
+        document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="stat-value">${todayDone}/${habits.length}</div><div class="stat-label">Today</div></div>
+    <div class="stat"><div class="stat-value">${totalStreak}</div><div class="stat-label">Total streak</div></div>
+  `
+    }
+
+    async function save() { const h = await compress(JSON.stringify(habits)); history.replaceState({}, '', '#' + h); try { localStorage.setItem('habit-hash', h) } catch { } }
+    async function load() { try { let h = location.hash.slice(1); if (!h) h = localStorage.getItem('habit-hash'); if (h) habits = JSON.parse(await decompress(h)) } catch { } render() }
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
+    addEventListener('DOMContentLoaded', load)
+</script>

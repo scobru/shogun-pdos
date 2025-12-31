@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pic</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+    }
+
+    html {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        color: #e0e0e0;
+        min-height: 100vh
+    }
+
+    body {
+        padding: 20px;
+        font: 16px/1.5 system-ui;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh
+    }
+
+    h1 {
+        margin-bottom: 8px
+    }
+
+    .subtitle {
+        opacity: 0.7;
+        margin-bottom: 24px;
+        text-align: center;
+        font-size: 14px
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 24px;
+        width: 100%;
+        max-width: 500px;
+        margin-bottom: 16px;
+        text-align: center
+    }
+
+    .drop-zone {
+        border: 3px dashed rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 40px 20px;
+        cursor: pointer;
+        transition: all 0.2s
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragover {
+        border-color: #8b5cf6;
+        background: rgba(139, 92, 246, 0.1)
+    }
+
+    .drop-zone p {
+        margin-bottom: 8px
+    }
+
+    .drop-zone small {
+        opacity: 0.5;
+        font-size: 12px
+    }
+
+    input[type=file] {
+        display: none
+    }
+
+    img {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 12px;
+        margin-bottom: 16px
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
+        margin-bottom: 12px
+    }
+
+    .secondary {
+        background: rgba(255, 255, 255, 0.1)
+    }
+
+    .info {
+        font-size: 12px;
+        opacity: 0.5;
+        margin-top: 8px
+    }
+
+    .caption-input {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit;
+        font: inherit;
+        text-align: center;
+        margin-bottom: 16px
+    }
+
+    .caption-input:focus {
+        outline: none
+    }
+
+    .caption {
+        font-size: 14px;
+        opacity: 0.7;
+        margin-top: 8px
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 12px 24px;
+        background: #333;
+        color: white;
+        border-radius: 10px;
+        opacity: 0;
+        transition: all 0.3s
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1
+    }
+
+    .warning {
+        padding: 12px;
+        background: rgba(245, 158, 11, 0.2);
+        border-radius: 10px;
+        color: #fbbf24;
+        font-size: 13px;
+        margin-bottom: 16px
+    }
+</style>
+<h1>🖼️ Pic</h1>
+<p class="subtitle">Share images via URL</p>
+
+<div class="card" id="upload-view">
+    <div class="drop-zone" id="drop-zone">
+        <p>📷 Click or drag an image</p>
+        <small>Max ~100KB to fit in URL</small>
+    </div>
+    <input type="file" id="file-input" accept="image/*">
+    <div class="warning" id="warning" style="display:none">⚠️ Immagine troppo grande, verrà compressa</div>
+</div>
+
+<div class="card" id="preview-view" style="display:none">
+    <img id="preview">
+    <input type="text" class="caption-input" id="caption" placeholder="Add a caption...">
+    <button id="share">📋 Share link</button>
+    <button class="secondary" id="download">💾 Download</button>
+    <button class="secondary" id="new-pic">🔄 New image</button>
+    <div class="info" id="size-info"></div>
+</div>
+
+<div class="card" id="view-mode" style="display:none">
+    <img id="shared-img">
+    <div class="caption" id="shared-caption"></div>
+    <button class="secondary" id="dl-shared">💾 Download</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const toast = document.getElementById('toast'), dropZone = document.getElementById('drop-zone'), fileInput = document.getElementById('file-input'), preview = document.getElementById('preview')
+    let imageData = '', caption = ''
+
+    // Check for shared image
+    if (location.hash.length > 1) loadShared()
+
+    dropZone.addEventListener('click', () => fileInput.click())
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover') })
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'))
+    dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]) })
+    fileInput.addEventListener('change', () => handleFile(fileInput.files[0]))
+    document.getElementById('caption').addEventListener('input', e => { caption = e.target.value; saveToUrl() })
+    document.getElementById('share').addEventListener('click', async () => { try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { } })
+    document.getElementById('download').addEventListener('click', () => downloadImage(imageData, 'pic.png'))
+    document.getElementById('dl-shared').addEventListener('click', () => downloadImage(document.getElementById('shared-img').src, 'pic.png'))
+    document.getElementById('new-pic').addEventListener('click', () => { location.hash = ''; location.reload() })
+
+    async function handleFile(file) {
+        if (!file || !file.type.startsWith('image/')) return
+
+        const warn = document.getElementById('warning')
+        warn.style.display = file.size > 100000 ? 'block' : 'none'
+
+        // Compress if needed
+        const img = new Image()
+        img.onload = async () => {
+            const canvas = document.createElement('canvas')
+            let w = img.width, h = img.height
+            const maxSize = 800
+            if (w > maxSize || h > maxSize) {
+                if (w > h) { h = h * maxSize / w; w = maxSize }
+                else { w = w * maxSize / h; h = maxSize }
+            }
+            canvas.width = w; canvas.height = h
+            const ctx = canvas.getContext('2d')
+            ctx.drawImage(img, 0, 0, w, h)
+
+            // Try different quality levels
+            let quality = 0.8
+            imageData = canvas.toDataURL('image/jpeg', quality)
+            while (imageData.length > 120000 && quality > 0.1) {
+                quality -= 0.1
+                imageData = canvas.toDataURL('image/jpeg', quality)
+            }
+
+            showPreview()
+            saveToUrl()
+        }
+        img.src = URL.createObjectURL(file)
+    }
+
+    function showPreview() {
+        document.getElementById('upload-view').style.display = 'none'
+        document.getElementById('preview-view').style.display = 'block'
+        preview.src = imageData
+        document.getElementById('size-info').textContent = `URL: ~${Math.round(imageData.length / 1024)}KB`
+    }
+
+    async function saveToUrl() {
+        const data = { img: imageData, cap: caption }
+        const hash = await compress(JSON.stringify(data))
+        history.replaceState({}, '', '#' + hash)
+    }
+
+    async function loadShared() {
+        try {
+            const data = JSON.parse(await decompress(location.hash.slice(1)))
+            document.getElementById('upload-view').style.display = 'none'
+            document.getElementById('view-mode').style.display = 'block'
+            document.getElementById('shared-img').src = data.img
+            document.getElementById('shared-caption').textContent = data.cap || ''
+            document.title = 'Shared pic'
+        } catch { showToast('Failed to load') }
+    }
+
+    function downloadImage(dataUrl, filename) {
+        const a = document.createElement('a')
+        a.href = dataUrl; a.download = filename; a.click()
+    }
+
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
+    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
+</script>

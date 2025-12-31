@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+    }
+
+    html {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        color: #e0e0e0;
+        min-height: 100vh
+    }
+
+    body {
+        padding: 20px;
+        font: 16px/1.5 system-ui;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh
+    }
+
+    h1 {
+        margin-bottom: 8px
+    }
+
+    .subtitle {
+        opacity: 0.7;
+        margin-bottom: 24px;
+        text-align: center
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 24px;
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 16px;
+        text-align: center
+    }
+
+    .coords {
+        font-size: 14px;
+        opacity: 0.7;
+        margin-bottom: 16px;
+        font-family: monospace
+    }
+
+    .map-link {
+        display: block;
+        padding: 14px;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 16px
+    }
+
+    .map-link:hover {
+        opacity: 0.9
+    }
+
+    button {
+        padding: 14px 28px;
+        border: none;
+        border-radius: 12px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
+        width: 100%;
+        margin-bottom: 12px
+    }
+
+    button:hover {
+        transform: scale(1.02)
+    }
+
+    .secondary {
+        background: rgba(255, 255, 255, 0.1)
+    }
+
+    .status {
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        font-size: 14px
+    }
+
+    .status.error {
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5
+    }
+
+    .status.success {
+        background: rgba(34, 197, 94, 0.2);
+        color: #86efac
+    }
+
+    .shared-info {
+        padding: 16px;
+        background: rgba(139, 92, 246, 0.2);
+        border-radius: 12px;
+        margin-bottom: 16px
+    }
+
+    .shared-info h3 {
+        font-size: 14px;
+        margin-bottom: 8px
+    }
+
+    .name-input {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit;
+        font: inherit;
+        text-align: center;
+        margin-bottom: 16px
+    }
+
+    .name-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.15)
+    }
+
+    .icon {
+        font-size: 48px;
+        margin-bottom: 16px
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 12px 24px;
+        background: #333;
+        color: white;
+        border-radius: 10px;
+        opacity: 0;
+        transition: all 0.3s
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1
+    }
+
+    .time {
+        font-size: 12px;
+        opacity: 0.5;
+        margin-top: 8px
+    }
+</style>
+<h1>📍 Where</h1>
+<p class="subtitle">Share your location</p>
+
+<div class="card" id="get-location">
+    <div class="icon">🗺️</div>
+    <input type="text" class="name-input" id="name" placeholder="Your name (optional)">
+    <button id="locate">📍 Get location</button>
+    <div class="status" id="status" style="display:none"></div>
+</div>
+
+<div class="card" id="show-location" style="display:none">
+    <div class="icon">📍</div>
+    <div class="shared-info">
+        <h3 id="shared-name">Shared location</h3>
+        <div class="coords" id="coords"></div>
+        <div class="time" id="time"></div>
+    </div>
+    <a class="map-link" id="map-link" target="_blank">🗺️ Open in Google Maps</a>
+    <button class="secondary" id="share">📋 Copy link</button>
+</div>
+
+<div class="card" id="my-location" style="display:none">
+    <div class="shared-info">
+        <h3>Your location</h3>
+        <div class="coords" id="my-coords"></div>
+    </div>
+    <a class="map-link" id="my-map-link" target="_blank">🗺️ Open in Google Maps</a>
+    <button id="share-mine">📋 Share location</button>
+    <button class="secondary" id="refresh">🔄 Refresh</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const toast = document.getElementById('toast')
+    let myLat, myLng, myName = ''
+
+    // Check if viewing shared location
+    if (location.hash.length > 1) {
+        loadShared()
+    }
+
+    document.getElementById('locate').addEventListener('click', getLocation)
+    document.getElementById('share-mine').addEventListener('click', shareLocation)
+    document.getElementById('refresh').addEventListener('click', getLocation)
+    document.getElementById('share').addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { }
+    })
+    document.getElementById('name').addEventListener('input', e => myName = e.target.value)
+
+    function getLocation() {
+        const status = document.getElementById('status')
+        status.style.display = 'block'
+        status.className = 'status'
+        status.textContent = '🔄 Getting location...'
+
+        if (!navigator.geolocation) {
+            status.className = 'status error'
+            status.textContent = '❌ Geolocation not supported'
+            return
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                myLat = pos.coords.latitude
+                myLng = pos.coords.longitude
+                document.getElementById('get-location').style.display = 'none'
+                document.getElementById('my-location').style.display = 'block'
+                document.getElementById('my-coords').textContent = `${myLat.toFixed(6)}, ${myLng.toFixed(6)}`
+                document.getElementById('my-map-link').href = `https://www.google.com/maps?q=${myLat},${myLng}`
+            },
+            err => {
+                status.className = 'status error'
+                status.textContent = '❌ ' + err.message
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        )
+    }
+
+    async function shareLocation() {
+        myName = document.getElementById('name').value
+        const data = { lat: myLat, lng: myLng, name: myName, time: Date.now() }
+        const hash = await compress(JSON.stringify(data))
+        const url = location.origin + location.pathname + '#' + hash
+        try {
+            await navigator.clipboard.writeText(url)
+            showToast('Link copied!')
+        } catch {
+            prompt('Copia questo link:', url)
+        }
+    }
+
+    async function loadShared() {
+        try {
+            const data = JSON.parse(await decompress(location.hash.slice(1)))
+            document.getElementById('get-location').style.display = 'none'
+            document.getElementById('show-location').style.display = 'block'
+            document.getElementById('shared-name').textContent = data.name || 'Shared location'
+            document.getElementById('coords').textContent = `${data.lat.toFixed(6)}, ${data.lng.toFixed(6)}`
+            document.getElementById('map-link').href = `https://www.google.com/maps?q=${data.lat},${data.lng}`
+            if (data.time) {
+                const d = new Date(data.time)
+                document.getElementById('time').textContent = 'Shared on ' + d.toLocaleString('it-IT')
+            }
+            document.title = (data.name || 'Posizione') + ' - Where'
+        } catch { }
+    }
+
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
+    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
+</script>

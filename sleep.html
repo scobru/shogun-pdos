@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sleep</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+    }
+
+    html {
+        background: linear-gradient(135deg, #0f0a1e, #1a1a2e);
+        color: #e0e0e0;
+        min-height: 100vh
+    }
+
+    body {
+        padding: 20px;
+        font: 16px/1.5 system-ui;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh
+    }
+
+    h1 {
+        margin-bottom: 8px
+    }
+
+    .subtitle {
+        opacity: 0.7;
+        margin-bottom: 32px;
+        text-align: center
+    }
+
+    .tabs {
+        display: flex;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 4px;
+        border-radius: 12px;
+        margin-bottom: 32px
+    }
+
+    .tab {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        opacity: 0.6
+    }
+
+    .tab.active {
+        background: rgba(255, 255, 255, 0.15);
+        opacity: 1
+    }
+
+    .section {
+        display: none;
+        text-align: center
+    }
+
+    .section.active {
+        display: block
+    }
+
+    .time-input {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 24px
+    }
+
+    .time-input input {
+        width: 80px;
+        padding: 16px;
+        font-size: 32px;
+        text-align: center;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit
+    }
+
+    .time-input input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.2)
+    }
+
+    .time-input span {
+        font-size: 32px;
+        opacity: 0.5
+    }
+
+    .info {
+        font-size: 14px;
+        opacity: 0.6;
+        margin-bottom: 24px
+    }
+
+    .results {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        max-width: 400px
+    }
+
+    .result-card {
+        padding: 20px 24px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        text-align: center;
+        min-width: 120px;
+        transition: all 0.2s;
+        cursor: default
+    }
+
+    .result-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px)
+    }
+
+    .result-card.recommended {
+        background: rgba(139, 92, 246, 0.3);
+        border: 2px solid #8b5cf6
+    }
+
+    .result-time {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px
+    }
+
+    .result-cycles {
+        font-size: 12px;
+        opacity: 0.7
+    }
+
+    .result-quality {
+        font-size: 11px;
+        margin-top: 4px
+    }
+
+    .good {
+        color: #22c55e
+    }
+
+    .ok {
+        color: #f59e0b
+    }
+
+    h2 {
+        font-size: 16px;
+        opacity: 0.7;
+        margin-bottom: 16px
+    }
+
+    .now-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        margin-bottom: 24px
+    }
+
+    .tip {
+        margin-top: 32px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        max-width: 400px;
+        font-size: 14px;
+        opacity: 0.7
+    }
+
+    .tip strong {
+        color: #8b5cf6
+    }
+</style>
+<h1>😴 Sleep</h1>
+<p class="subtitle">Calculate the perfect time to sleep/wake</p>
+<div class="tabs">
+    <button class="tab active" data-tab="wake">I need to wake up at...</button>
+    <button class="tab" data-tab="sleep">I go to sleep at...</button>
+</div>
+
+<div class="section active" id="wake-section">
+    <div class="time-input">
+        <input type="number" id="wake-hour" min="0" max="23" value="7" placeholder="07">
+        <span>:</span>
+        <input type="number" id="wake-min" min="0" max="59" value="00" placeholder="00">
+    </div>
+    <p class="info">You should go to sleep at one of these times:</p>
+    <div class="results" id="wake-results"></div>
+</div>
+
+<div class="section" id="sleep-section">
+    <button class="now-btn" id="now-btn">⏰ Now</button>
+    <div class="time-input">
+        <input type="number" id="sleep-hour" min="0" max="23" value="23" placeholder="23">
+        <span>:</span>
+        <input type="number" id="sleep-min" min="0" max="59" value="00" placeholder="00">
+    </div>
+    <p class="info">You should wake up at one of these times:</p>
+    <div class="results" id="sleep-results"></div>
+</div>
+
+<div class="tip">
+    <strong>💡 Tip:</strong> Un ciclo di sonno dura ~90 minuti. Svegliarsi tra un ciclo e l'altro ti fa sentire più
+    riposato. Consigliati 5-6 cycles (7.5-9 ore).
+</div>
+
+<script>
+    const CYCLE = 90, FALL_ASLEEP = 15 // minutes
+
+    document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'))
+        t.classList.add('active')
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+        document.getElementById(t.dataset.tab + '-section').classList.add('active')
+    }))
+
+    document.getElementById('wake-hour').addEventListener('input', calcWake)
+    document.getElementById('wake-min').addEventListener('input', calcWake)
+    document.getElementById('sleep-hour').addEventListener('input', calcSleep)
+    document.getElementById('sleep-min').addEventListener('input', calcSleep)
+    document.getElementById('now-btn').addEventListener('click', () => {
+        const now = new Date()
+        document.getElementById('sleep-hour').value = now.getHours()
+        document.getElementById('sleep-min').value = now.getMinutes()
+        calcSleep()
+    })
+
+    function calcWake() {
+        const h = parseInt(document.getElementById('wake-hour').value) || 0
+        const m = parseInt(document.getElementById('wake-min').value) || 0
+        const wake = new Date(); wake.setHours(h, m, 0, 0)
+
+        const results = []
+        for (let cycles = 6; cycles >= 3; cycles--) {
+            const sleepTime = new Date(wake.getTime() - (cycles * CYCLE + FALL_ASLEEP) * 60000)
+            results.push({ time: sleepTime, cycles, recommended: cycles >= 5 })
+        }
+
+        renderResults('wake-results', results)
+    }
+
+    function calcSleep() {
+        const h = parseInt(document.getElementById('sleep-hour').value) || 0
+        const m = parseInt(document.getElementById('sleep-min').value) || 0
+        const sleep = new Date(); sleep.setHours(h, m, 0, 0)
+
+        const results = []
+        for (let cycles = 3; cycles <= 6; cycles++) {
+            const wakeTime = new Date(sleep.getTime() + (cycles * CYCLE + FALL_ASLEEP) * 60000)
+            results.push({ time: wakeTime, cycles, recommended: cycles >= 5 })
+        }
+
+        renderResults('sleep-results', results)
+    }
+
+    function renderResults(id, results) {
+        const el = document.getElementById(id)
+        el.innerHTML = results.map(r => {
+            const hours = r.cycles * 1.5
+            const quality = r.cycles >= 5 ? 'good' : 'ok'
+            const qualityText = r.cycles >= 5 ? '✓ Optimal' : r.cycles >= 4 ? '~ Sufficient' : '⚠ Low'
+            return `<div class="result-card ${r.recommended ? 'recommended' : ''}">
+      <div class="result-time">${pad(r.time.getHours())}:${pad(r.time.getMinutes())}</div>
+      <div class="result-cycles">${r.cycles} cycles (${hours}h)</div>
+      <div class="result-quality ${quality}">${qualityText}</div>
+    </div>`
+        }).join('')
+    }
+
+    function pad(n) { return n.toString().padStart(2, '0') }
+
+    // Initial calc
+    calcWake(); calcSleep()
+
+    // Set current time defaults
+    const now = new Date()
+    document.getElementById('sleep-hour').value = now.getHours()
+    document.getElementById('sleep-min').value = now.getMinutes()
+    calcSleep()
+</script>

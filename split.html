@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Split</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+    }
+
+    html {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        color: #e0e0e0;
+        min-height: 100vh
+    }
+
+    body {
+        padding: 20px;
+        font: 16px/1.5 system-ui
+    }
+
+    .container {
+        max-width: 500px;
+        margin: 0 auto
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 8px;
+        font-size: 28px
+    }
+
+    .subtitle {
+        text-align: center;
+        opacity: 0.7;
+        margin-bottom: 24px
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px
+    }
+
+    .card h2 {
+        font-size: 14px;
+        opacity: 0.7;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center
+    }
+
+    .items {
+        margin-bottom: 16px
+    }
+
+    .item {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+        align-items: center
+    }
+
+    .item input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font: inherit;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit
+    }
+
+    .item input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.15)
+    }
+
+    .item input.price {
+        width: 100px;
+        flex: none;
+        text-align: right
+    }
+
+    .item .del {
+        padding: 8px 12px;
+        background: rgba(239, 68, 68, 0.3);
+        border: none;
+        border-radius: 8px;
+        color: #ef4444;
+        cursor: pointer
+    }
+
+    .add-btn {
+        width: 100%;
+        padding: 10px;
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        opacity: 0.7
+    }
+
+    .add-btn:hover {
+        border-color: rgba(255, 255, 255, 0.4);
+        opacity: 1
+    }
+
+    .people {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px
+    }
+
+    .person {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px
+    }
+
+    .person input {
+        width: 80px;
+        padding: 6px;
+        border: none;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit;
+        font: inherit
+    }
+
+    .person input:focus {
+        outline: none
+    }
+
+    .person .remove {
+        padding: 4px 8px;
+        background: transparent;
+        border: none;
+        color: #ef4444;
+        cursor: pointer;
+        font-size: 18px
+    }
+
+    .result {
+        background: rgba(139, 92, 246, 0.2);
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center
+    }
+
+    .result h3 {
+        font-size: 14px;
+        opacity: 0.7;
+        margin-bottom: 8px
+    }
+
+    .total {
+        font-size: 40px;
+        font-weight: 700;
+        margin-bottom: 16px
+    }
+
+    .breakdown {
+        text-align: left
+    }
+
+    .breakdown-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        margin-bottom: 8px
+    }
+
+    .breakdown-item .name {
+        font-weight: 600
+    }
+
+    .breakdown-item .amount {
+        color: #22c55e;
+        font-weight: 700
+    }
+
+    .tip-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px
+    }
+
+    .tip-btn {
+        flex: 1;
+        padding: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        cursor: pointer
+    }
+
+    .tip-btn.active {
+        background: rgba(139, 92, 246, 0.3);
+        border-color: #8b5cf6
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 20px
+    }
+
+    button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit
+    }
+
+    button:hover {
+        background: rgba(255, 255, 255, 0.2)
+    }
+
+    .primary {
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9)
+    }
+
+    .mode-toggle {
+        display: flex;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 4px;
+        margin-bottom: 16px
+    }
+
+    .mode-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        opacity: 0.6
+    }
+
+    .mode-btn.active {
+        background: rgba(255, 255, 255, 0.15);
+        opacity: 1
+    }
+
+    .simple-mode,
+    .advanced-mode {
+        display: none
+    }
+
+    .simple-mode.active,
+    .advanced-mode.active {
+        display: block
+    }
+
+    .simple-input {
+        font-size: 32px;
+        text-align: center;
+        padding: 20px;
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit
+    }
+
+    .simple-input:focus {
+        outline: none
+    }
+
+    .people-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin: 24px 0
+    }
+
+    .people-btn {
+        width: 48px;
+        height: 48px;
+        border: none;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.2);
+        color: inherit
+    }
+
+    .people-count {
+        font-size: 48px;
+        font-weight: 700;
+        min-width: 80px;
+        text-align: center
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 12px 24px;
+        background: #333;
+        color: white;
+        border-radius: 10px;
+        opacity: 0;
+        transition: all 0.3s
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1
+    }
+
+    .currency-select {
+        padding: 8px;
+        border: none;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit;
+        font: inherit
+    }
+</style>
+<div class="container">
+    <h1>💰 Split</h1>
+    <p class="subtitle">Split bills easily</p>
+
+    <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="simple">Simple</button>
+        <button class="mode-btn" data-mode="advanced">Advanced</button>
+    </div>
+
+    <!-- SIMPLE MODE -->
+    <div class="simple-mode active" id="simple-mode">
+        <div class="card">
+            <h2>Totale <select class="currency-select" id="currency">
+                    <option>€</option>
+                    <option>$</option>
+                    <option>£</option>
+                </select></h2>
+            <input type="number" class="simple-input" id="simple-total" placeholder="0.00" step="0.01">
+
+            <h2 style="margin-top:20px">People</h2>
+            <div class="people-row">
+                <button class="people-btn" id="minus">−</button>
+                <div class="people-count" id="simple-people">2</div>
+                <button class="people-btn" id="plus">+</button>
+            </div>
+
+            <h2>Tip</h2>
+            <div class="tip-row">
+                <button class="tip-btn" data-tip="0">0%</button>
+                <button class="tip-btn" data-tip="10">10%</button>
+                <button class="tip-btn active" data-tip="15">15%</button>
+                <button class="tip-btn" data-tip="20">20%</button>
+            </div>
+        </div>
+
+        <div class="result">
+            <h3>Each pays</h3>
+            <div class="total" id="simple-result">€ 0.00</div>
+        </div>
+    </div>
+
+    <!-- ADVANCED MODE -->
+    <div class="advanced-mode" id="advanced-mode">
+        <div class="card">
+            <h2>Participants <button class="add-btn"
+                    style="width:auto;padding:4px 12px;border:none;background:rgba(255,255,255,0.1)" id="add-person">+
+                    Add</button></h2>
+            <div class="people" id="people-list"></div>
+        </div>
+
+        <div class="card">
+            <h2>Expenses <button class="add-btn"
+                    style="width:auto;padding:4px 12px;border:none;background:rgba(255,255,255,0.1)" id="add-item">+
+                    Add</button></h2>
+            <div class="items" id="items-list"></div>
+        </div>
+
+        <div class="result">
+            <h3>Who owes what</h3>
+            <div class="breakdown" id="breakdown"></div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="primary" id="share">📋 Share</button>
+        <button id="reset">🔄 Reset</button>
+    </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+    // State
+    let mode = 'simple', simplePeople = 2, tip = 15, currency = '€'
+    let people = [{ id: 1, name: 'You' }, { id: 2, name: 'Friend' }]
+    let items = [{ id: 1, name: '', price: '', paidBy: 1, splitWith: [1, 2] }]
+
+    const toast = document.getElementById('toast')
+
+    // Mode toggle
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'))
+            btn.classList.add('active')
+            mode = btn.dataset.mode
+            document.getElementById('simple-mode').classList.toggle('active', mode === 'simple')
+            document.getElementById('advanced-mode').classList.toggle('active', mode === 'advanced')
+            save()
+        })
+    })
+
+    // Simple mode
+    document.getElementById('simple-total').addEventListener('input', calcSimple)
+    document.getElementById('minus').addEventListener('click', () => { if (simplePeople > 1) { simplePeople--; document.getElementById('simple-people').textContent = simplePeople; calcSimple() } })
+    document.getElementById('plus').addEventListener('click', () => { if (simplePeople < 20) { simplePeople++; document.getElementById('simple-people').textContent = simplePeople; calcSimple() } })
+    document.getElementById('currency').addEventListener('change', e => { currency = e.target.value; calcSimple() })
+    document.querySelectorAll('.tip-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('active'))
+            btn.classList.add('active')
+            tip = parseInt(btn.dataset.tip)
+            calcSimple()
+        })
+    })
+
+    function calcSimple() {
+        const total = parseFloat(document.getElementById('simple-total').value) || 0
+        const withTip = total * (1 + tip / 100)
+        const perPerson = withTip / simplePeople
+        document.getElementById('simple-result').textContent = `${currency} ${perPerson.toFixed(2)}`
+        save()
+    }
+
+    // Advanced mode
+    document.getElementById('add-person').addEventListener('click', () => {
+        people.push({ id: Date.now(), name: `Person ${people.length + 1}` })
+        renderPeople()
+        save()
+    })
+
+    document.getElementById('add-item').addEventListener('click', () => {
+        items.push({ id: Date.now(), name: '', price: '', paidBy: people[0]?.id, splitWith: people.map(p => p.id) })
+        renderItems()
+        save()
+    })
+
+    function renderPeople() {
+        const el = document.getElementById('people-list')
+        el.innerHTML = people.map(p => `
+    <div class="person" data-id="${p.id}">
+      <input type="text" value="${p.name}" onchange="updatePerson(${p.id},this.value)">
+      ${people.length > 1 ? `<button class="remove" onclick="removePerson(${p.id})">×</button>` : ''}
+    </div>
+  `).join('')
+    }
+
+    function renderItems() {
+        const el = document.getElementById('items-list')
+        const peopleOpts = people.map(p => `<option value="${p.id}">${p.name}</option>`).join('')
+        el.innerHTML = items.map(item => `
+    <div class="item" data-id="${item.id}">
+      <input type="text" placeholder="What?" value="${item.name}" onchange="updateItem(${item.id},'name',this.value)">
+      <input type="number" class="price" placeholder="€ 0.00" value="${item.price}" onchange="updateItem(${item.id},'price',this.value)">
+      <select onchange="updateItem(${item.id},'paidBy',this.value)">${peopleOpts.replace(`value="${item.paidBy}"`, `value="${item.paidBy}" selected`)}</select>
+      <button class="del" onclick="removeItem(${item.id})">×</button>
+    </div>
+  `).join('')
+        calcAdvanced()
+    }
+
+    window.updatePerson = (id, name) => { const p = people.find(x => x.id === id); if (p) p.name = name; renderItems(); save() }
+    window.removePerson = id => { people = people.filter(p => p.id !== id); items.forEach(i => { i.splitWith = i.splitWith.filter(x => x !== id); if (i.paidBy === id && people.length) i.paidBy = people[0].id }); renderPeople(); renderItems(); save() }
+    window.updateItem = (id, field, val) => { const i = items.find(x => x.id === id); if (i) { i[field] = field === 'paidBy' ? parseInt(val) : val } calcAdvanced(); save() }
+    window.removeItem = id => { items = items.filter(i => i.id !== id); renderItems(); save() }
+
+    function calcAdvanced() {
+        const balances = {}
+        people.forEach(p => balances[p.id] = { name: p.name, paid: 0, owes: 0 })
+
+        items.forEach(item => {
+            const price = parseFloat(item.price) || 0
+            if (item.paidBy && balances[item.paidBy]) balances[item.paidBy].paid += price
+            const splitCount = item.splitWith.length || people.length
+            const perPerson = price / splitCount
+                ; (item.splitWith.length ? item.splitWith : people.map(p => p.id)).forEach(pid => {
+                    if (balances[pid]) balances[pid].owes += perPerson
+                })
+        })
+
+        const el = document.getElementById('breakdown')
+        el.innerHTML = Object.values(balances).map(b => {
+            const net = b.paid - b.owes
+            const sign = net >= 0 ? '+' : ''
+            const color = net >= 0 ? '#22c55e' : '#ef4444'
+            return `<div class="breakdown-item"><span class="name">${b.name}</span><span class="amount" style="color:${color}">${sign}€${net.toFixed(2)}</span></div>`
+        }).join('')
+    }
+
+    // Actions
+    document.getElementById('share').addEventListener('click', async () => {
+        await save()
+        try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { showToast('Copy URL') }
+    })
+
+    document.getElementById('reset').addEventListener('click', () => {
+        simplePeople = 2; tip = 15
+        document.getElementById('simple-total').value = ''
+        document.getElementById('simple-people').textContent = '2'
+        document.querySelectorAll('.tip-btn').forEach(b => b.classList.toggle('active', b.dataset.tip === '15'))
+        people = [{ id: 1, name: 'You' }, { id: 2, name: 'Friend' }]
+        items = [{ id: 1, name: '', price: '', paidBy: 1, splitWith: [1, 2] }]
+        renderPeople(); renderItems(); calcSimple(); save()
+    })
+
+    // Save/Load
+    async function save() {
+        const d = { mode, simplePeople, tip, currency, simpleTotal: document.getElementById('simple-total').value, people, items }
+        const h = await compress(JSON.stringify(d))
+        history.replaceState({}, '', '#' + h)
+        try { localStorage.setItem('split2-hash', h) } catch { }
+    }
+
+    async function load() {
+        try {
+            let h = location.hash.slice(1); if (!h) h = localStorage.getItem('split2-hash')
+            if (h) {
+                const d = JSON.parse(await decompress(h))
+                mode = d.mode || 'simple'; simplePeople = d.simplePeople || 2; tip = d.tip || 15; currency = d.currency || '€'
+                document.getElementById('simple-total').value = d.simpleTotal || ''
+                document.getElementById('simple-people').textContent = simplePeople
+                document.getElementById('currency').value = currency
+                document.querySelectorAll('.tip-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.tip) === tip))
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode))
+                document.getElementById('simple-mode').classList.toggle('active', mode === 'simple')
+                document.getElementById('advanced-mode').classList.toggle('active', mode === 'advanced')
+                if (d.people) people = d.people; if (d.items) items = d.items
+            }
+        } catch { }
+        renderPeople(); renderItems(); calcSimple()
+    }
+
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
+    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
+
+    addEventListener('DOMContentLoaded', load)
+</script>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>List</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+    }
+
+    html {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        color: #e0e0e0;
+        min-height: 100vh
+    }
+
+    body {
+        padding: 20px;
+        font: 16px/1.5 system-ui;
+        max-width: 500px;
+        margin: 0 auto
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 24px
+    }
+
+    .input-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px
+    }
+
+    input {
+        flex: 1;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        font: inherit;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit
+    }
+
+    input:focus {
+        outline: none
+    }
+
+    button {
+        padding: 14px 20px;
+        border: none;
+        border-radius: 12px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white
+    }
+
+    .list {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        overflow: hidden
+    }
+
+    .item {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1)
+    }
+
+    .item:last-child {
+        border: none
+    }
+
+    .item.done {
+        opacity: 0.5
+    }
+
+    .item.done span {
+        text-decoration: line-through
+    }
+
+    .check {
+        width: 24px;
+        height: 24px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 6px;
+        margin-right: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center
+    }
+
+    .item.done .check {
+        background: #22c55e;
+        border-color: #22c55e
+    }
+
+    span {
+        flex: 1;
+        word-break: break-word
+    }
+
+    .del {
+        padding: 8px;
+        background: transparent;
+        color: #ef4444;
+        opacity: 0
+    }
+
+    .item:hover .del {
+        opacity: 1
+    }
+
+    .empty {
+        padding: 48px;
+        text-align: center;
+        opacity: 0.5
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 16px
+    }
+
+    .actions button {
+        background: rgba(255, 255, 255, 0.1)
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 12px 24px;
+        background: #333;
+        color: white;
+        border-radius: 10px;
+        opacity: 0;
+        transition: all 0.3s
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1
+    }
+</style>
+<div class="container">
+    <h1>📝 List</h1>
+    <div class="input-row">
+        <input type="text" id="input" placeholder="Add item..." autofocus>
+        <button id="add">+</button>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="actions">
+        <button id="share">📋 Share</button>
+        <button id="clear">🧹 Clear done</button>
+    </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+    let items = []
+    const input = document.getElementById('input'), listEl = document.getElementById('list'), toast = document.getElementById('toast')
+    input.addEventListener('keypress', e => { if (e.key === 'Enter' && input.value.trim()) { items.push({ text: input.value.trim(), done: false, id: Date.now() }); input.value = ''; render(); save() } })
+    document.getElementById('add').addEventListener('click', () => { if (input.value.trim()) { items.push({ text: input.value.trim(), done: false, id: Date.now() }); input.value = ''; render(); save() } })
+    document.getElementById('share').addEventListener('click', async () => { await save(); try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { showToast('Copy URL') } })
+    document.getElementById('clear').addEventListener('click', () => { items = items.filter(i => !i.done); render(); save() })
+    window.toggle = id => { const i = items.find(x => x.id === id); if (i) i.done = !i.done; render(); save() }
+    window.del = id => { items = items.filter(i => i.id !== id); render(); save() }
+    function render() {
+        if (!items.length) { listEl.innerHTML = '<div class="empty">List empty ✨</div>'; return }
+        listEl.innerHTML = items.map(i => `<div class="item ${i.done ? 'done' : ''}" data-id="${i.id}"><div class="check" onclick="toggle(${i.id})">${i.done ? '✓' : ''}</div><span>${i.text.replace(/</g, '&lt;')}</span><button class="del" onclick="del(${i.id})">✕</button></div>`).join('')
+    }
+    async function save() { const h = await compress(JSON.stringify(items)); history.replaceState({}, '', '#' + h); try { localStorage.setItem('list-hash', h) } catch { } }
+    async function load() { try { let h = location.hash.slice(1); if (!h) h = localStorage.getItem('list-hash'); if (h) items = JSON.parse(await decompress(h)) } catch { } render() }
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); const buf = await new Response(st.readable).arrayBuffer(); return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
+    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
+    addEventListener('DOMContentLoaded', load); addEventListener('hashchange', load)
+</script>

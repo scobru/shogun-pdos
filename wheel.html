@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wheel</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+    }
+
+    html {
+        background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+        color: #e0e0e0;
+        min-height: 100vh
+    }
+
+    body {
+        padding: 20px;
+        font: 16px/1.5 system-ui;
+        display: flex;
+        flex-direction: column;
+        align-items: center
+    }
+
+    h1 {
+        margin-bottom: 24px
+    }
+
+    .wheel-container {
+        position: relative;
+        margin-bottom: 32px
+    }
+
+    #wheel {
+        border-radius: 50%;
+        box-shadow: 0 0 40px rgba(139, 92, 246, 0.3)
+    }
+
+    .pointer {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 40px;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))
+    }
+
+    .result {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 32px;
+        min-height: 48px;
+        text-align: center;
+        color: #22c55e
+    }
+
+    .options-container {
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 24px
+    }
+
+    .options-container h2 {
+        font-size: 14px;
+        opacity: 0.7;
+        margin-bottom: 12px
+    }
+
+    .option {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px
+    }
+
+    .option input {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit;
+        font: inherit
+    }
+
+    .option input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.15)
+    }
+
+    .option .del {
+        padding: 12px;
+        background: rgba(239, 68, 68, 0.2);
+        border: none;
+        border-radius: 8px;
+        color: #ef4444;
+        cursor: pointer
+    }
+
+    .add-btn {
+        width: 100%;
+        padding: 12px;
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        opacity: 0.7
+    }
+
+    .add-btn:hover {
+        opacity: 1;
+        border-color: rgba(255, 255, 255, 0.4)
+    }
+
+    button {
+        padding: 14px 32px;
+        border: none;
+        border-radius: 12px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s
+    }
+
+    .spin-btn {
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
+        font-size: 20px;
+        margin-bottom: 16px
+    }
+
+    .spin-btn:hover {
+        transform: scale(1.05)
+    }
+
+    .spin-btn:disabled {
+        opacity: 0.5;
+        transform: none
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px
+    }
+
+    .actions button {
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 12px 24px;
+        background: #333;
+        color: white;
+        border-radius: 10px;
+        opacity: 0;
+        transition: all 0.3s
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1
+    }
+</style>
+<h1>🎡 Wheel</h1>
+<div class="wheel-container">
+    <div class="pointer">▼</div>
+    <canvas id="wheel" width="300" height="300"></canvas>
+</div>
+<div class="result" id="result"></div>
+<button class="spin-btn" id="spin">🎰 GIRA!</button>
+<div class="options-container">
+    <h2>Options</h2>
+    <div id="options"></div>
+    <button class="add-btn" id="add">+ Add option</button>
+</div>
+<div class="actions">
+    <button id="share">📋 Share</button>
+    <button id="reset">🔄 Reset</button>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+    const COLORS = ['#8b5cf6', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#84cc16', '#f97316', '#6366f1', '#14b8a6']
+    let options = ['Pizza 🍕', 'Sushi 🍣', 'Burger 🍔', 'Pasta 🍝', 'Poke 🥗', 'Tacos 🌮']
+    let spinning = false, rotation = 0
+
+    const canvas = document.getElementById('wheel'), ctx = canvas.getContext('2d'), resultEl = document.getElementById('result'), optionsEl = document.getElementById('options'), toast = document.getElementById('toast')
+
+    document.getElementById('spin').addEventListener('click', spin)
+    document.getElementById('add').addEventListener('click', () => { options.push('Opzione ' + (options.length + 1)); render(); save() })
+    document.getElementById('share').addEventListener('click', async () => { await save(); try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { showToast('Copia URL') } })
+    document.getElementById('reset').addEventListener('click', () => { options = ['Pizza 🍕', 'Sushi 🍣', 'Burger 🍔', 'Pasta 🍝']; render(); save() })
+
+    window.updateOption = (i, val) => { options[i] = val; drawWheel(); save() }
+    window.removeOption = i => { if (options.length > 2) { options.splice(i, 1); render(); save() } }
+
+    function render() {
+        optionsEl.innerHTML = options.map((o, i) => `<div class="option"><input value="${o.replace(/"/g, '&quot;')}" onchange="updateOption(${i},this.value)"><button class="del" onclick="removeOption(${i})">×</button></div>`).join('')
+        drawWheel()
+    }
+
+    function drawWheel() {
+        const n = options.length, arc = 2 * Math.PI / n, r = 150
+        ctx.clearRect(0, 0, 300, 300)
+        options.forEach((opt, i) => {
+            ctx.beginPath(); ctx.moveTo(r, r)
+            ctx.arc(r, r, r - 5, rotation + i * arc, rotation + (i + 1) * arc)
+            ctx.fillStyle = COLORS[i % COLORS.length]; ctx.fill()
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 2; ctx.stroke()
+            // Text
+            ctx.save(); ctx.translate(r, r); ctx.rotate(rotation + i * arc + arc / 2)
+            ctx.fillStyle = 'white'; ctx.font = 'bold 14px system-ui'; ctx.textAlign = 'right'
+            ctx.fillText(opt.length > 12 ? opt.slice(0, 12) + '…' : opt, r - 15, 5)
+            ctx.restore()
+        })
+        // Center
+        ctx.beginPath(); ctx.arc(r, r, 20, 0, 2 * Math.PI); ctx.fillStyle = '#1a1a2e'; ctx.fill()
+    }
+
+    function spin() {
+        if (spinning || options.length < 2) return
+        spinning = true; resultEl.textContent = ''; document.getElementById('spin').disabled = true
+        const spins = 5 + Math.random() * 5, targetRotation = rotation + spins * 2 * Math.PI
+        const start = performance.now(), duration = 4000
+
+        function animate(now) {
+            const elapsed = now - start, progress = Math.min(elapsed / duration, 1)
+            const eased = 1 - Math.pow(1 - progress, 3) // ease out cubic
+            rotation = rotation + (targetRotation - rotation) * eased / 10
+            rotation += (targetRotation - rotation) * eased * 0.1
+            if (progress < 1) {
+                rotation += 0.3 * (1 - progress)
+                drawWheel()
+                requestAnimationFrame(animate)
+            } else {
+                rotation = targetRotation % (2 * Math.PI)
+                drawWheel()
+                // Find winner
+                const arc = 2 * Math.PI / options.length
+                const pointerAngle = (3 * Math.PI / 2 - rotation + 2 * Math.PI) % (2 * Math.PI)
+                const winnerIndex = Math.floor(pointerAngle / arc) % options.length
+                resultEl.textContent = '🎉 ' + options[winnerIndex]
+                spinning = false; document.getElementById('spin').disabled = false
+            }
+        }
+        requestAnimationFrame(animate)
+    }
+
+    async function save() { const h = await compress(JSON.stringify(options)); history.replaceState({}, '', '#' + h); try { localStorage.setItem('wheel-hash', h) } catch { } }
+    async function load() { try { let h = location.hash.slice(1); if (!h) h = localStorage.getItem('wheel-hash'); if (h) options = JSON.parse(await decompress(h)) } catch { } render() }
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
+    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
+    addEventListener('DOMContentLoaded', load)
+</script>
