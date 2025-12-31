@@ -258,7 +258,9 @@
 <div class="card" id="preview-view" style="display:none">
     <img id="preview">
     <input type="text" class="caption-input" id="caption" placeholder="Add a caption...">
-    <button id="share">📋 Share link</button>
+    <div class="actions">
+        <button id="share">🔗 Share URL</button>
+    </div>
     <button class="secondary" id="download">💾 Download</button>
     <button class="secondary" id="new-pic">🔄 New image</button>
     <div class="info" id="size-info"></div>
@@ -271,6 +273,10 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<footer style="text-align:center; margin-top:40px; padding:20px; opacity:0.5; font-size:12px;">
+    <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
+</footer>
 
 <script>
     const toast = document.getElementById('toast'), dropZone = document.getElementById('drop-zone'), fileInput = document.getElementById('file-input'), preview = document.getElementById('preview')
