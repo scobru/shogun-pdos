@@ -80,6 +80,12 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
+        line-height: 1;
+    }
+
+    h1 span {
+        display: flex;
+        align-items: center;
     }
 
     .theme-toggle {
@@ -272,7 +278,7 @@
 
 <div class="header-bar">
     <a href="index.html" class="home-link" title="Home">🏠</a>
-    <h1>🌍 Meet</h1>
+    <h1><span>🌍</span><span>Meet</span></h1>
     <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
 </div>
 <p class="subtitle">Find the perfect meeting time across timezones</p>
@@ -314,12 +320,12 @@
 
 <script>
     const ZONES = [
-        { name: 'Roma', offset: 1 }, { name: 'Londra', offset: 0 }, { name: 'New York', offset: -5 }, { name: 'Los Angeles', offset: -8 },
+        { name: 'Rome', offset: 1 }, { name: 'London', offset: 0 }, { name: 'New York', offset: -5 }, { name: 'Los Angeles', offset: -8 },
         { name: 'Tokyo', offset: 9 }, { name: 'Sydney', offset: 11 }, { name: 'Dubai', offset: 4 }, { name: 'Mumbai', offset: 5.5 },
-        { name: 'Berlino', offset: 1 }, { name: 'Parigi', offset: 1 }, { name: 'Chicago', offset: -6 }, { name: 'Singapore', offset: 8 }
+        { name: 'Berlin', offset: 1 }, { name: 'Paris', offset: 1 }, { name: 'Chicago', offset: -6 }, { name: 'Singapore', offset: 8 }
     ]
 
-    let myZone = 'Roma', myTime = '14:00', meetingName = ''
+    let myZone = 'Rome', myTime = '14:00', meetingName = ''
     let participants = [{ id: 1, name: 'Team US', zone: 'New York' }, { id: 2, name: 'Team Asia', zone: 'Tokyo' }]
 
     const myZoneSelect = document.getElementById('my-zone'), myTimeInput = document.getElementById('my-time'), meetingNameInput = document.getElementById('meeting-name'), zonesEl = document.getElementById('zones'), resultsEl = document.getElementById('results'), toast = document.getElementById('toast')
@@ -344,12 +350,12 @@
     myZoneSelect.addEventListener('change', () => { myZone = myZoneSelect.value; calc(); save() })
     myTimeInput.addEventListener('change', () => { myTime = myTimeInput.value; calc(); save() })
     meetingNameInput.addEventListener('input', () => { meetingName = meetingNameInput.value; document.title = meetingName ? `${meetingName} - Meet` : 'Meet'; save() })
-    document.getElementById('add-zone').addEventListener('click', () => { participants.push({ id: Date.now(), name: 'Nuovo', zone: 'Londra' }); render(); save() })
+    document.getElementById('add-zone').addEventListener('click', () => { participants.push({ id: Date.now(), name: 'New', zone: 'London' }); render(); save() })
     document.getElementById('share').addEventListener('click', async () => { await save(); try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { } })
     document.getElementById('reset').addEventListener('click', () => {
-        meetingName = ''; myZone = 'Roma'; myTime = '14:00'
+        meetingName = ''; myZone = 'Rome'; myTime = '14:00'
         participants = [{ id: 1, name: 'Team US', zone: 'New York' }, { id: 2, name: 'Team Asia', zone: 'Tokyo' }]
-        meetingNameInput.value = ''; myZoneSelect.value = 'Roma'; myTimeInput.value = '14:00'
+        meetingNameInput.value = ''; myZoneSelect.value = 'Rome'; myTimeInput.value = '14:00'
         document.title = 'Meet'
         history.replaceState({}, '', location.pathname)
         try { localStorage.removeItem('meet-hash') } catch { }
@@ -362,7 +368,7 @@
     function render() {
         const zoneOpts = ZONES.map(z => `<option value="${z.name}">${z.name}</option>`).join('')
         zonesEl.innerHTML = participants.map(p => `
-    <div class="zone"><input placeholder="Nome" value="${p.name}" onchange="updateParticipant(${p.id},'name',this.value)">
+    <div class="zone"><input placeholder="Name" value="${p.name}" onchange="updateParticipant(${p.id},'name',this.value)">
     <select onchange="updateParticipant(${p.id},'zone',this.value)">${zoneOpts.replace(`value="${p.zone}"`, `value="${p.zone}" selected`)}</select>
     <button class="del" onclick="removeParticipant(${p.id})">×</button></div>
   `).join('')
@@ -374,7 +380,7 @@
         const [h, m] = myTime.split(':').map(Number)
         const baseMinutes = h * 60 + m
 
-        let html = `<div class="result-row"><div class="result-name">Tu (${myZone})</div><div class="result-time">${myTime}</div><div class="result-diff">—</div></div>`
+        let html = `<div class="result-row"><div class="result-name">You (${myZone})</div><div class="result-time">${myTime}</div><div class="result-diff">—</div></div>`
 
         participants.forEach(p => {
             const pOffset = ZONES.find(z => z.name === p.zone)?.offset || 0
@@ -391,7 +397,7 @@
     }
 
     async function save() { const d = { meetingName, myZone, myTime, participants }; const h = await compress(JSON.stringify(d)); history.replaceState({}, '', '#' + h); try { localStorage.setItem('meet-hash', h) } catch { } }
-    async function load() { try { let h = location.hash.slice(1); if (!h) h = localStorage.getItem('meet-hash'); if (h) { const d = JSON.parse(await decompress(h)); meetingName = d.meetingName || ''; myZone = d.myZone || 'Roma'; myTime = d.myTime || '14:00'; participants = d.participants || []; meetingNameInput.value = meetingName; myZoneSelect.value = myZone; myTimeInput.value = myTime; if (meetingName) document.title = `${meetingName} - Meet` } } catch { } render() }
+    async function load() { try { let h = location.hash.slice(1); if (!h) h = localStorage.getItem('meet-hash'); if (h) { const d = JSON.parse(await decompress(h)); meetingName = d.meetingName || ''; myZone = d.myZone || 'Rome'; myTime = d.myTime || '14:00'; participants = d.participants || []; meetingNameInput.value = meetingName; myZoneSelect.value = myZone; myTimeInput.value = myTime; if (meetingName) document.title = `${meetingName} - Meet` } } catch { } render() }
     async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
     async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
     function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }

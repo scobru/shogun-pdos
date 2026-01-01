@@ -65,6 +65,12 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        line-height: 1;
+    }
+
+    h1 span {
+        display: flex;
+        align-items: center;
     }
 
     .home-link {
@@ -185,7 +191,8 @@
     }
 </style>
 <header>
-    <h1><a href="index.html" class="home-link" title="Home">🏠</a> ⚡ Snippet</h1>
+    <a href="index.html" class="home-link" title="Home">🏠</a>
+    <h1><span>⚡</span><span>Snippet</span></h1>
     <div class="tabs">
         <button class="tab active" data-mode="html">HTML</button>
         <button class="tab" data-mode="js">JS</button>

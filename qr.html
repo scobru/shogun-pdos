@@ -80,6 +80,12 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
+        line-height: 1;
+    }
+
+    h1 span {
+        display: flex;
+        align-items: center;
     }
 
     .theme-toggle {
@@ -226,16 +232,16 @@
 
 <div class="header-bar">
     <a href="index.html" class="home-link" title="Home">🏠</a>
-    <h1>📱 QR</h1>
+    <h1><span>📱</span><span>QR</span></h1>
     <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
 </div>
 <div class="tabs">
-    <button class="tab active" data-type="text">Testo</button>
+    <button class="tab active" data-type="text">Text</button>
     <button class="tab" data-type="url">URL</button>
     <button class="tab" data-type="wifi">WiFi</button>
 </div>
 <div class="input-area">
-    <textarea id="text-input" placeholder="Scrivi il testo..."></textarea>
+    <textarea id="text-input" placeholder="Write text..."></textarea>
     <div class="wifi-fields" id="wifi-fields">
         <input type="text" id="wifi-ssid" placeholder="Network name (SSID)">
         <input type="Password" id="wifi-pass" placeholder="Password">
@@ -243,7 +249,7 @@
             style="width:100%;padding:14px;border:2px solid var(--select-border);border-radius:12px;background:var(--select-bg);color:inherit">
             <option value="WPA">WPA/WPA2</option>
             <option value="WEP">WEP</option>
-            <option value="nopass">Nessuna Password</option>
+            <option value="nopass">None</option>
         </select>
     </div>
 </div>
@@ -274,7 +280,7 @@
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
-    }); document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); mode = t.dataset.type; textInput.style.display = mode === 'wifi' ? 'none' : 'block'; wifiFields.classList.toggle('active', mode === 'wifi'); textInput.placeholder = mode === 'url' ? 'https://...' : 'Scrivi il testo...'; Generatete() }))
+    }); document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); mode = t.dataset.type; textInput.style.display = mode === 'wifi' ? 'none' : 'block'; wifiFields.classList.toggle('active', mode === 'wifi'); textInput.placeholder = mode === 'url' ? 'https://...' : 'Write text...'; Generatete() }))
     textInput.addEventListener('input', debounce(300, Generatete))
     document.getElementById('wifi-ssid').addEventListener('input', debounce(300, Generatete))
     document.getElementById('wifi-pass').addEventListener('input', debounce(300, Generatete))

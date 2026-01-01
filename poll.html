@@ -84,6 +84,12 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
+        line-height: 1;
+    }
+
+    h1 span {
+        display: flex;
+        align-items: center;
     }
 
     .theme-toggle {
@@ -278,7 +284,7 @@
 
 <div class="header-bar">
     <a href="index.html" class="home-link" title="Home">🏠</a>
-    <h1>🗳️ Poll</h1>
+    <h1><span>🗳️</span><span>Poll</span></h1>
     <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
 </div>
 
@@ -286,10 +292,10 @@
     <h2>Create poll</h2>
     <input type="text" id="question" placeholder="Your question...">
     <div id="options">
-        <div class="option-row"><input type="text" placeholder="Option 1" value="Sì"></div>
+        <div class="option-row"><input type="text" placeholder="Option 1" value="Yes"></div>
         <div class="option-row"><input type="text" placeholder="Option 2" value="No"></div>
     </div>
-    <button class="add-btn" id="add-option">+ Aggiungi Option</button>
+    <button class="add-btn" id="add-option">+ Add Option</button>
     <button id="create" style="margin-top:16px">🗳️ Create & Share Poll</button>
 </div>
 
@@ -343,7 +349,7 @@
     if (location.hash.length > 1) loadPoll()
 
     async function createPoll() {
-        const question = document.getElementById('question').value || 'Sondaggio'
+        const question = document.getElementById('question').value || 'Survey'
         const inputs = document.querySelectorAll('#options input')
         const options = [...inputs].map(i => i.value).filter(v => v.trim())
         if (options.length < 2) { showToast('Need at least 2 options'); return }

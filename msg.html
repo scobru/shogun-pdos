@@ -79,6 +79,12 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
+        line-height: 1;
+    }
+
+    h1 span {
+        display: flex;
+        align-items: center;
     }
 
     .theme-toggle {
@@ -260,7 +266,7 @@
 
 <div class="header-bar">
     <a href="index.html" class="home-link" title="Home">🏠</a>
-    <h1>✉️ Message</h1>
+    <h1><span>✉️</span><span>Message</span></h1>
     <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
 </div>
 
@@ -274,7 +280,7 @@
         <input type="text" id="from" placeholder="Your name">
     </div>
     <div class="field">
-        <label>Messaggio</label>
+        <label>Message</label>
         <textarea id="message" placeholder="Write your message..."></textarea>
     </div>
     <div class="toggle">
@@ -300,7 +306,7 @@
 
 <div class="card locked" id="locked" style="display:none">
     <div class="locked-icon">🔒</div>
-    <p>Questo messaggio è protetto da password</p>
+    <p>This message is password protected</p>
     <input type="password" id="unlock-password" placeholder="Enter password">
     <button id="unlock">🔓 Unlock</button>
     <p class="error" id="error" style="display:none">Wrong password</p>
@@ -349,7 +355,7 @@
         const to = document.getElementById('to').value || 'Someone'
         const from = document.getElementById('from').value || 'Anonymous'
         const message = document.getElementById('message').value
-        if (!message.trim()) { showToast('Scrivi un messaggio'); return }
+        if (!message.trim()) { showToast('Write a message'); return }
 
         const isEncrypted = document.getElementById('encrypt-toggle').checked
         const password = document.getElementById('password').value
@@ -405,8 +411,8 @@
         document.getElementById('compose').style.display = 'none'
         document.getElementById('locked').style.display = 'none'
         document.getElementById('view').style.display = 'block'
-        document.getElementById('letter-to').textContent = 'A: ' + to
-        document.getElementById('letter-from').textContent = 'Da: ' + from
+        document.getElementById('letter-to').textContent = 'To: ' + to
+        document.getElementById('letter-from').textContent = 'From: ' + from
         document.getElementById('letter-content').textContent = message
         document.title = 'Message for ' + to
     }

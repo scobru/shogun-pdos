@@ -72,6 +72,12 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
+        line-height: 1;
+    }
+
+    h1 span {
+        display: flex;
+        align-items: center;
     }
 
     .theme-toggle {
@@ -227,7 +233,7 @@
 <div class="container">
     <div class="header-bar">
         <a href="index.html" class="home-link" title="Home">🏠</a>
-        <h1>📝 List</h1>
+        <h1><span>📝</span><span>List</span></h1>
         <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
     </div>
     <div class="input-row">
