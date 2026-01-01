@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculator</title>
+<style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        --text-color: #e0e0e0;
+        --toolbar-bg: rgba(255, 255, 255, 0.1);
+        --toolbar-border: rgba(255, 255, 255, 0.1);
+        --btn-hover-bg: rgba(255, 255, 255, 0.1);
+        --btn-hover-color: #fff;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --key-bg: rgba(255, 255, 255, 0.08);
+        --key-hover: rgba(255, 255, 255, 0.15);
+    }
+
+    [data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        --text-color: #102a43;
+        --toolbar-bg: rgba(255, 255, 255, 0.9);
+        --toolbar-border: rgba(0, 0, 0, 0.1);
+        --btn-hover-bg: rgba(0, 0, 0, 0.05);
+        --btn-hover-color: #102a43;
+        --card-bg: rgba(255, 255, 255, 0.6);
+        --card-border: rgba(0, 0, 0, 0.05);
+        --key-bg: rgba(255, 255, 255, 0.8);
+        --key-hover: rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        background: var(--bg-gradient);
+        color: var(--text-color);
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    body {
+        font: 16px / 1.5 system-ui;
+        padding: 20px;
+        padding-bottom: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 340px;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+
+    .header-bar h1 {
+        font-size: 24px;
+        background: linear-gradient(135deg, #8b5cf6, #22c55e);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .calculator {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .display {
+        background: var(--key-bg);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        text-align: right;
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    .expression {
+        font-size: 16px;
+        opacity: 0.5;
+        min-height: 24px;
+        word-break: break-all;
+    }
+
+    .result {
+        font-size: 42px;
+        font-weight: 600;
+        word-break: break-all;
+    }
+
+    .keypad {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+
+    .key {
+        background: var(--key-bg);
+        border: none;
+        border-radius: 12px;
+        padding: 18px;
+        font-size: 22px;
+        color: var(--text-color);
+        cursor: pointer;
+        transition: all 0.15s;
+        user-select: none;
+    }
+
+    .key:hover {
+        background: var(--key-hover);
+        transform: scale(1.05);
+    }
+
+    .key:active {
+        transform: scale(0.95);
+    }
+
+    .key.operator {
+        background: rgba(139, 92, 246, 0.2);
+    }
+
+    .key.operator:hover {
+        background: rgba(139, 92, 246, 0.3);
+    }
+
+    .key.equals {
+        background: linear-gradient(135deg, #8b5cf6, #22c55e);
+        color: white;
+        grid-column: span 2;
+    }
+
+    .key.equals:hover {
+        opacity: 0.9;
+    }
+
+    .key.clear {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+
+    .key.clear:hover {
+        background: rgba(239, 68, 68, 0.3);
+    }
+
+    .key.zero {
+        grid-column: span 2;
+    }
+
+    .toolbar {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--toolbar-bg);
+        backdrop-filter: blur(10px);
+        padding: 8px 16px;
+        border-radius: 50px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        border: 1px solid var(--toolbar-border);
+        z-index: 100;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+        background: transparent;
+        border: none;
+        color: var(--text-color);
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s, color 0.2s;
+        text-decoration: none;
+        font-size: 20px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .btn:hover {
+        background: var(--btn-hover-bg);
+        color: var(--btn-hover-color);
+    }
+
+    .history-panel {
+        margin-top: 16px;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s;
+    }
+
+    .history-panel.show {
+        max-height: 200px;
+    }
+
+    .history-list {
+        list-style: none;
+        padding: 12px;
+        max-height: 180px;
+        overflow-y: auto;
+    }
+
+    .history-item {
+        padding: 8px;
+        border-bottom: 1px solid var(--card-border);
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+
+    .history-item:last-child {
+        border-bottom: none;
+    }
+
+    .history-item:hover {
+        background: var(--key-hover);
+        border-radius: 6px;
+    }
+
+    .history-item .expr {
+        opacity: 0.6;
+    }
+
+    .history-item .res {
+        font-weight: 600;
+    }
+</style>
+
+<div class="container">
+    <div class="header-bar">
+        <span>🧮</span>
+        <h1>Calculator</h1>
+    </div>
+
+    <div class="calculator">
+        <div class="display">
+            <div class="expression" id="expression"></div>
+            <div class="result" id="result">0</div>
+        </div>
+
+        <div class="keypad">
+            <button class="key clear" data-action="clear">C</button>
+            <button class="key operator" data-action="backspace">⌫</button>
+            <button class="key operator" data-action="percent">%</button>
+            <button class="key operator" data-value="/">÷</button>
+
+            <button class="key" data-value="7">7</button>
+            <button class="key" data-value="8">8</button>
+            <button class="key" data-value="9">9</button>
+            <button class="key operator" data-value="*">×</button>
+
+            <button class="key" data-value="4">4</button>
+            <button class="key" data-value="5">5</button>
+            <button class="key" data-value="6">6</button>
+            <button class="key operator" data-value="-">−</button>
+
+            <button class="key" data-value="1">1</button>
+            <button class="key" data-value="2">2</button>
+            <button class="key" data-value="3">3</button>
+            <button class="key operator" data-value="+">+</button>
+
+            <button class="key zero" data-value="0">0</button>
+            <button class="key" data-value=".">.</button>
+            <button class="key equals" data-action="equals">=</button>
+        </div>
+    </div>
+
+    <div class="history-panel" id="history-panel">
+        <ul class="history-list" id="history-list"></ul>
+    </div>
+</div>
+
+<div class="toolbar">
+    <a href="index.html" class="btn" title="Home">🏠</a>
+    <button class="btn" id="theme-toggle" title="Toggle Theme">🌓</button>
+    <button class="btn" id="history-toggle" title="History">📜</button>
+</div>
+
+<footer style="text-align:center; padding:20px; opacity:0.5; font-size:12px; transition: opacity 0.3s;">
+    <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
+</footer>
+
+<script>
+    let currentInput = '0';
+    let expression = '';
+    let history = [];
+    let shouldReset = false;
+
+    const resultEl = document.getElementById('result');
+    const expressionEl = document.getElementById('expression');
+    const historyPanel = document.getElementById('history-panel');
+    const historyList = document.getElementById('history-list');
+
+    // Theme logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+
+    document.getElementById('history-toggle').addEventListener('click', () => {
+        historyPanel.classList.toggle('show');
+        renderHistory();
+    });
+
+    document.querySelectorAll('.key').forEach(key => {
+        key.addEventListener('click', () => {
+            const value = key.dataset.value;
+            const action = key.dataset.action;
+
+            if (value) handleInput(value);
+            else if (action) handleAction(action);
+        });
+    });
+
+    document.addEventListener('keydown', (e) => {
+        const keyMap = {
+            '0': '0', '1': '1', '2': '2', '3': '3', '4': '4',
+            '5': '5', '6': '6', '7': '7', '8': '8', '9': '9',
+            '.': '.', '+': '+', '-': '-', '*': '*', '/': '/',
+            'Enter': 'equals', '=': 'equals', 'Escape': 'clear',
+            'Backspace': 'backspace', '%': 'percent'
+        };
+
+        if (keyMap[e.key]) {
+            e.preventDefault();
+            if (['equals', 'clear', 'backspace', 'percent'].includes(keyMap[e.key])) {
+                handleAction(keyMap[e.key]);
+            } else {
+                handleInput(keyMap[e.key]);
+            }
+        }
+    });
+
+    function handleInput(value) {
+        if (shouldReset && !isOperator(value)) {
+            currentInput = '0';
+            expression = '';
+            shouldReset = false;
+        }
+
+        if (isOperator(value)) {
+            if (currentInput !== '0' || expression) {
+                expression += currentInput + ' ' + getDisplayOperator(value) + ' ';
+                currentInput = '0';
+            }
+        } else if (value === '.') {
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+            }
+        } else {
+            if (currentInput === '0') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+        }
+
+        updateDisplay();
+    }
+
+    function handleAction(action) {
+        switch (action) {
+            case 'clear':
+                currentInput = '0';
+                expression = '';
+                shouldReset = false;
+                break;
+            case 'backspace':
+                if (currentInput.length > 1) {
+                    currentInput = currentInput.slice(0, -1);
+                } else {
+                    currentInput = '0';
+                }
+                break;
+            case 'percent':
+                currentInput = String(parseFloat(currentInput) / 100);
+                break;
+            case 'equals':
+                calculate();
+                break;
+        }
+        updateDisplay();
+    }
+
+    function calculate() {
+        if (!expression && currentInput === '0') return;
+
+        const fullExpr = expression + currentInput;
+        const calcExpr = fullExpr
+            .replace(/×/g, '*')
+            .replace(/÷/g, '/')
+            .replace(/−/g, '-')
+            .replace(/\s/g, '');
+
+        try {
+            const result = Function('"use strict"; return (' + calcExpr + ')')();
+            const formattedResult = formatNumber(result);
+
+            history.unshift({ expr: fullExpr, result: formattedResult });
+            if (history.length > 20) history.pop();
+            saveHistory();
+
+            expressionEl.textContent = fullExpr + ' =';
+            currentInput = formattedResult;
+            expression = '';
+            shouldReset = true;
+        } catch (e) {
+            currentInput = 'Error';
+            shouldReset = true;
+        }
+    }
+
+    function isOperator(value) {
+        return ['+', '-', '*', '/'].includes(value);
+    }
+
+    function getDisplayOperator(op) {
+        const map = { '+': '+', '-': '−', '*': '×', '/': '÷' };
+        return map[op] || op;
+    }
+
+    function formatNumber(num) {
+        if (isNaN(num) || !isFinite(num)) return 'Error';
+        const str = String(num);
+        if (str.length > 12) {
+            return num.toExponential(6);
+        }
+        return str;
+    }
+
+    function updateDisplay() {
+        resultEl.textContent = currentInput;
+        if (!shouldReset) {
+            expressionEl.textContent = expression;
+        }
+    }
+
+    function renderHistory() {
+        if (history.length === 0) {
+            historyList.innerHTML = '<li style="text-align:center;opacity:0.5;padding:20px;">No history yet</li>';
+            return;
+        }
+        historyList.innerHTML = history.map((h, i) => `
+      <li class="history-item" onclick="restoreHistory(${i})">
+        <span class="expr">${h.expr}</span>
+        <span class="res">= ${h.result}</span>
+      </li>
+    `).join('');
+    }
+
+    function restoreHistory(index) {
+        currentInput = history[index].result;
+        expression = '';
+        shouldReset = true;
+        updateDisplay();
+        historyPanel.classList.remove('show');
+    }
+
+    function saveHistory() {
+        try { localStorage.setItem('calc-history', JSON.stringify(history)); } catch (e) { }
+    }
+
+    function loadHistory() {
+        try {
+            const stored = localStorage.getItem('calc-history');
+            if (stored) history = JSON.parse(stored);
+        } catch (e) { }
+    }
+
+    loadHistory();
+</script>

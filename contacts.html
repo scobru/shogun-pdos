@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contacts</title>
+<style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        --text-color: #e0e0e0;
+        --toolbar-bg: rgba(255, 255, 255, 0.1);
+        --toolbar-border: rgba(255, 255, 255, 0.1);
+        --btn-hover-bg: rgba(255, 255, 255, 0.1);
+        --btn-hover-color: #fff;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --input-bg: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        --text-color: #102a43;
+        --toolbar-bg: rgba(255, 255, 255, 0.9);
+        --toolbar-border: rgba(0, 0, 0, 0.1);
+        --btn-hover-bg: rgba(0, 0, 0, 0.05);
+        --btn-hover-color: #102a43;
+        --card-bg: rgba(255, 255, 255, 0.6);
+        --card-border: rgba(0, 0, 0, 0.05);
+        --input-bg: rgba(255, 255, 255, 0.8);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        background: var(--bg-gradient);
+        color: var(--text-color);
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    body {
+        font: 16px / 1.5 system-ui;
+        padding: 20px;
+        padding-bottom: 100px;
+    }
+
+    .container {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .header-bar h1 {
+        font-size: 24px;
+        background: linear-gradient(135deg, #8b5cf6, #22c55e);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .search-box {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .search-box input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        background: var(--input-bg);
+        color: var(--text-color);
+        font-size: 16px;
+    }
+
+    .search-box input::placeholder {
+        opacity: 0.5;
+    }
+
+    .add-btn {
+        background: linear-gradient(135deg, #8b5cf6, #22c55e);
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .contacts-list {
+        list-style: none;
+    }
+
+    .contact-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .contact-card:hover {
+        transform: translateX(4px);
+        background: var(--btn-hover-bg);
+    }
+
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8b5cf6, #22c55e);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: white;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .contact-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .contact-name {
+        font-weight: 600;
+        font-size: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .contact-phone {
+        font-size: 14px;
+        opacity: 0.6;
+    }
+
+    .contact-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .contact-actions button {
+        background: transparent;
+        border: none;
+        color: var(--text-color);
+        cursor: pointer;
+        padding: 8px;
+        font-size: 16px;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+    }
+
+    .contact-actions button:hover {
+        opacity: 1;
+    }
+
+    .no-contacts {
+        text-align: center;
+        opacity: 0.5;
+        font-size: 14px;
+        padding: 40px 20px;
+    }
+
+    .no-contacts .icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        padding: 24px;
+        width: 90%;
+        max-width: 360px;
+    }
+
+    .modal-content h3 {
+        margin-bottom: 20px;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 12px;
+        opacity: 0.6;
+        margin-bottom: 6px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        background: var(--input-bg);
+        color: var(--text-color);
+        font-size: 16px;
+    }
+
+    .modal-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .modal-buttons button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .modal-buttons .cancel-btn {
+        background: var(--card-bg);
+        color: var(--text-color);
+        border: 1px solid var(--card-border);
+    }
+
+    .modal-buttons .save-btn {
+        background: linear-gradient(135deg, #8b5cf6, #22c55e);
+        color: white;
+    }
+
+    .modal-buttons .delete-btn {
+        background: #ef4444;
+        color: white;
+    }
+
+    .toolbar {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--toolbar-bg);
+        backdrop-filter: blur(10px);
+        padding: 8px 16px;
+        border-radius: 50px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        border: 1px solid var(--toolbar-border);
+        z-index: 100;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+        background: transparent;
+        border: none;
+        color: var(--text-color);
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s, color 0.2s;
+        text-decoration: none;
+        font-size: 20px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .btn:hover {
+        background: var(--btn-hover-bg);
+        color: var(--btn-hover-color);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #8b5cf6, #22c55e);
+        color: white !important;
+    }
+
+    .status {
+        font-size: 12px;
+        opacity: 0.5;
+        margin: 0 8px;
+        min-width: 60px;
+        text-align: center;
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        padding: 8px 16px;
+        background: #22c55e;
+        color: white;
+        border-radius: 20px;
+        font-size: 14px;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s;
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+
+    .alphabet-nav {
+        position: fixed;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        font-size: 10px;
+        opacity: 0.4;
+    }
+
+    .alphabet-nav span {
+        padding: 2px 4px;
+        cursor: pointer;
+    }
+
+    .alphabet-nav span:hover {
+        opacity: 1;
+        color: #8b5cf6;
+    }
+</style>
+
+<div class="container">
+    <div class="header-bar">
+        <span>📇</span>
+        <h1>Contacts</h1>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="search" placeholder="Search contacts...">
+        <button class="add-btn" id="add-contact">➕</button>
+    </div>
+
+    <ul class="contacts-list" id="contacts-list"></ul>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h3 id="modal-title">Add Contact</h3>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="input-name" placeholder="John Doe">
+        </div>
+        <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" id="input-phone" placeholder="+1 234 567 8900">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="input-email" placeholder="john@example.com">
+        </div>
+        <div class="form-group">
+            <label>Notes</label>
+            <input type="text" id="input-notes" placeholder="Birthday, work, etc.">
+        </div>
+        <div class="modal-buttons">
+            <button class="cancel-btn" id="cancel-btn">Cancel</button>
+            <button class="delete-btn" id="delete-btn" style="display:none;">Delete</button>
+            <button class="save-btn" id="save-btn">Save</button>
+        </div>
+    </div>
+</div>
+
+<div class="toolbar">
+    <a href="index.html" class="btn" title="Home">🏠</a>
+    <button class="btn" id="theme-toggle" title="Toggle Theme">🌓</button>
+    <div class="status" id="status"></div>
+    <button class="btn btn-primary" id="share" title="Share URL">🔗</button>
+</div>
+
+<div class="toast" id="toast">Link copied!</div>
+
+<footer style="text-align:center; padding:20px; opacity:0.5; font-size:12px; transition: opacity 0.3s;">
+    <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
+</footer>
+
+<script>
+    let contacts = [];
+    let editIndex = -1;
+
+    const contactsList = document.getElementById('contacts-list');
+    const searchInput = document.getElementById('search');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const statusEl = document.getElementById('status');
+    const toastEl = document.getElementById('toast');
+    const deleteBtn = document.getElementById('delete-btn');
+
+    const inputName = document.getElementById('input-name');
+    const inputPhone = document.getElementById('input-phone');
+    const inputEmail = document.getElementById('input-email');
+    const inputNotes = document.getElementById('input-notes');
+
+    // Theme logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+
+    document.getElementById('add-contact').addEventListener('click', () => {
+        editIndex = -1;
+        modalTitle.textContent = 'Add Contact';
+        deleteBtn.style.display = 'none';
+        clearForm();
+        modal.classList.add('show');
+        inputName.focus();
+    });
+
+    document.getElementById('cancel-btn').addEventListener('click', closeModal);
+
+    document.getElementById('save-btn').addEventListener('click', saveContact);
+
+    document.getElementById('delete-btn').addEventListener('click', () => {
+        if (editIndex >= 0) {
+            contacts.splice(editIndex, 1);
+            closeModal();
+            render();
+            saveData();
+        }
+    });
+
+    searchInput.addEventListener('input', render);
+
+    document.getElementById('share').addEventListener('click', async () => {
+        await saveData();
+        try {
+            await navigator.clipboard.writeText(location.href);
+            showToast();
+        } catch (e) {
+            console.error('Copy failed', e);
+        }
+    });
+
+    function closeModal() {
+        modal.classList.remove('show');
+        clearForm();
+        editIndex = -1;
+    }
+
+    function clearForm() {
+        inputName.value = '';
+        inputPhone.value = '';
+        inputEmail.value = '';
+        inputNotes.value = '';
+    }
+
+    function saveContact() {
+        const name = inputName.value.trim();
+        if (!name) return;
+
+        const contact = {
+            name,
+            phone: inputPhone.value.trim(),
+            email: inputEmail.value.trim(),
+            notes: inputNotes.value.trim()
+        };
+
+        if (editIndex >= 0) {
+            contacts[editIndex] = contact;
+        } else {
+            contacts.push(contact);
+        }
+
+        contacts.sort((a, b) => a.name.localeCompare(b.name));
+        closeModal();
+        render();
+        saveData();
+    }
+
+    function editContact(index) {
+        editIndex = index;
+        const contact = contacts[index];
+        modalTitle.textContent = 'Edit Contact';
+        deleteBtn.style.display = 'block';
+        inputName.value = contact.name;
+        inputPhone.value = contact.phone;
+        inputEmail.value = contact.email;
+        inputNotes.value = contact.notes;
+        modal.classList.add('show');
+        inputName.focus();
+    }
+
+    function callContact(phone) {
+        if (phone) window.location.href = `tel:${phone}`;
+    }
+
+    function getInitials(name) {
+        return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+    }
+
+    function render() {
+        const query = searchInput.value.toLowerCase();
+        const filtered = contacts.filter(c =>
+            c.name.toLowerCase().includes(query) ||
+            c.phone.includes(query) ||
+            c.email.toLowerCase().includes(query)
+        );
+
+        statusEl.textContent = `${contacts.length} contacts`;
+
+        if (filtered.length === 0) {
+            contactsList.innerHTML = `
+        <li class="no-contacts">
+          <div class="icon">📇</div>
+          ${contacts.length === 0 ? 'No contacts yet.<br>Tap + to add one!' : 'No matching contacts.'}
+        </li>
+      `;
+            return;
+        }
+
+        contactsList.innerHTML = filtered.map((c, i) => {
+            const originalIndex = contacts.indexOf(c);
+            return `
+        <li class="contact-card" onclick="editContact(${originalIndex})">
+          <div class="avatar">${getInitials(c.name)}</div>
+          <div class="contact-info">
+            <div class="contact-name">${c.name}</div>
+            <div class="contact-phone">${c.phone || c.email || 'No contact info'}</div>
+          </div>
+          <div class="contact-actions">
+            ${c.phone ? `<button onclick="event.stopPropagation(); callContact('${c.phone}')" title="Call">📞</button>` : ''}
+          </div>
+        </li>
+      `;
+        }).join('');
+    }
+
+    async function saveData() {
+        const hash = '#' + await compress(JSON.stringify(contacts));
+        if (location.hash !== hash) history.replaceState({}, '', hash);
+        try { localStorage.setItem('contacts-data', JSON.stringify(contacts)); } catch (e) { }
+    }
+
+    async function loadData() {
+        try {
+            if (location.hash && location.hash !== '#') {
+                contacts = JSON.parse(await decompress(location.hash.slice(1)));
+            } else {
+                const stored = localStorage.getItem('contacts-data');
+                if (stored) contacts = JSON.parse(stored);
+            }
+        } catch (e) {
+            console.error('Load failed', e);
+            contacts = [];
+        }
+        render();
+    }
+
+    function showToast() {
+        toastEl.classList.add('show');
+        setTimeout(() => toastEl.classList.remove('show'), 2000);
+    }
+
+    async function compress(string) {
+        try {
+            const byteArray = new TextEncoder().encode(string);
+            const stream = new CompressionStream('deflate-raw');
+            const writer = stream.writable.getWriter();
+            writer.write(byteArray);
+            writer.close();
+            const buffer = await new Response(stream.readable).arrayBuffer();
+            return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+                .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        } catch (e) { return ''; }
+    }
+
+    async function decompress(b64) {
+        try {
+            const binStr = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+            const byteArray = new Uint8Array(binStr.length);
+            for (let i = 0; i < binStr.length; i++) byteArray[i] = binStr.charCodeAt(i);
+            const stream = new DecompressionStream('deflate-raw');
+            const writer = stream.writable.getWriter();
+            writer.write(byteArray);
+            writer.close();
+            const buffer = await new Response(stream.readable).arrayBuffer();
+            return new TextDecoder().decode(buffer);
+        } catch (e) { return '[]'; }
+    }
+
+    addEventListener('DOMContentLoaded', loadData);
+    addEventListener('hashchange', loadData);
+</script>
