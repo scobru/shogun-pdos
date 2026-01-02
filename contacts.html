@@ -1,30 +1,14 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Contacts</title>
+<title>CONTACTS</title>
 <style>
     :root {
-        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        --text-color: #e0e0e0;
-        --toolbar-bg: rgba(255, 255, 255, 0.1);
-        --toolbar-border: rgba(255, 255, 255, 0.1);
-        --btn-hover-bg: rgba(255, 255, 255, 0.1);
-        --btn-hover-color: #fff;
-        --card-bg: rgba(255, 255, 255, 0.05);
-        --card-border: rgba(255, 255, 255, 0.08);
-        --input-bg: rgba(255, 255, 255, 0.08);
-    }
-
-    [data-theme="light"] {
-        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-        --text-color: #102a43;
-        --toolbar-bg: rgba(255, 255, 255, 0.9);
-        --toolbar-border: rgba(0, 0, 0, 0.1);
-        --btn-hover-bg: rgba(0, 0, 0, 0.05);
-        --btn-hover-color: #102a43;
-        --card-bg: rgba(255, 255, 255, 0.6);
-        --card-border: rgba(0, 0, 0, 0.05);
-        --input-bg: rgba(255, 255, 255, 0.8);
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --border-color: #ffffff;
+        --accent-color: #d71920;
+        --font-stack: 'Courier New', Courier, monospace;
     }
 
     * {
@@ -33,81 +17,84 @@
         box-sizing: border-box;
     }
 
-    html {
-        background: var(--bg-gradient);
-        color: var(--text-color);
-        min-height: 100vh;
-        transition: background 0.3s, color 0.3s;
-    }
-
     body {
-        font: 16px / 1.5 system-ui;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
         padding: 20px;
         padding-bottom: 100px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .container {
+        width: 100%;
         max-width: 500px;
-        margin: 0 auto;
     }
 
-    .header-bar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 20px;
+    header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
     }
 
-    .header-bar h1 {
+    h1 {
         font-size: 24px;
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-weight: normal;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+    }
+
+    /* Search & Add */
+    .controls {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
     }
 
     .search-box {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 20px;
-    }
-
-    .search-box input {
         flex: 1;
-        padding: 12px 16px;
-        border: 1px solid var(--card-border);
-        border-radius: 12px;
-        background: var(--input-bg);
+        background: transparent;
+        border: 1px solid var(--border-color);
         color: var(--text-color);
+        font-family: var(--font-stack);
+        padding: 12px;
         font-size: 16px;
+        outline: none;
     }
 
-    .search-box input::placeholder {
-        opacity: 0.5;
+    .search-box:focus {
+        border-color: var(--accent-color);
     }
 
     .add-btn {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        border: none;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 12px;
-        font-size: 16px;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        font-size: 24px;
+        width: 48px;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 6px;
+        justify-content: center;
     }
 
+    .add-btn:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
+    }
+
+    /* List */
     .contacts-list {
         list-style: none;
     }
 
     .contact-card {
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 12px;
+        border: 1px solid var(--border-color);
         padding: 16px;
         margin-bottom: 12px;
         display: flex;
@@ -118,85 +105,73 @@
     }
 
     .contact-card:hover {
+        background: #111;
         transform: translateX(4px);
-        background: var(--btn-hover-bg);
     }
 
     .avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--border-color);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 20px;
-        color: white;
         font-weight: bold;
-        flex-shrink: 0;
+        font-size: 18px;
     }
 
     .contact-info {
         flex: 1;
-        min-width: 0;
+        overflow: hidden;
     }
 
     .contact-name {
-        font-weight: 600;
+        font-weight: bold;
         font-size: 16px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    .contact-phone {
-        font-size: 14px;
-        opacity: 0.6;
+    .contact-detail {
+        font-size: 12px;
+        opacity: 0.7;
+        margin-top: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .contact-actions {
-        display: flex;
-        gap: 8px;
-    }
-
-    .contact-actions button {
+    .call-btn {
         background: transparent;
-        border: none;
+        border: 1px solid var(--border-color);
         color: var(--text-color);
-        cursor: pointer;
+        font-family: var(--font-stack);
         padding: 8px;
-        font-size: 16px;
-        opacity: 0.5;
-        transition: opacity 0.2s;
+        font-size: 12px;
+        cursor: pointer;
+        text-transform: uppercase;
     }
 
-    .contact-actions button:hover {
-        opacity: 1;
+    .call-btn:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
-    .no-contacts {
-        text-align: center;
-        opacity: 0.5;
-        font-size: 14px;
-        padding: 40px 20px;
-    }
-
-    .no-contacts .icon {
-        font-size: 48px;
-        margin-bottom: 12px;
-    }
-
+    /* Modal */
     .modal {
         display: none;
         position: fixed;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 100;
         align-items: center;
         justify-content: center;
-        z-index: 200;
     }
 
     .modal.show {
@@ -204,19 +179,19 @@
     }
 
     .modal-content {
-        background: var(--card-bg);
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--card-border);
-        border-radius: 16px;
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
         padding: 24px;
         width: 90%;
-        max-width: 360px;
+        max-width: 400px;
     }
 
     .modal-content h3 {
-        margin-bottom: 20px;
-        font-size: 18px;
+        text-transform: uppercase;
+        margin-bottom: 24px;
         text-align: center;
+        border-bottom: 1px solid #333;
+        padding-bottom: 12px;
     }
 
     .form-group {
@@ -225,155 +200,129 @@
 
     .form-group label {
         display: block;
-        font-size: 12px;
-        opacity: 0.6;
+        font-size: 10px;
+        text-transform: uppercase;
         margin-bottom: 6px;
+        opacity: 0.7;
+        letter-spacing: 1px;
     }
 
     .form-group input {
         width: 100%;
-        padding: 12px;
-        border: 1px solid var(--card-border);
-        border-radius: 8px;
-        background: var(--input-bg);
+        background: transparent;
+        border: 1px solid var(--border-color);
         color: var(--text-color);
+        padding: 12px;
+        font-family: var(--font-stack);
         font-size: 16px;
+        outline: none;
+    }
+
+    .form-group input:focus {
+        border-color: var(--accent-color);
     }
 
     .modal-buttons {
         display: flex;
-        gap: 12px;
-        margin-top: 20px;
+        gap: 16px;
+        margin-top: 32px;
     }
 
     .modal-buttons button {
         flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .modal-buttons .cancel-btn {
-        background: var(--card-bg);
+        background: transparent;
+        border: 1px solid var(--border-color);
         color: var(--text-color);
-        border: 1px solid var(--card-border);
+        padding: 14px;
+        font-family: var(--font-stack);
+        text-transform: uppercase;
+        cursor: pointer;
+        font-weight: bold;
     }
 
-    .modal-buttons .save-btn {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        color: white;
+    .modal-buttons button:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
     .modal-buttons .delete-btn {
-        background: #ef4444;
-        color: white;
+        border-color: var(--accent-color);
+        color: var(--accent-color);
     }
 
+    .modal-buttons .delete-btn:hover {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    /* Toolbar */
     .toolbar {
         position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--toolbar-bg);
-        backdrop-filter: blur(10px);
-        padding: 8px 16px;
-        border-radius: 50px;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-color);
+        border-top: 1px solid var(--border-color);
         display: flex;
-        gap: 12px;
-        align-items: center;
-        border: 1px solid var(--toolbar-border);
-        z-index: 100;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        justify-content: space-around;
+        padding: 16px;
     }
 
-    .btn {
+    .toolbar a,
+    .toolbar button {
+        color: var(--text-color);
+        text-decoration: none;
         background: transparent;
         border: none;
-        color: var(--text-color);
+        font-family: var(--font-stack);
+        font-size: 14px;
+        text-transform: uppercase;
         cursor: pointer;
         padding: 8px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s, color 0.2s;
-        text-decoration: none;
-        font-size: 20px;
-        width: 40px;
-        height: 40px;
     }
 
-    .btn:hover {
-        background: var(--btn-hover-bg);
-        color: var(--btn-hover-color);
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        color: white !important;
-    }
-
-    .status {
-        font-size: 12px;
-        opacity: 0.5;
-        margin: 0 8px;
-        min-width: 60px;
-        text-align: center;
+    .toolbar a:hover,
+    .toolbar button:hover {
+        text-decoration: underline;
     }
 
     .toast {
         position: fixed;
-        bottom: 80px;
+        top: 20px;
         left: 50%;
-        transform: translateX(-50%) translateY(20px);
+        transform: translateX(-50%);
+        background: var(--text-color);
+        color: var(--bg-color);
         padding: 8px 16px;
-        background: #22c55e;
-        color: white;
-        border-radius: 20px;
-        font-size: 14px;
+        font-size: 12px;
+        text-transform: uppercase;
         opacity: 0;
         pointer-events: none;
-        transition: all 0.3s;
+        transition: opacity 0.3s;
     }
 
     .toast.show {
-        transform: translateX(-50%) translateY(0);
         opacity: 1;
     }
 
-    .alphabet-nav {
-        position: fixed;
-        right: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        display: flex;
-        flex-direction: column;
-        font-size: 10px;
-        opacity: 0.4;
-    }
-
-    .alphabet-nav span {
-        padding: 2px 4px;
-        cursor: pointer;
-    }
-
-    .alphabet-nav span:hover {
-        opacity: 1;
-        color: #8b5cf6;
+    .no-contacts {
+        text-align: center;
+        padding: 40px;
+        border: 1px dashed #333;
+        opacity: 0.5;
+        text-transform: uppercase;
+        font-size: 12px;
     }
 </style>
 
 <div class="container">
-    <div class="header-bar">
-        <span>📇</span>
-        <h1>Contacts</h1>
-    </div>
+    <header>
+        <h1>CONTACTS</h1>
+    </header>
 
-    <div class="search-box">
-        <input type="text" id="search" placeholder="Search contacts...">
-        <button class="add-btn" id="add-contact">➕</button>
+    <div class="controls">
+        <input type="text" class="search-box" id="search" placeholder="SEARCH...">
+        <button class="add-btn" id="add-contact">+</button>
     </div>
 
     <ul class="contacts-list" id="contacts-list"></ul>
@@ -381,44 +330,40 @@
 
 <div class="modal" id="modal">
     <div class="modal-content">
-        <h3 id="modal-title">Add Contact</h3>
+        <h3 id="modal-title">ADD CONTACT</h3>
         <div class="form-group">
             <label>Name</label>
-            <input type="text" id="input-name" placeholder="John Doe">
+            <input type="text" id="input-name" placeholder="FULL NAME">
         </div>
         <div class="form-group">
             <label>Phone</label>
-            <input type="tel" id="input-phone" placeholder="+1 234 567 8900">
+            <input type="tel" id="input-phone" placeholder="PHONE NUMBER">
         </div>
         <div class="form-group">
             <label>Email</label>
-            <input type="email" id="input-email" placeholder="john@example.com">
+            <input type="email" id="input-email" placeholder="EMAIL ADDRESS">
         </div>
         <div class="form-group">
             <label>Notes</label>
-            <input type="text" id="input-notes" placeholder="Birthday, work, etc.">
+            <input type="text" id="input-notes" placeholder="NOTES">
         </div>
         <div class="modal-buttons">
-            <button class="cancel-btn" id="cancel-btn">Cancel</button>
-            <button class="delete-btn" id="delete-btn" style="display:none;">Delete</button>
-            <button class="save-btn" id="save-btn">Save</button>
+            <button class="delete-btn" id="delete-btn" style="display:none;">DELETE</button>
+            <button id="cancel-btn">CANCEL</button>
+            <button id="save-btn">SAVE</button>
         </div>
     </div>
 </div>
 
 <div class="toolbar">
-    <a href="index.html" class="btn" title="Home">🏠</a>
-    <button class="btn" id="theme-toggle" title="Toggle Theme">🌓</button>
-    <div class="status" id="status"></div>
-    <button class="btn btn-primary" id="share" title="Share URL">🔗</button>
+    <a href="index.html">[HOME]</a>
+    <button id="share">[SHARE]</button>
 </div>
 
-<div class="toast" id="toast">Link copied!</div>
+<div class="toast" id="toast">LINK COPIED</div>
 
-<footer style="text-align:center; padding:20px; opacity:0.5; font-size:12px; transition: opacity 0.3s;">
-    <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
-</footer>
-
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
 <script>
     let contacts = [];
     let editIndex = -1;
@@ -427,7 +372,6 @@
     const searchInput = document.getElementById('search');
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modal-title');
-    const statusEl = document.getElementById('status');
     const toastEl = document.getElementById('toast');
     const deleteBtn = document.getElementById('delete-btn');
 
@@ -435,25 +379,37 @@
     const inputPhone = document.getElementById('input-phone');
     const inputEmail = document.getElementById('input-email');
     const inputNotes = document.getElementById('input-notes');
+    let gun, gunNode, user;
 
-    // Theme logic
-    const themeToggle = document.getElementById('theme-toggle');
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-        document.documentElement.setAttribute('data-theme', storedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.documentElement.setAttribute('data-theme', 'light');
+    // Initialize Gun
+    const relayUrl = localStorage.getItem('gun-relay-url');
+    if (relayUrl) {
+        gun = Gun({ localStorage: false, peers: [relayUrl] });
+        user = gun.user().recall({ sessionStorage: true });
+
+        if (user.is) {
+            gunNode = user.get('shogun-contacts');
+        } else {
+            gunNode = gun.get('shogun-contacts');
+        }
+
+        gunNode.on((data) => {
+            if (data && data.contacts) {
+                try {
+                    const remoteContacts = JSON.parse(data.contacts);
+                    if (JSON.stringify(remoteContacts) !== JSON.stringify(contacts)) {
+                        contacts = remoteContacts;
+                        render();
+                        updateHash();
+                    }
+                } catch (e) { }
+            }
+        });
     }
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    });
 
     document.getElementById('add-contact').addEventListener('click', () => {
         editIndex = -1;
-        modalTitle.textContent = 'Add Contact';
+        modalTitle.textContent = 'ADD CONTACT';
         deleteBtn.style.display = 'none';
         clearForm();
         modal.classList.add('show');
@@ -524,7 +480,7 @@
     function editContact(index) {
         editIndex = index;
         const contact = contacts[index];
-        modalTitle.textContent = 'Edit Contact';
+        modalTitle.textContent = 'EDIT CONTACT';
         deleteBtn.style.display = 'block';
         inputName.value = contact.name;
         inputPhone.value = contact.phone;
@@ -550,13 +506,10 @@
             c.email.toLowerCase().includes(query)
         );
 
-        statusEl.textContent = `${contacts.length} contacts`;
-
         if (filtered.length === 0) {
             contactsList.innerHTML = `
         <li class="no-contacts">
-          <div class="icon">📇</div>
-          ${contacts.length === 0 ? 'No contacts yet.<br>Tap + to add one!' : 'No matching contacts.'}
+          ${contacts.length === 0 ? 'NO CONTACTS SAVED' : 'NO MATCHES FOUND'}
         </li>
       `;
             return;
@@ -569,17 +522,23 @@
           <div class="avatar">${getInitials(c.name)}</div>
           <div class="contact-info">
             <div class="contact-name">${c.name}</div>
-            <div class="contact-phone">${c.phone || c.email || 'No contact info'}</div>
+            <div class="contact-detail">${c.phone || c.email || 'NO INFO'}</div>
           </div>
-          <div class="contact-actions">
-            ${c.phone ? `<button onclick="event.stopPropagation(); callContact('${c.phone}')" title="Call">📞</button>` : ''}
-          </div>
+          ${c.phone ? `<button onclick="event.stopPropagation(); callContact('${c.phone}')" class="call-btn">CALL</button>` : ''}
         </li>
       `;
         }).join('');
     }
 
     async function saveData() {
+        // Sync to Gun
+        if (gunNode) {
+            gunNode.put({ contacts: JSON.stringify(contacts) });
+        }
+        updateHash();
+    }
+
+    async function updateHash() {
         const hash = '#' + await compress(JSON.stringify(contacts));
         if (location.hash !== hash) history.replaceState({}, '', hash);
         try { localStorage.setItem('contacts-data', JSON.stringify(contacts)); } catch (e) { }
@@ -593,10 +552,7 @@
                 const stored = localStorage.getItem('contacts-data');
                 if (stored) contacts = JSON.parse(stored);
             }
-        } catch (e) {
-            console.error('Load failed', e);
-            contacts = [];
-        }
+        } catch (e) { contacts = []; }
         render();
     }
 
@@ -606,30 +562,26 @@
     }
 
     async function compress(string) {
-        try {
-            const byteArray = new TextEncoder().encode(string);
-            const stream = new CompressionStream('deflate-raw');
-            const writer = stream.writable.getWriter();
-            writer.write(byteArray);
-            writer.close();
-            const buffer = await new Response(stream.readable).arrayBuffer();
-            return btoa(String.fromCharCode(...new Uint8Array(buffer)))
-                .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-        } catch (e) { return ''; }
+        const byteArray = new TextEncoder().encode(string);
+        const stream = new CompressionStream('deflate-raw');
+        const writer = stream.writable.getWriter();
+        writer.write(byteArray);
+        writer.close();
+        const buffer = await new Response(stream.readable).arrayBuffer();
+        return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     }
 
     async function decompress(b64) {
-        try {
-            const binStr = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
-            const byteArray = new Uint8Array(binStr.length);
-            for (let i = 0; i < binStr.length; i++) byteArray[i] = binStr.charCodeAt(i);
-            const stream = new DecompressionStream('deflate-raw');
-            const writer = stream.writable.getWriter();
-            writer.write(byteArray);
-            writer.close();
-            const buffer = await new Response(stream.readable).arrayBuffer();
-            return new TextDecoder().decode(buffer);
-        } catch (e) { return '[]'; }
+        const binStr = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+        const byteArray = new Uint8Array(binStr.length);
+        for (let i = 0; i < binStr.length; i++) byteArray[i] = binStr.charCodeAt(i);
+        const stream = new DecompressionStream('deflate-raw');
+        const writer = stream.writable.getWriter();
+        writer.write(byteArray);
+        writer.close();
+        const buffer = await new Response(stream.readable).arrayBuffer();
+        return new TextDecoder().decode(buffer);
     }
 
     addEventListener('DOMContentLoaded', loadData);

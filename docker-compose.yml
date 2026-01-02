@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  shogun-nobackend:
+    build: .
+    container_name: shogun-nobackend
+    ports:
+      - "4000:4000"
+    volumes:
+      - gun-data:/app/data
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+
+volumes:
+  gun-data:

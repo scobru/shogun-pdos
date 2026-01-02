@@ -1,45 +1,118 @@
-# ⚡ Shogun NoBackend
+# Shogun NoBackend
 
-A suite of **14 minimalist, serverless web tools** that live entirely in your URL. 
-Zero backend, zero tracking, 100% shareable.
+A suite of **20+ minimalist web tools** with real-time sync via GunDB.
+No backend required, privacy-first, 100% shareable.
 
-## ✨ Features
+## Features
 
-- **No Backend**: State is stored in the URL hash (compressed). Share the URL, share the state.
-- **Privacy First**: No data leaves your browser.
-- **Light/Dark Mode**: Automatic detection with a manual toggle.
-- **Premium Design**: Glassmorphism, smooth animations, and responsive layouts.
-- **Mobile Friendly**: Designed to work perfectly on phone and desktop.
+- **Real-Time Sync**: Login once, sync across all your devices via GunDB
+- **User Space**: Private data encrypted and synced in your personal space
+- **URL Sharing**: Share any state via URL hash (works without login too)
+- **Zero Tracking**: Your data never touches our servers (except Gun relay)
+- **Minimalist Design**: Nothing Phone-inspired monochrome aesthetic
 
-## 🚀 How to use
+## Quick Start
 
-1. **Open any HTML file** in your browser (e.g., `index.html` to see the dashboard).
-2. **Use the tool** (write notes, create lists, split bills).
-3. **Share**: Copy the URL to share your exact state with others.
+```bash
+yarn install
+yarn start
+```
 
-## 🛠️ The Tools
+Open `http://localhost:4000` to access the dashboard.
 
+## Docker Deployment
+
+### Using Docker Compose (recommended)
+
+```bash
+docker-compose up -d
+```
+
+### Using Docker directly
+
+```bash
+docker build -t shogun-nobackend .
+docker run -d -p 4000:4000 --name shogun-nobackend shogun-nobackend
+```
+
+Access at `http://localhost:4000`
+
+## Tools
+
+### Productivity
 | Tool | Description |
 |------|-------------|
-| **[Collect](collect.html)** | Link manager with versioning |
-| **[Event](event.html)** | Event countdown and tracker |
-| **[List](list.html)** | Simple checklist/todo list |
-| **[Meet](meet.html)** | Timezone planner for meetings |
-| **[Message](msg.html)** | Distraction-free letter writer |
-| **[Note](note.html)** | Minimal text editor (Markdown support) |
-| **[Pic](pic.html)** | Private image viewer/sharer (Base64) |
-| **[Poll](poll.html)** | Quick voting and polls |
-| **[QR](qr.html)** | Instant QR code generator |
-| **[Secret](secret.html)** | Client-side encrypted notes (AES-GCM) |
-| **[Snippet](snippet.html)** | Code snippet runner (HTML/JS) |
-| **[Split](split.html)** | Bill splitter with tip calculator |
-| **[Wheel](wheel.html)** | Decision making wheel |
-| **[Where](where.html)** | Anonymous location sharing |
+| **Note** | Minimal text editor with real-time sync |
+| **List** | Task/checklist manager |
+| **Calendar** | Event calendar with date picker |
+| **Contacts** | Address book / directory |
+| **Collect** | Bookmark/link collection manager |
+| **Snippet** | Code snippet editor with syntax preview |
 
-## 🎨 Credits & Inspiration
+### Communication
+| Tool | Description |
+|------|-------------|
+| **Chat** | Real-time chat rooms with room codes |
+| **Poll** | Quick voting and polls (shareable) |
 
-Inspired by the concept of "URL-based apps" and the original [textarea.my](https://textarea.my). 
-Refactored and expanded by the Shogun team to provide a cohesive, modern experience without server dependencies.
+### Security
+| Tool | Description |
+|------|-------------|
+| **Pass** | Encrypted password manager (AES-256) |
+| **Secret** | Client-side encrypted text (AES-GCM) |
+
+### Files & Media
+| Tool | Description |
+|------|-------------|
+| **Files** | Local file manager with drag & drop |
+| **Pic** | Image viewer/sharer (Base64 encoded) |
+| **QR** | QR code generator and scanner |
+
+### Utilities
+| Tool | Description |
+|------|-------------|
+| **Calc** | Scientific calculator |
+| **Split** | Bill splitter with tip calculator |
+| **Alarm** | Alarm clock |
+| **Timer** | Stopwatch and countdown |
+| **Wheel** | Random decision wheel |
+| **Where** | GPS location sharing |
+
+## Architecture
+
+```
+┌─────────────┐     ┌─────────────┐
+│   Browser   │◄───►│  GunDB      │
+│  (Client)   │     │  Relay      │
+└─────────────┘     └─────────────┘
+       │
+       ▼
+┌─────────────┐
+│ localStorage│ (offline fallback)
+└─────────────┘
+```
+
+- **Authenticated users**: Data syncs to `gun.user().get('app-name')`
+- **Anonymous users**: Data stored in URL hash + localStorage
+- **Server**: Simple Express + Gun relay (`server.js`)
+
+## Authentication
+
+1. Go to `index.html`
+2. Click **LOGIN** in the footer
+3. Register or login with username/password
+4. Your data now syncs across devices!
+
+## Tech Stack
+
+- Vanilla HTML/CSS/JS (no frameworks)
+- [GunDB](https://gun.eco) for real-time sync
+- [SEA](https://gun.eco/docs/SEA) for encryption/auth
+- Web Crypto API for local encryption
+
+## License
+
+MIT
 
 ---
-*Made with ❤️ and Vanilla JS*
+*Part of the [Shogun Ecosystem](https://shogun-eco.xyz)*

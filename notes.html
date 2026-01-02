@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOTES</title>
+<style>
+    :root {
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --border-color: #ffffff;
+        --accent-color: #d71920;
+        --font-stack: 'Courier New', Courier, monospace;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    header {
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    h1 {
+        font-size: 20px;
+        font-weight: normal;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+    }
+
+    .new-btn {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        padding: 8px 16px;
+        cursor: pointer;
+        text-transform: uppercase;
+        font-size: 12px;
+    }
+
+    .new-btn:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
+    }
+
+    .container {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .sidebar {
+        width: 250px;
+        border-right: 1px solid var(--border-color);
+        overflow-y: auto;
+        flex-shrink: 0;
+    }
+
+    @media (max-width: 600px) {
+        .sidebar {
+            width: 100%;
+        }
+
+        .container {
+            flex-direction: column;
+        }
+
+        .editor-area {
+            display: none;
+        }
+
+        .editor-area.active {
+            display: flex;
+        }
+
+        .sidebar.hidden {
+            display: none;
+        }
+    }
+
+    .note-item {
+        padding: 16px;
+        border-bottom: 1px solid #333;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .note-item:hover {
+        background: #111;
+    }
+
+    .note-item.active {
+        background: #222;
+        border-left: 3px solid var(--accent-color);
+    }
+
+    .note-title {
+        font-size: 14px;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .note-preview {
+        font-size: 11px;
+        opacity: 0.5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .note-date {
+        font-size: 10px;
+        opacity: 0.3;
+        margin-top: 4px;
+    }
+
+    .editor-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .editor-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .editor-header input {
+        background: transparent;
+        border: none;
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        font-size: 16px;
+        text-transform: uppercase;
+        flex: 1;
+        outline: none;
+    }
+
+    .editor-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .editor-actions button {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        padding: 6px 12px;
+        cursor: pointer;
+        font-size: 10px;
+        text-transform: uppercase;
+    }
+
+    .editor-actions button:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
+    }
+
+    .editor {
+        flex: 1;
+        outline: none;
+        padding: 16px;
+        font-family: var(--font-stack);
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        overflow-y: auto;
+        background: transparent;
+        color: var(--text-color);
+    }
+
+    .empty-state {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.3;
+        text-transform: uppercase;
+        font-size: 12px;
+    }
+
+    .toolbar {
+        background: var(--bg-color);
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-around;
+        padding: 16px;
+    }
+
+    .toolbar a,
+    .toolbar button {
+        color: var(--text-color);
+        text-decoration: none;
+        font-family: var(--font-stack);
+        font-size: 14px;
+        text-transform: uppercase;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--text-color);
+        color: var(--bg-color);
+        padding: 8px 16px;
+        font-size: 12px;
+        text-transform: uppercase;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+        z-index: 100;
+    }
+
+    .toast.show {
+        opacity: 1;
+    }
+
+    .back-btn {
+        display: none;
+        background: transparent;
+        border: none;
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+        .back-btn {
+            display: block;
+        }
+    }
+</style>
+
+<header>
+    <h1>NOTES</h1>
+    <button class="new-btn" id="new-btn">+ NEW</button>
+</header>
+
+<div class="container">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="editor-area" id="editor-area">
+        <div class="empty-state" id="empty-state">SELECT OR CREATE A NOTE</div>
+        <div id="editor-view" style="display:none; flex-direction:column; flex:1;">
+            <div class="editor-header">
+                <button class="back-btn" id="back-btn">&lt; BACK</button>
+                <input type="text" id="note-title" placeholder="UNTITLED">
+                <div class="editor-actions">
+                    <button id="delete-btn">DEL</button>
+                </div>
+            </div>
+            <div class="editor" contenteditable="plaintext-only" id="editor" spellcheck="false"></div>
+        </div>
+    </div>
+</div>
+
+<div class="toolbar">
+    <a href="index.html">[HOME]</a>
+    <span id="status" style="opacity:0.5; font-size:12px;">READY</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const editorArea = document.getElementById('editor-area');
+    const emptyState = document.getElementById('empty-state');
+    const editorView = document.getElementById('editor-view');
+    const titleInput = document.getElementById('note-title');
+    const editor = document.getElementById('editor');
+    const statusEl = document.getElementById('status');
+    const toast = document.getElementById('toast');
+
+    let notes = [];
+    let currentId = null;
+    let gun, gunNode, user;
+    let saveTimer;
+
+    // Initialize Gun
+    const relayUrl = localStorage.getItem('gun-relay-url');
+    if (relayUrl) {
+        gun = Gun({ localStorage: false, peers: [relayUrl] });
+        user = gun.user().recall({ sessionStorage: true });
+
+        if (user.is) {
+            gunNode = user.get('shogun-notes');
+            statusEl.textContent = 'USER: ' + (user.is.alias || '').toUpperCase();
+        } else {
+            gunNode = gun.get('shogun-notes');
+            statusEl.textContent = 'PUBLIC';
+        }
+
+        // Listen for remote updates
+        gunNode.on((data) => {
+            if (data && data.notes) {
+                try {
+                    const remote = JSON.parse(data.notes);
+                    if (JSON.stringify(remote) !== JSON.stringify(notes)) {
+                        notes = remote;
+                        renderSidebar();
+                        if (currentId) {
+                            const note = notes.find(n => n.id === currentId);
+                            if (note) {
+                                titleInput.value = note.title;
+                                if (editor.textContent !== note.content) {
+                                    editor.textContent = note.content;
+                                }
+                            }
+                        }
+                    }
+                } catch { }
+            }
+        });
+    }
+
+    // Load from localStorage fallback
+    try {
+        const stored = localStorage.getItem('notes-data');
+        if (stored) notes = JSON.parse(stored);
+    } catch { }
+
+    renderSidebar();
+
+    document.getElementById('new-btn').addEventListener('click', createNote);
+    document.getElementById('delete-btn').addEventListener('click', deleteNote);
+    document.getElementById('back-btn').addEventListener('click', () => {
+        sidebar.classList.remove('hidden');
+        editorArea.classList.remove('active');
+        currentId = null;
+    });
+
+    titleInput.addEventListener('input', debounce(300, save));
+    editor.addEventListener('input', debounce(300, save));
+
+    function createNote() {
+        const note = {
+            id: Date.now().toString(),
+            title: 'UNTITLED',
+            content: '',
+            updated: Date.now()
+        };
+        notes.unshift(note);
+        save();
+        selectNote(note.id);
+    }
+
+    function selectNote(id) {
+        currentId = id;
+        const note = notes.find(n => n.id === id);
+        if (!note) return;
+
+        titleInput.value = note.title;
+        editor.textContent = note.content;
+
+        emptyState.style.display = 'none';
+        editorView.style.display = 'flex';
+
+        // Mobile: hide sidebar
+        sidebar.classList.add('hidden');
+        editorArea.classList.add('active');
+
+        renderSidebar();
+        editor.focus();
+    }
+
+    function deleteNote() {
+        if (!currentId) return;
+        if (!confirm('DELETE THIS NOTE?')) return;
+
+        notes = notes.filter(n => n.id !== currentId);
+        currentId = null;
+        save();
+
+        emptyState.style.display = 'flex';
+        editorView.style.display = 'none';
+        sidebar.classList.remove('hidden');
+        editorArea.classList.remove('active');
+
+        renderSidebar();
+    }
+
+    function save() {
+        if (currentId) {
+            const note = notes.find(n => n.id === currentId);
+            if (note) {
+                note.title = titleInput.value || 'UNTITLED';
+                note.content = editor.textContent;
+                note.updated = Date.now();
+            }
+        }
+
+        // Sort by updated
+        notes.sort((a, b) => b.updated - a.updated);
+
+        // Save locally
+        try {
+            localStorage.setItem('notes-data', JSON.stringify(notes));
+        } catch { }
+
+        // Sync to Gun
+        if (gunNode) {
+            gunNode.put({ notes: JSON.stringify(notes) });
+        }
+
+        renderSidebar();
+        statusEl.textContent = 'SAVED';
+    }
+
+    function renderSidebar() {
+        if (notes.length === 0) {
+            sidebar.innerHTML = '<div style="padding:20px; opacity:0.5; text-transform:uppercase; font-size:11px; text-align:center;">NO NOTES YET</div>';
+            return;
+        }
+
+        sidebar.innerHTML = notes.map(note => `
+            <div class="note-item ${note.id === currentId ? 'active' : ''}" onclick="selectNote('${note.id}')">
+                <div class="note-title">${escapeHtml(note.title)}</div>
+                <div class="note-preview">${escapeHtml(note.content.substring(0, 50))}</div>
+                <div class="note-date">${formatDate(note.updated)}</div>
+            </div>
+        `).join('');
+    }
+
+    function formatDate(ts) {
+        const d = new Date(ts);
+        return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function escapeHtml(text) {
+        return (text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function debounce(ms, fn) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), ms);
+        };
+    }
+
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // Expose to onclick
+    window.selectNote = selectNote;
+</script>

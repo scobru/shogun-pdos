@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAD</title>
+<style>
+  :root {
+    --bg-color: #000000;
+    --text-color: #ffffff;
+    --border-color: #ffffff;
+    --accent-color: #d71920;
+    --font-stack: 'Courier New', Courier, monospace;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-stack);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px;
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: normal;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  article {
+    flex: 1;
+    outline: none;
+    padding: 20px;
+    padding-bottom: 80px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: var(--font-stack);
+    font-size: 16px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    border: none;
+    display: block;
+    background: transparent;
+    color: var(--text-color);
+  }
+
+  /* Toolbar */
+  .toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    padding: 16px;
+    z-index: 100;
+  }
+
+  .toolbar a,
+  .toolbar button {
+    color: var(--text-color);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    font-family: var(--font-stack);
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  .toolbar a:hover,
+  .toolbar button:hover {
+    text-decoration: underline;
+  }
+
+  .status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 12px;
+    opacity: 0.5;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .toast {
+    position: fixed;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-color);
+    color: var(--bg-color);
+    padding: 8px 16px;
+    font-size: 12px;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .toast.show {
+    opacity: 1;
+  }
+</style>
+
+<header>
+  <h1>PAD</h1>
+</header>
+<div class="status" id="status">SAVED</div>
+
+<article contenteditable="plaintext-only" spellcheck="false" placeholder="START TYPING..."></article>
+
+<div class="toolbar">
+  <a href="index.html">[HOME]</a>
+  <button id="share">[SHARE]</button>
+</div>
+
+<div class="toast" id="toast">LINK COPIED</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+<script>
+  // Debounce utility - defined first
+  function debounce(ms, fn) {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), ms);
+    };
+  }
+
+  const article = document.querySelector('article');
+  const statusEl = document.getElementById('status');
+  const toastEl = document.getElementById('toast');
+  let gun, gunNode, user;
+  let saveTimer, hashTimer;
+
+  function init() {
+    // Initialize Gun
+    const relayUrl = localStorage.getItem('gun-relay-url');
+    if (relayUrl) {
+      gun = Gun({ localStorage: false, peers: [relayUrl] });
+      user = gun.user().recall({ sessionStorage: true });
+
+      // Determine node based on user auth
+      if (user.is) {
+        // User is logged in - use user space
+        gunNode = user.get('shogun-pad');
+        statusEl.textContent = 'USER: ' + (user.is.alias || '').toUpperCase();
+        statusEl.style.color = '#22c55e';
+      } else {
+        // Not logged in - use public space
+        gunNode = gun.get('shogun-pad');
+        statusEl.textContent = 'PUBLIC';
+        statusEl.style.color = '#f59e0b';
+      }
+
+      // Update from Gun - use .on() with change detection
+      gunNode.on(function (data, key) {
+        console.log('Gun received:', data);
+        if (data && typeof data.text === 'string') {
+          // Only update if content is different
+          if (data.text !== article.textContent) {
+            console.log('Updating content from remote');
+            article.textContent = data.text;
+            statusEl.textContent = user?.is ? 'SYNCED' : 'PUBLIC';
+            clearTimeout(hashTimer);
+            hashTimer = setTimeout(updateHash, 500);
+          }
+        }
+      });
+    } else {
+      statusEl.textContent = 'OFFLINE';
+    }
+
+    article.addEventListener('input', () => {
+      statusEl.textContent = 'TYPING...';
+      const text = article.textContent;
+
+      // Sync to Gun
+      if (gunNode) {
+        gunNode.put({ text: text });
+      }
+
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(save, 500);
+    });
+
+    load();
+  }
+
+  addEventListener('hashchange', load);
+
+  document.getElementById('share').addEventListener('click', async () => {
+    await save();
+    try {
+      await navigator.clipboard.writeText(location.href);
+      showToast();
+    } catch (e) {
+      statusEl.textContent = 'COPY FAILED';
+    }
+  });
+
+  function showToast() {
+    toastEl.classList.add('show');
+    setTimeout(() => toastEl.classList.remove('show'), 2000);
+  }
+
+  async function load() {
+    try {
+      if (location.hash.length > 1) await set(location.hash);
+      else {
+        await set(localStorage.getItem('hash') ?? '');
+        // If we have content and valid hash/local storage, we could update URL
+        // But with Gun, we prioritize live data if connected, otherwise local
+        if (article.textContent) history.replaceState({}, '', await get());
+        article.focus();
+      }
+    } catch (e) {
+      article.focus();
+    }
+  }
+
+  async function save() {
+    await updateHash();
+    statusEl.textContent = gun ? 'SYNCED' : 'SAVED';
+  }
+
+  async function updateHash() {
+    const hash = await get();
+    if (location.hash !== hash) history.replaceState({}, '', hash);
+    try { localStorage.setItem('hash', hash); } catch (e) { }
+  }
+
+  async function set(hash) {
+    if (!hash || hash === '#' || hash.length < 2) return;
+    try {
+      const [content, style] = (await decompress(hash.slice(1))).split('\x00');
+      // Only update if different to avoid cursor jumps or overwrite if Gun is newer
+      // For simplicity, we trust the load if it's explicit
+      if (article.textContent !== content) article.textContent = content;
+      if (style) article.setAttribute('style', style);
+    } catch (e) { }
+  }
+
+  async function get() {
+    const style = article.getAttribute('style');
+    const content = article.textContent + (style !== null ? '\x00' + style : '');
+    return '#' + await compress(content);
+  }
+
+  async function compress(string) {
+    try {
+      const byteArray = new TextEncoder().encode(string);
+      const stream = new CompressionStream('deflate-raw');
+      const writer = stream.writable.getWriter();
+      writer.write(byteArray);
+      writer.close();
+      const buffer = await new Response(stream.readable).arrayBuffer();
+      return btoa(String.fromCharCode(...new Uint8Array(buffer))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    } catch (e) { return ''; }
+  }
+
+  async function decompress(b64) {
+    try {
+      const binStr = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+      const byteArray = new Uint8Array(binStr.length);
+      for (let i = 0; i < binStr.length; i++) byteArray[i] = binStr.charCodeAt(i);
+      const stream = new DecompressionStream('deflate-raw');
+      const writer = stream.writable.getWriter();
+      writer.write(byteArray);
+      writer.close();
+      const buffer = await new Response(stream.readable).arrayBuffer();
+      return new TextDecoder().decode(buffer);
+    } catch (e) { return ''; }
+  }
+
+  // Initialize on DOM ready  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>

@@ -1,28 +1,14 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Alarm</title>
+<title>ALARM</title>
 <style>
     :root {
-        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        --text-color: #e0e0e0;
-        --toolbar-bg: rgba(255, 255, 255, 0.1);
-        --toolbar-border: rgba(255, 255, 255, 0.1);
-        --btn-hover-bg: rgba(255, 255, 255, 0.1);
-        --btn-hover-color: #fff;
-        --card-bg: rgba(255, 255, 255, 0.05);
-        --card-border: rgba(255, 255, 255, 0.08);
-    }
-
-    [data-theme="light"] {
-        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-        --text-color: #102a43;
-        --toolbar-bg: rgba(255, 255, 255, 0.9);
-        --toolbar-border: rgba(0, 0, 0, 0.1);
-        --btn-hover-bg: rgba(0, 0, 0, 0.05);
-        --btn-hover-color: #102a43;
-        --card-bg: rgba(255, 255, 255, 0.6);
-        --card-border: rgba(0, 0, 0, 0.05);
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --border-color: #ffffff;
+        --accent-color: #d71920;
+        --font-stack: 'Courier New', Courier, monospace;
     }
 
     * {
@@ -31,204 +17,170 @@
         box-sizing: border-box;
     }
 
-    html {
-        background: var(--bg-gradient);
-        color: var(--text-color);
-        min-height: 100vh;
-        transition: background 0.3s, color 0.3s;
-    }
-
     body {
-        font: 16px / 1.5 system-ui;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
         padding: 20px;
         padding-bottom: 100px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .container {
+        width: 100%;
         max-width: 400px;
-        margin: 0 auto;
     }
 
-    .header-bar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 24px;
+    header {
+        text-align: center;
+        margin-bottom: 30px;
     }
 
-    .header-bar h1 {
+    h1 {
         font-size: 24px;
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-weight: normal;
+        letter-spacing: 4px;
+        text-transform: uppercase;
     }
 
     .clock-display {
         text-align: center;
-        margin-bottom: 32px;
+        margin-bottom: 40px;
+        border: 1px solid var(--border-color);
+        padding: 20px;
     }
 
     .current-time {
         font-size: 64px;
-        font-weight: 300;
-        letter-spacing: -2px;
+        font-weight: normal;
+        letter-spacing: -4px;
     }
 
     .current-date {
-        font-size: 16px;
-        opacity: 0.6;
+        font-size: 14px;
+        opacity: 0.7;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        border-bottom: 1px dotted var(--border-color);
+        padding-bottom: 8px;
     }
 
     .section-title {
         font-size: 14px;
-        opacity: 0.6;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        text-transform: uppercase;
     }
 
     .add-btn {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        border: none;
-        color: white;
-        padding: 6px 14px;
-        border-radius: 20px;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
         font-size: 12px;
+        padding: 4px 12px;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 4px;
+        text-transform: uppercase;
+    }
+
+    .add-btn:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
     .alarms-list {
         list-style: none;
-        margin-bottom: 24px;
     }
 
     .alarm-card {
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 16px;
-        padding: 16px 20px;
+        border: 1px solid var(--border-color);
+        padding: 16px;
         margin-bottom: 12px;
         display: flex;
-        align-items: center;
         justify-content: space-between;
+        align-items: center;
         transition: all 0.2s;
     }
 
-    .alarm-card.ringing {
-        animation: pulse 0.5s ease-in-out infinite alternate;
-        border-color: #22c55e;
-    }
-
-    @keyframes pulse {
-        from {
-            transform: scale(1);
-        }
-
-        to {
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
-        }
-    }
-
-    .alarm-info {
-        flex: 1;
+    .alarm-card.disabled {
+        opacity: 0.5;
     }
 
     .alarm-time {
         font-size: 32px;
-        font-weight: 500;
+        line-height: 1;
     }
 
-    .alarm-label {
-        font-size: 14px;
-        opacity: 0.6;
-    }
-
-    .alarm-days {
-        font-size: 11px;
-        opacity: 0.5;
+    .alarm-info {
+        font-size: 12px;
+        text-transform: uppercase;
         margin-top: 4px;
     }
 
     .alarm-controls {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 16px;
     }
 
+    /* Square Toggle */
     .toggle {
-        width: 50px;
-        height: 28px;
-        background: var(--card-border);
-        border-radius: 14px;
-        cursor: pointer;
+        width: 40px;
+        height: 20px;
+        border: 1px solid var(--border-color);
         position: relative;
-        transition: background 0.2s;
-    }
-
-    .toggle.active {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
+        cursor: pointer;
     }
 
     .toggle::after {
         content: '';
         position: absolute;
-        width: 22px;
-        height: 22px;
-        background: white;
-        border-radius: 50%;
-        top: 3px;
-        left: 3px;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        background: var(--border-color);
         transition: transform 0.2s;
     }
 
     .toggle.active::after {
-        transform: translateX(22px);
+        transform: translateX(20px);
+        background: var(--accent-color);
     }
 
     .delete-btn {
         background: transparent;
         border: none;
         color: var(--text-color);
+        font-family: var(--font-stack);
         cursor: pointer;
-        font-size: 18px;
-        opacity: 0.4;
-        transition: opacity 0.2s;
+        font-size: 14px;
     }
 
     .delete-btn:hover {
-        opacity: 1;
-        color: #ef4444;
+        color: var(--accent-color);
     }
 
-    .no-alarms {
-        text-align: center;
-        padding: 40px;
-        opacity: 0.5;
-    }
-
-    .no-alarms .icon {
-        font-size: 48px;
-        margin-bottom: 12px;
-    }
-
+    /* Modal */
     .modal {
         display: none;
         position: fixed;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 100;
         align-items: center;
         justify-content: center;
-        z-index: 200;
     }
 
     .modal.show {
@@ -236,215 +188,165 @@
     }
 
     .modal-content {
-        background: var(--card-bg);
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--card-border);
-        border-radius: 20px;
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
         padding: 24px;
         width: 90%;
-        max-width: 320px;
-    }
-
-    .modal-content h3 {
-        margin-bottom: 20px;
-        font-size: 18px;
+        max-width: 350px;
         text-align: center;
     }
 
     .time-picker {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
         gap: 8px;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
     }
 
     .time-picker input {
-        width: 80px;
-        padding: 16px;
-        font-size: 32px;
-        text-align: center;
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 12px;
+        background: transparent;
+        border: 1px solid var(--border-color);
         color: var(--text-color);
+        font-family: var(--font-stack);
+        font-size: 40px;
+        width: 80px;
+        text-align: center;
+        padding: 10px;
+        outline: none;
     }
 
     .time-picker span {
-        font-size: 32px;
-        font-weight: bold;
+        font-size: 40px;
     }
 
-    .form-group {
-        margin-bottom: 16px;
-    }
-
-    .form-group label {
-        display: block;
-        font-size: 12px;
-        opacity: 0.6;
-        margin-bottom: 6px;
-    }
-
-    .form-group input {
+    .label-input {
         width: 100%;
-        padding: 12px;
-        border: 1px solid var(--card-border);
-        border-radius: 8px;
-        background: var(--card-bg);
+        background: transparent;
+        border: 1px solid var(--border-color);
         color: var(--text-color);
-        font-size: 16px;
+        font-family: var(--font-stack);
+        padding: 12px;
+        margin-bottom: 16px;
+        outline: none;
+        text-transform: uppercase;
     }
 
     .days-selector {
         display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 24px;
     }
 
     .day-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: 1px solid var(--card-border);
-        background: var(--card-bg);
+        width: 32px;
+        height: 32px;
+        background: transparent;
+        border: 1px solid var(--border-color);
         color: var(--text-color);
-        cursor: pointer;
+        font-family: var(--font-stack);
         font-size: 12px;
-        transition: all 0.2s;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .day-btn.selected {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        color: white;
-        border-color: transparent;
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
     .modal-buttons {
         display: flex;
-        gap: 12px;
-        margin-top: 24px;
+        gap: 16px;
     }
 
     .modal-buttons button {
         flex: 1;
         padding: 14px;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-
-    .modal-buttons .cancel-btn {
-        background: var(--card-bg);
+        background: transparent;
+        border: 1px solid var(--border-color);
         color: var(--text-color);
-        border: 1px solid var(--card-border);
-    }
-
-    .modal-buttons .save-btn {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        color: white;
-    }
-
-    /* Ringing modal */
-    .ringing-modal {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .ringing-modal .alarm-icon {
-        font-size: 80px;
-        animation: shake 0.3s ease-in-out infinite alternate;
-        margin-bottom: 20px;
-    }
-
-    @keyframes shake {
-        from {
-            transform: rotate(-10deg);
-        }
-
-        to {
-            transform: rotate(10deg);
-        }
-    }
-
-    .ringing-modal .alarm-time-display {
-        font-size: 48px;
-        font-weight: 300;
-        margin-bottom: 8px;
-    }
-
-    .ringing-modal .alarm-label-display {
-        font-size: 18px;
-        opacity: 0.7;
-        margin-bottom: 24px;
-    }
-
-    .dismiss-btn {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        border: none;
-        color: white;
-        padding: 16px 48px;
-        border-radius: 30px;
-        font-size: 18px;
+        font-family: var(--font-stack);
+        text-transform: uppercase;
         cursor: pointer;
+        font-weight: bold;
     }
 
+    .modal-buttons button:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
+    }
+
+    /* Ringing Screen */
+    .ringing-overlay {
+        background: var(--bg-color);
+        z-index: 200;
+    }
+
+    .alarm-text-large {
+        font-size: 48px;
+        font-weight: bold;
+        letter-spacing: 4px;
+        margin-bottom: 40px;
+        animation: blink 0.5s infinite;
+    }
+
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    /* Toolbar */
     .toolbar {
         position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--toolbar-bg);
-        backdrop-filter: blur(10px);
-        padding: 8px 16px;
-        border-radius: 50px;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-color);
+        border-top: 1px solid var(--border-color);
         display: flex;
-        gap: 12px;
-        align-items: center;
-        border: 1px solid var(--toolbar-border);
-        z-index: 100;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        justify-content: space-around;
+        padding: 16px;
     }
 
-    .btn {
+    .toolbar a,
+    .toolbar button {
+        color: var(--text-color);
+        text-decoration: none;
         background: transparent;
         border: none;
-        color: var(--text-color);
+        font-family: var(--font-stack);
+        font-size: 14px;
+        text-transform: uppercase;
         cursor: pointer;
         padding: 8px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s, color 0.2s;
-        text-decoration: none;
-        font-size: 20px;
-        width: 40px;
-        height: 40px;
-    }
-
-    .btn:hover {
-        background: var(--btn-hover-bg);
-        color: var(--btn-hover-color);
     }
 </style>
 
 <div class="container">
-    <div class="header-bar">
-        <span>⏰</span>
-        <h1>Alarm</h1>
-    </div>
+    <header>
+        <h1>ALARM</h1>
+    </header>
 
     <div class="clock-display">
         <div class="current-time" id="current-time">00:00</div>
         <div class="current-date" id="current-date"></div>
     </div>
 
-    <div class="section-title">
-        <span>Alarms</span>
-        <button class="add-btn" id="add-alarm">➕ Add</button>
+    <div class="section-header">
+        <span class="section-title">ACTIVE ALARMS</span>
+        <button class="add-btn" id="add-alarm">ADD +</button>
     </div>
 
     <ul class="alarms-list" id="alarms-list"></ul>
@@ -452,56 +354,50 @@
 
 <div class="modal" id="modal">
     <div class="modal-content">
-        <h3 id="modal-title">New Alarm</h3>
+        <h3 style="margin-bottom:20px; text-transform:uppercase;">Set Alarm</h3>
         <div class="time-picker">
-            <input type="number" id="input-hours" min="0" max="23" value="08" placeholder="08">
+            <input type="number" id="input-hours" min="0" max="23" placeholder="00">
             <span>:</span>
-            <input type="number" id="input-minutes" min="0" max="59" value="00" placeholder="00">
+            <input type="number" id="input-minutes" min="0" max="59" placeholder="00">
         </div>
-        <div class="form-group">
-            <label>Label</label>
-            <input type="text" id="input-label" placeholder="Wake up, Meeting, etc.">
+
+        <input type="text" class="label-input" id="input-label" placeholder="LABEL">
+
+        <div class="days-selector">
+            <button class="day-btn" data-day="1">M</button>
+            <button class="day-btn" data-day="2">T</button>
+            <button class="day-btn" data-day="3">W</button>
+            <button class="day-btn" data-day="4">T</button>
+            <button class="day-btn" data-day="5">F</button>
+            <button class="day-btn" data-day="6">S</button>
+            <button class="day-btn" data-day="0">S</button>
         </div>
-        <div class="form-group">
-            <label>Repeat</label>
-            <div class="days-selector" id="days-selector">
-                <button class="day-btn" data-day="0">S</button>
-                <button class="day-btn" data-day="1">M</button>
-                <button class="day-btn" data-day="2">T</button>
-                <button class="day-btn" data-day="3">W</button>
-                <button class="day-btn" data-day="4">T</button>
-                <button class="day-btn" data-day="5">F</button>
-                <button class="day-btn" data-day="6">S</button>
-            </div>
-        </div>
+
         <div class="modal-buttons">
-            <button class="cancel-btn" id="cancel-btn">Cancel</button>
-            <button class="save-btn" id="save-btn">Save</button>
+            <button id="cancel-btn">CANCEL</button>
+            <button id="save-btn" style="border-color:var(--accent-color); color:var(--accent-color)">SAVE</button>
         </div>
     </div>
 </div>
 
-<div class="modal" id="ringing-modal">
-    <div class="modal-content ringing-modal">
-        <div class="alarm-icon">⏰</div>
-        <div class="alarm-time-display" id="ringing-time">08:00</div>
-        <div class="alarm-label-display" id="ringing-label">Wake up</div>
-        <button class="dismiss-btn" id="dismiss-btn">Dismiss</button>
+<div class="modal ringing-overlay" id="ringing-modal">
+    <div class="modal-content" style="border:none;">
+        <div class="alarm-text-large">WAKE UP</div>
+        <div class="current-time" id="ringing-time"></div>
+        <div style="font-size:24px; text-transform:uppercase; margin-bottom:40px;" id="ringing-label"></div>
+        <button
+            style="padding:20px 40px; background:var(--accent-color); border:none; color:white; font-family:var(--font-stack); font-size:18px; cursor:pointer;"
+            id="dismiss-btn">DISMISS</button>
     </div>
 </div>
 
 <div class="toolbar">
-    <a href="index.html" class="btn" title="Home">🏠</a>
-    <button class="btn" id="theme-toggle" title="Toggle Theme">🌓</button>
+    <a href="index.html">[HOME]</a>
 </div>
 
-<footer style="text-align:center; padding:20px; opacity:0.5; font-size:12px; transition: opacity 0.3s;">
-    <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
-</footer>
-
 <script>
-    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
     let alarms = [];
     let editIndex = -1;
@@ -517,21 +413,6 @@
     const inputHours = document.getElementById('input-hours');
     const inputMinutes = document.getElementById('input-minutes');
     const inputLabel = document.getElementById('input-label');
-
-    // Theme logic
-    const themeToggle = document.getElementById('theme-toggle');
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-        document.documentElement.setAttribute('data-theme', storedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.documentElement.setAttribute('data-theme', 'light');
-    }
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    });
 
     // Clock
     function updateClock() {
@@ -563,7 +444,6 @@
 
     document.getElementById('add-alarm').addEventListener('click', () => {
         editIndex = -1;
-        document.getElementById('modal-title').textContent = 'New Alarm';
         const now = new Date();
         inputHours.value = String(now.getHours()).padStart(2, '0');
         inputMinutes.value = '00';
@@ -585,7 +465,7 @@
     function saveAlarm() {
         const hours = parseInt(inputHours.value) || 0;
         const minutes = parseInt(inputMinutes.value) || 0;
-        const label = inputLabel.value.trim() || 'Alarm';
+        const label = inputLabel.value.trim() || 'ALARM';
 
         const alarm = {
             id: editIndex >= 0 ? alarms[editIndex].id : Date.now(),
@@ -596,11 +476,8 @@
             enabled: true
         };
 
-        if (editIndex >= 0) {
-            alarms[editIndex] = alarm;
-        } else {
-            alarms.push(alarm);
-        }
+        if (editIndex >= 0) alarms[editIndex] = alarm;
+        else alarms.push(alarm);
 
         alarms.sort((a, b) => (a.hours * 60 + a.minutes) - (b.hours * 60 + b.minutes));
         modal.classList.remove('show');
@@ -618,21 +495,6 @@
         alarms.splice(index, 1);
         render();
         saveData();
-    }
-
-    function editAlarm(index) {
-        editIndex = index;
-        const alarm = alarms[index];
-        document.getElementById('modal-title').textContent = 'Edit Alarm';
-        inputHours.value = String(alarm.hours).padStart(2, '0');
-        inputMinutes.value = String(alarm.minutes).padStart(2, '0');
-        inputLabel.value = alarm.label;
-        selectedDays = [...alarm.days];
-        document.querySelectorAll('.day-btn').forEach(btn => {
-            const day = parseInt(btn.dataset.day);
-            btn.classList.toggle('selected', selectedDays.includes(day));
-        });
-        modal.classList.add('show');
     }
 
     function checkAlarms(now) {
@@ -660,24 +522,18 @@
         document.getElementById('ringing-label').textContent = alarm.label;
         ringingModal.classList.add('show');
         playAlarmSound();
-
-        // Mark card as ringing
-        render();
     }
 
     function dismissAlarm() {
         ringingModal.classList.remove('show');
         stopAlarmSound();
-
         if (ringingAlarm && ringingAlarm.days.length === 0) {
-            // One-time alarm, disable it
             const index = alarms.findIndex(a => a.id === ringingAlarm.id);
             if (index >= 0) {
                 alarms[index].enabled = false;
                 saveData();
             }
         }
-
         ringingAlarm = null;
         render();
     }
@@ -689,20 +545,20 @@
             const gain = audioContext.createGain();
             osc.connect(gain);
             gain.connect(audioContext.destination);
-            osc.frequency.value = 800;
-            gain.gain.value = 0.3;
+            osc.frequency.value = 800; // Technical beep
+            osc.type = 'square';
+            gain.gain.value = 0.1;
+
+            // Beep-Beep-Beep
             osc.start();
 
-            // Beep pattern
             let beeping = true;
-            const interval = setInterval(() => {
-                if (!ringingAlarm) {
-                    clearInterval(interval);
-                    return;
-                }
+            // Simple interval to modulate gain
+            setInterval(() => {
+                gain.gain.value = beeping ? 0.1 : 0;
                 beeping = !beeping;
-                gain.gain.value = beeping ? 0.3 : 0;
             }, 500);
+
         } catch (e) {
             console.log('Audio not available');
         }
@@ -717,30 +573,24 @@
 
     function render() {
         if (alarms.length === 0) {
-            alarmsList.innerHTML = `
-        <li class="no-alarms">
-          <div class="icon">⏰</div>
-          No alarms set.<br>Tap + to add one!
-        </li>
-      `;
+            alarmsList.innerHTML = '<li style="text-align:center; opacity:0.5; padding:20px; text-transform:uppercase; font-size:12px;">NO ALARMS SET</li>';
             return;
         }
 
         alarmsList.innerHTML = alarms.map((alarm, i) => {
-            const isRinging = ringingAlarm && ringingAlarm.id === alarm.id;
-            const daysText = alarm.days.length === 7 ? 'Every day' :
-                alarm.days.length === 0 ? 'Once' :
-                    alarm.days.map(d => DAYS[d].slice(0, 2)).join(', ');
+            const daysText = alarm.days.length === 7 ? 'EVERY DAY' :
+                alarm.days.length === 0 ? 'ONCE' :
+                    alarm.days.map(d => DAYS[d].slice(0, 1)).join(' ');
+
             return `
-        <li class="alarm-card ${isRinging ? 'ringing' : ''}" onclick="editAlarm(${i})">
-          <div class="alarm-info">
+        <li class="alarm-card ${!alarm.enabled ? 'disabled' : ''}">
+          <div onclick="toggleAlarm(${i})" style="flex:1; cursor:pointer;">
             <div class="alarm-time">${formatTime(alarm.hours, alarm.minutes)}</div>
-            <div class="alarm-label">${alarm.label}</div>
-            <div class="alarm-days">${daysText}</div>
+            <div class="alarm-info">${alarm.label} • ${daysText}</div>
           </div>
           <div class="alarm-controls">
-            <div class="toggle ${alarm.enabled ? 'active' : ''}" onclick="event.stopPropagation(); toggleAlarm(${i})"></div>
-            <button class="delete-btn" onclick="event.stopPropagation(); deleteAlarm(${i})">✕</button>
+            <div class="toggle ${alarm.enabled ? 'active' : ''}" onclick="toggleAlarm(${i})"></div>
+            <button class="delete-btn" onclick="deleteAlarm(${i})">[X]</button>
           </div>
         </li>
       `;

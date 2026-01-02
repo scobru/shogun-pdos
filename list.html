@@ -1,28 +1,14 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>List</title>
+<title>LIST</title>
 <style>
     :root {
-        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        --text-color: #e0e0e0;
-        --card-bg: rgba(255, 255, 255, 0.05);
-        --card-border: rgba(255, 255, 255, 0.08);
-        --input-bg: rgba(255, 255, 255, 0.1);
-        --input-focus-bg: rgba(255, 255, 255, 0.15);
-        --item-border: rgba(255, 255, 255, 0.1);
-        --btn-secondary-bg: rgba(255, 255, 255, 0.1);
-    }
-
-    [data-theme="light"] {
-        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-        --text-color: #102a43;
-        --card-bg: rgba(255, 255, 255, 0.6);
-        --card-border: rgba(0, 0, 0, 0.05);
-        --input-bg: rgba(0, 0, 0, 0.05);
-        --input-focus-bg: rgba(0, 0, 0, 0.08);
-        --item-border: rgba(0, 0, 0, 0.05);
-        --btn-secondary-bg: rgba(0, 0, 0, 0.05);
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --border-color: #ffffff;
+        --accent-color: #d71920;
+        --font-stack: 'Courier New', Courier, monospace;
     }
 
     * {
@@ -31,258 +17,383 @@
         box-sizing: border-box;
     }
 
-    html {
-        background: var(--bg-gradient);
-        color: var(--text-color);
-        min-height: 100vh;
-        transition: background 0.3s, color 0.3s;
-    }
-
     body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
         padding: 20px;
-        font: 16px/1.5 system-ui;
-        max-width: 500px;
-        margin: 0 auto;
-    }
-
-    .header-bar {
+        padding-bottom: 100px;
+        min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        margin-bottom: 24px;
     }
 
-    .home-link {
-        text-decoration: none;
-        font-size: 20px;
-        margin-right: 16px;
-        opacity: 0.7;
-        transition: opacity 0.2s;
+    .container {
+        width: 100%;
+        max-width: 500px;
     }
 
-    .home-link:hover {
-        opacity: 1;
+    header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
     }
 
     h1 {
-        flex: 1;
-        text-align: center;
-        margin: 0;
         font-size: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        line-height: 1;
-    }
-
-    h1 span {
-        display: flex;
-        align-items: center;
-    }
-
-    .theme-toggle {
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        font-size: 20px;
-        padding: 0 0 0 16px;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-    }
-
-    .theme-toggle:hover {
-        opacity: 1;
-        transform: scale(1.1);
+        font-weight: normal;
+        letter-spacing: 4px;
+        text-transform: uppercase;
     }
 
     .input-row {
         display: flex;
         gap: 8px;
-        margin-bottom: 16px;
+        margin-bottom: 24px;
     }
 
     input {
         flex: 1;
-        padding: 14px;
-        border: none;
-        border-radius: 12px;
-        font: inherit;
-        background: var(--input-bg);
-        color: inherit;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        padding: 12px;
+        font-size: 16px;
+        outline: none;
     }
 
     input:focus {
-        outline: none;
-        background: var(--input-focus-bg);
+        border-color: var(--accent-color);
     }
 
-    button {
-        padding: 14px 20px;
-        border: none;
-        border-radius: 12px;
-        font: inherit;
-        font-weight: 600;
+    .add-btn {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        font-size: 24px;
+        width: 48px;
         cursor: pointer;
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    button:hover {
-        opacity: 0.9;
+    .add-btn:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
     .list {
-        background: var(--card-bg);
-        border-radius: 16px;
-        overflow: hidden;
-        border: 1px solid var(--card-border);
+        list-style: none;
+        border: 1px solid var(--border-color);
     }
 
     .item {
         display: flex;
         align-items: center;
         padding: 16px;
-        border-bottom: 1px solid var(--item-border);
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.2s;
     }
 
     .item:last-child {
-        border: none;
+        border-bottom: none;
     }
 
-    .item.done {
-        opacity: 0.5;
+    .item:hover {
+        background: #111;
     }
 
     .item.done span {
         text-decoration: line-through;
+        opacity: 0.5;
     }
 
     .check {
-        width: 24px;
-        height: 24px;
-        border: 2px solid var(--text-color);
-        opacity: 0.3;
-        border-radius: 6px;
-        margin-right: 12px;
-        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        border: 1px solid var(--border-color);
+        margin-right: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 14px;
     }
 
-    .item.done .check {
-        background: #22c55e;
-        border-color: #22c55e;
-        opacity: 1;
+    .item.done .check::after {
+        content: 'X';
     }
 
     span {
         flex: 1;
         word-break: break-word;
+        font-size: 14px;
+        text-transform: uppercase;
     }
 
-    .del {
-        padding: 8px;
+    .del-btn {
         background: transparent;
-        color: #ef4444;
-        opacity: 0;
+        border: none;
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        padding: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        opacity: 0.5;
     }
 
-    .item:hover .del {
+    .del-btn:hover {
+        color: var(--accent-color);
         opacity: 1;
     }
 
     .empty {
-        padding: 48px;
+        padding: 40px;
         text-align: center;
         opacity: 0.5;
+        text-transform: uppercase;
+        font-size: 12px;
     }
 
     .actions {
         display: flex;
-        gap: 8px;
+        gap: 16px;
+        margin-top: 24px;
         justify-content: center;
-        margin-top: 16px;
     }
 
     .actions button {
-        background: var(--btn-secondary-bg);
-        color: inherit;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        padding: 12px;
+        text-transform: uppercase;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .actions button:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
+    }
+
+    /* Toolbar */
+    .toolbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-color);
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-around;
+        padding: 16px;
+    }
+
+    .toolbar a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-family: var(--font-stack);
+        font-size: 14px;
+        text-transform: uppercase;
     }
 
     .toast {
         position: fixed;
-        bottom: 20px;
+        top: 20px;
         left: 50%;
-        transform: translateX(-50%) translateY(100px);
+        transform: translateX(-50%);
+        background: var(--text-color);
+        color: var(--bg-color);
         padding: 8px 16px;
-        background: #22c55e;
-        color: white;
-        border-radius: 20px;
-        font-size: 14px;
+        font-size: 12px;
+        text-transform: uppercase;
         opacity: 0;
-        transition: all 0.3s;
         pointer-events: none;
+        transition: opacity 0.3s;
     }
 
     .toast.show {
-        transform: translateX(-50%) translateY(0);
         opacity: 1;
     }
 </style>
-<div class="container">
-    <div class="header-bar">
-        <a href="index.html" class="home-link" title="Home">🏠</a>
-        <h1><span>📝</span><span>List</span></h1>
-        <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
-    </div>
-    <div class="input-row">
-        <input type="text" id="input" placeholder="Add item..." autofocus>
-        <button id="add">+</button>
-    </div>
-    <div class="list" id="list"></div>
-    <div class="actions">
-        <button id="share">🔗 Share</button>
-        <button id="clear">🧹 Clear done</button>
-    </div>
-    <footer style="text-align:center; margin-top:40px; padding:20px; opacity:0.5; font-size:12px;">
-        <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
-    </footer>
-</div>
-<div class="toast" id="toast"></div>
-<script>
-    let items = []
-    const input = document.getElementById('input'), listEl = document.getElementById('list'), toast = document.getElementById('toast')
 
-    // Theme logic
-    const themeToggle = document.getElementById('theme-toggle');
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-        document.documentElement.setAttribute('data-theme', storedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.documentElement.setAttribute('data-theme', 'light');
+<div class="container">
+    <header>
+        <h1>LIST</h1>
+    </header>
+
+    <div class="input-row">
+        <input type="text" id="input" placeholder="ADD ITEM..." autofocus>
+        <button class="add-btn" id="add">+</button>
+    </div>
+
+    <div class="list" id="list"></div>
+
+    <div class="actions">
+        <button id="share">SHARE LIST</button>
+        <button id="clear">CLEAR DONE</button>
+    </div>
+</div>
+
+<div class="toolbar">
+    <a href="index.html">[HOME]</a>
+</div>
+
+<div class="toast" id="toast">LINK COPIED</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+<script>
+    let items = [];
+    const input = document.getElementById('input');
+    const listEl = document.getElementById('list');
+    const toast = document.getElementById('toast');
+    let gun, gunNode, user;
+
+    // Initialize Gun
+    const relayUrl = localStorage.getItem('gun-relay-url');
+    if (relayUrl) {
+        gun = Gun({ localStorage: false, peers: [relayUrl] });
+        user = gun.user().recall({ sessionStorage: true });
+
+        // Determine node based on user auth
+        if (user.is) {
+            gunNode = user.get('shogun-list');
+        } else {
+            gunNode = gun.get('shogun-list');
+        }
+
+        // Update from Gun
+        gunNode.on((data) => {
+            if (data && data.items) {
+                try {
+                    const remoteItems = JSON.parse(data.items);
+                    if (JSON.stringify(remoteItems) !== JSON.stringify(items)) {
+                        items = remoteItems;
+                        render();
+                        updateHash();
+                    }
+                } catch (e) { }
+            }
+        });
     }
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+
+    input.addEventListener('keypress', e => {
+        if (e.key === 'Enter' && input.value.trim()) addItem();
     });
 
-    input.addEventListener('keypress', e => { if (e.key === 'Enter' && input.value.trim()) { items.push({ text: input.value.trim(), done: false, id: Date.now() }); input.value = ''; render(); save() } })
-    document.getElementById('add').addEventListener('click', () => { if (input.value.trim()) { items.push({ text: input.value.trim(), done: false, id: Date.now() }); input.value = ''; render(); save() } })
-    document.getElementById('share').addEventListener('click', async () => { await save(); try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { showToast('Copy URL') } })
-    document.getElementById('clear').addEventListener('click', () => { items = items.filter(i => !i.done); render(); save() })
-    window.toggle = id => { const i = items.find(x => x.id === id); if (i) i.done = !i.done; render(); save() }
-    window.del = id => { items = items.filter(i => i.id !== id); render(); save() }
-    function render() {
-        if (!items.length) { listEl.innerHTML = '<div class="empty">List empty ✨</div>'; return }
-        listEl.innerHTML = items.map(i => `<div class="item ${i.done ? 'done' : ''}" data-id="${i.id}"><div class="check" onclick="toggle(${i.id})">${i.done ? '✓' : ''}</div><span>${i.text.replace(/</g, '&lt;')}</span><button class="del" onclick="del(${i.id})">✕</button></div>`).join('')
+    document.getElementById('add').addEventListener('click', addItem);
+
+    document.getElementById('share').addEventListener('click', async () => {
+        await save();
+        try {
+            await navigator.clipboard.writeText(location.href);
+            showToast('LINK COPIED');
+        } catch {
+            showToast('COPY FAILED');
+        }
+    });
+
+    document.getElementById('clear').addEventListener('click', () => {
+        items = items.filter(i => !i.done);
+        render();
+        save();
+    });
+
+    function addItem() {
+        if (input.value.trim()) {
+            items.push({ text: input.value.trim(), done: false, id: Date.now() });
+            input.value = '';
+            render();
+            save();
+        }
     }
-    async function save() { const h = await compress(JSON.stringify(items)); history.replaceState({}, '', '#' + h); try { localStorage.setItem('list-hash', h) } catch { } }
-    async function load() { try { let h = location.hash.slice(1); if (!h) h = localStorage.getItem('list-hash'); if (h) items = JSON.parse(await decompress(h)) } catch { } render() }
-    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); const buf = await new Response(st.readable).arrayBuffer(); return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
-    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
-    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
-    addEventListener('DOMContentLoaded', load); addEventListener('hashchange', load)
+
+    window.toggle = id => {
+        const i = items.find(x => x.id === id);
+        if (i) {
+            i.done = !i.done;
+            render();
+            save();
+        }
+    };
+
+    window.del = (id, e) => {
+        e.stopPropagation();
+        items = items.filter(i => i.id !== id);
+        render();
+        save();
+    };
+
+    function render() {
+        if (!items.length) {
+            listEl.innerHTML = '<div class="empty">NO ITEMS</div>';
+            return;
+        }
+        listEl.innerHTML = items.map(i => `
+      <div class="item ${i.done ? 'done' : ''}" onclick="toggle(${i.id})">
+        <div class="check"></div>
+        <span>${i.text.replace(/</g, '&lt;')}</span>
+        <button class="del-btn" onclick="del(${i.id}, event)">[X]</button>
+      </div>
+    `).join('');
+    }
+
+    async function save() {
+        // Sync to Gun
+        if (gunNode) {
+            gunNode.put({ items: JSON.stringify(items) });
+        }
+        updateHash();
+    }
+
+    async function updateHash() {
+        const h = await compress(JSON.stringify(items));
+        history.replaceState({}, '', '#' + h);
+        try { localStorage.setItem('list-hash', h); } catch { }
+    }
+
+    async function load() {
+        try {
+            // Load from Hash or LocalStorage as baseline
+            let h = location.hash.slice(1);
+            if (!h) h = localStorage.getItem('list-hash');
+            if (h) items = JSON.parse(await decompress(h));
+        } catch { }
+        render();
+    }
+
+    async function compress(s) {
+        const b = new TextEncoder().encode(s);
+        const st = new CompressionStream('deflate-raw');
+        const w = st.writable.getWriter();
+        w.write(b); w.close();
+        const buf = await new Response(st.readable).arrayBuffer();
+        return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    async function decompress(b) {
+        const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/'));
+        const arr = Uint8Array.from(bin, c => c.charCodeAt(0));
+        const st = new DecompressionStream('deflate-raw');
+        const w = st.writable.getWriter();
+        w.write(arr); w.close();
+        return new TextDecoder().decode(await new Response(st.readable).arrayBuffer());
+    }
+
+    function showToast(m) {
+        toast.textContent = m;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    addEventListener('DOMContentLoaded', load);
+    addEventListener('hashchange', load);
 </script>

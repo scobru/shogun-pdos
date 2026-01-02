@@ -1,291 +1,396 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tools</title>
+<title>SHOGUN</title>
 <style>
   :root {
-    --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-    --text-color: #e0e0e0;
-    --card-bg: rgba(255, 255, 255, 0.05);
-    --card-border: rgba(255, 255, 255, 0.08);
-    --card-hover-bg: rgba(255, 255, 255, 0.1);
-    --footer-color: rgba(224, 224, 224, 0.4);
-    --badge-bg: rgba(139, 92, 246, 0.2);
-  }
-
-  [data-theme="light"] {
-    --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-    --text-color: #102a43;
-    --card-bg: rgba(255, 255, 255, 0.6);
-    --card-border: rgba(0, 0, 0, 0.05);
-    --card-hover-bg: rgba(255, 255, 255, 0.9);
-    --footer-color: rgba(16, 42, 67, 0.4);
-    --badge-bg: rgba(139, 92, 246, 0.1);
+    --bg-color: #000000;
+    --text-color: #ffffff;
+    --border-color: #ffffff;
+    --accent-color: #d71920;
+    --font-stack: 'Courier New', Courier, monospace;
   }
 
   * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box
-  }
-
-  html {
-    background: var(--bg-gradient);
-    color: var(--text-color);
-    min-height: 100vh;
-    transition: background 0.3s;
+    box-sizing: border-box;
   }
 
   body {
-    padding: 40px 20px;
-    font: 16px/1.5 system-ui
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-stack);
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .container {
-    max-width: 700px;
-    margin: 0 auto;
-    position: relative;
+    width: 100%;
+    max-width: 600px;
   }
 
-  .theme-toggle {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    color: var(--text-color);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
+  header {
+    margin-bottom: 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    transition: all 0.2s;
+    gap: 16px;
   }
 
-  .theme-toggle:hover {
-    background: var(--card-hover-bg);
-    transform: scale(1.1);
+  .logo {
+    width: 80px;
+    height: 80px;
+    fill: var(--text-color);
   }
 
   h1 {
-    font-size: 42px;
-    text-align: center;
-    margin-bottom: 8px;
-    background: linear-gradient(135deg, #8b5cf6, #22c55e);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent
+    font-size: 24px;
+    font-weight: normal;
+    letter-spacing: 4px;
+    text-transform: uppercase;
   }
 
   .subtitle {
-    text-align: center;
-    opacity: 0.6;
-    margin-bottom: 40px;
-    font-size: 14px
+    font-size: 12px;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
-  a {
-    text-decoration: none;
-    color: inherit
-  }
-
-  .card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 16px;
-    transition: all 0.2s;
+  a.card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    padding: 24px 16px;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: all 0.2s;
+    text-align: center;
+    background: transparent;
   }
 
-  .card:hover {
-    background: var(--card-hover-bg);
-    transform: translateY(-3px);
+  a.card:hover {
+    background: var(--text-color);
+    color: var(--bg-color);
   }
 
-  .icon {
-    font-size: 26px;
-    margin-bottom: 4px
+  .card-name {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
   }
 
-  .name {
-    font-weight: 600;
-    font-size: 13px
-  }
-
-  .desc {
+  .card-desc {
     font-size: 10px;
-    opacity: 0.5;
-    margin-top: 2px
+    margin-top: 8px;
+    opacity: 0.7;
+    text-transform: uppercase;
   }
 
   footer {
+    margin-top: 60px;
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: 0.5;
     text-align: center;
-    margin-top: 48px;
-    color: var(--footer-color);
-    font-size: 12px
+    width: 100%;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
   }
 
   footer a {
-    color: #8b5cf6
+    color: inherit;
+    text-decoration: none;
   }
 
-  .badge {
-    display: inline-block;
-    padding: 4px 12px;
-    background: var(--badge-bg);
-    border-radius: 20px;
-    font-size: 11px;
-    margin-bottom: 32px
-  }
-
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
-  .logo {
-    width: 56px;
-    height: 56px;
-    transition: transform 0.3s;
-  }
-
-  .logo:hover {
-    transform: scale(1.1) rotate(5deg);
+  /* Dot matrix effect overlay */
+  .matrix-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 9999;
   }
 </style>
+
+<div class="matrix-overlay"></div>
+
 <div class="container">
-  <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
-  <div class="header">
-    <img src="logo.svg" alt="Shogun Logo" class="logo">
-    <h1>Shogun NoBackend</h1>
-  </div>
-  <p class="subtitle">Minimalist tools that live in the URL</p>
-  <p style="text-align:center"><span class="badge">17 tools • No backend • 100% shareable</span></p>
+  <header>
+    <svg class="logo" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+      <path fill="currentColor"
+        d="M23.7,-34.6C34.4,-34.8,49.4,-36,53.2,-30.4C57,-24.8,49.5,-12.4,41.3,-4.7C33.2,3,24.4,6,18.2,7.4C12.1,8.8,8.5,8.6,5.9,8C3.2,7.4,1.6,6.4,-2.7,11.1C-7.1,15.8,-14.1,26.3,-14.2,25.4C-14.3,24.6,-7.5,12.5,-17.5,6.3C-27.5,0.2,-54.3,0.1,-55.5,-0.7C-56.7,-1.5,-32.2,-2.9,-19.9,-5.2C-7.7,-7.4,-7.6,-10.3,-6.4,-15.5C-5.1,-20.8,-2.5,-28.3,2,-31.7C6.5,-35.1,13,-34.4,23.7,-34.6Z"
+        transform="translate(100 100) scale(2)" />
+    </svg>
+    <h1>SHOGUN</h1>
+    <div class="subtitle">NO BACKEND TOOLS</div>
+  </header>
 
   <div class="grid">
-    <a href="note.html" class="card">
-      <div class="icon">📝</div>
-      <div class="name">Note</div>
-      <div class="desc">Notes</div>
-    </a>
-    <a href="list.html" class="card">
-      <div class="icon">✅</div>
-      <div class="name">List</div>
-      <div class="desc">Lists</div>
-    </a>
-    <a href="msg.html" class="card">
-      <div class="icon">✉️</div>
-      <div class="name">Message</div>
-      <div class="desc">Letter</div>
-    </a>
+    <!-- Essential -->
     <a href="calendar.html" class="card">
-      <div class="icon">📅</div>
-      <div class="name">Calendar</div>
-      <div class="desc">Events</div>
+      <div class="card-name">CALENDAR</div>
+      <div class="card-desc">PLANNER</div>
     </a>
     <a href="contacts.html" class="card">
-      <div class="icon">📇</div>
-      <div class="name">Contacts</div>
-      <div class="desc">Phone book</div>
+      <div class="card-name">CONTACTS</div>
+      <div class="card-desc">DIRECTORY</div>
+    </a>
+    <a href="chat.html" class="card">
+      <div class="card-name">CHAT</div>
+      <div class="card-desc">ROOMS</div>
+    </a>
+    <a href="pass.html" class="card">
+      <div class="card-name">PASS</div>
+      <div class="card-desc">VAULT</div>
+    </a>
+    <a href="files.html" class="card">
+      <div class="card-name">FILES</div>
+      <div class="card-desc">STORAGE</div>
     </a>
     <a href="calc.html" class="card">
-      <div class="icon">🧮</div>
-      <div class="name">Calc</div>
-      <div class="desc">Calculator</div>
+      <div class="card-name">CALC</div>
+      <div class="card-desc">MATH</div>
     </a>
     <a href="alarm.html" class="card">
-      <div class="icon">⏰</div>
-      <div class="name">Alarm</div>
-      <div class="desc">Alarms</div>
+      <div class="card-name">ALARM</div>
+      <div class="card-desc">WAKE UP</div>
     </a>
     <a href="timer.html" class="card">
-      <div class="icon">⏱️</div>
-      <div class="name">Timer</div>
-      <div class="desc">Stopwatch</div>
+      <div class="card-name">TIMER</div>
+      <div class="card-desc">CHRONO</div>
+    </a>
+
+    <!-- Utilities -->
+    <a href="notes.html" class="card">
+      <div class="card-name">NOTES</div>
+      <div class="card-desc">MULTI</div>
+    </a>
+    <a href="pad.html" class="card">
+      <div class="card-name">PAD</div>
+      <div class="card-desc">QUICK</div>
+    </a>
+    <a href="list.html" class="card">
+      <div class="card-name">LIST</div>
+      <div class="card-desc">TASKS</div>
     </a>
     <a href="split.html" class="card">
-      <div class="icon">💰</div>
-      <div class="name">Split</div>
-      <div class="desc">Split bill</div>
-    </a>
-    <a href="poll.html" class="card">
-      <div class="icon">🗳️</div>
-      <div class="name">Poll</div>
-      <div class="desc">Polls</div>
-    </a>
-    <a href="qr.html" class="card">
-      <div class="icon">📱</div>
-      <div class="name">QR</div>
-      <div class="desc">QR Code</div>
+      <div class="card-name">SPLIT</div>
+      <div class="card-desc">FINANCE</div>
     </a>
     <a href="where.html" class="card">
-      <div class="icon">📍</div>
-      <div class="name">Where</div>
-      <div class="desc">Location</div>
+      <div class="card-name">WHERE</div>
+      <div class="card-desc">GPS</div>
     </a>
+    <a href="qr.html" class="card">
+      <div class="card-name">QR</div>
+      <div class="card-desc">SCAN</div>
+    </a>
+
+    <!-- Misc -->
     <a href="pic.html" class="card">
-      <div class="icon">🖼️</div>
-      <div class="name">Pic</div>
-      <div class="desc">Photos</div>
+      <div class="card-name">PIC</div>
+      <div class="card-desc">IMAGE</div>
+    </a>
+    <a href="poll.html" class="card">
+      <div class="card-name">POLL</div>
+      <div class="card-desc">VOTE</div>
     </a>
     <a href="wheel.html" class="card">
-      <div class="icon">🎡</div>
-      <div class="name">Wheel</div>
-      <div class="desc">Fortune</div>
+      <div class="card-name">WHEEL</div>
+      <div class="card-desc">RNG</div>
     </a>
     <a href="snippet.html" class="card">
-      <div class="icon">⚡</div>
-      <div class="name">Snippet</div>
-      <div class="desc">Code</div>
+      <div class="card-name">CODE</div>
+      <div class="card-desc">DEV</div>
     </a>
     <a href="secret.html" class="card">
-      <div class="icon">🔒</div>
-      <div class="name">Secret</div>
-      <div class="desc">Encrypted</div>
+      <div class="card-name">SECRET</div>
+      <div class="card-desc">CRYPT</div>
     </a>
     <a href="collect.html" class="card">
-      <div class="icon">📂</div>
-      <div class="name">Collect</div>
-      <div class="desc">Links</div>
+      <div class="card-name">COLLECT</div>
+      <div class="card-desc">LINKS</div>
     </a>
   </div>
 
-  <footer>
-    <a href="https://shogun-eco.xyz" target="_blank">shogun-eco.xyz</a> •
-    17 tools • No backend
+  <footer style="display:flex; flex-direction:column; gap:12px;">
+    <div id="auth-status" style="display:flex; gap:8px; align-items:center; justify-content:center;">
+      <span id="user-display" style="font-size:12px; opacity:0.7;">NOT LOGGED IN</span>
+      <button id="auth-btn"
+        style="background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; font-size:10px; padding:4px 12px; cursor:pointer;">LOGIN</button>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center; justify-content:center; opacity:0.5;">
+      <span style="font-size:10px;">SYNC SERVER:</span>
+      <input id="gun-url" type="text" placeholder="http://localhost:4000/gun"
+        style="background:transparent; border:none; border-bottom:1px solid #fff; color:#fff; font-family:inherit; font-size:10px; width:150px; text-transform:lowercase; text-align:center;">
+    </div>
+    <a href="https://shogun-eco.xyz" target="_blank">SHOGUN-ECO.XYZ</a>
   </footer>
 </div>
 
+<!-- Auth Modal -->
+<div id="auth-modal"
+  style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:#000; border:1px solid #fff; padding:24px; width:90%; max-width:320px;">
+    <h3 id="auth-title" style="text-transform:uppercase; font-size:14px; margin-bottom:20px; text-align:center;">LOGIN
+    </h3>
+    <input id="auth-user" type="text" placeholder="USERNAME"
+      style="width:100%; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; margin-bottom:12px;">
+    <input id="auth-pass" type="password" placeholder="PASSWORD"
+      style="width:100%; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; margin-bottom:20px;">
+    <div style="display:flex; gap:12px;">
+      <button id="auth-cancel"
+        style="flex:1; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; cursor:pointer; text-transform:uppercase;">CANCEL</button>
+      <button id="auth-submit"
+        style="flex:1; background:#fff; border:1px solid #fff; color:#000; font-family:inherit; padding:12px; cursor:pointer; text-transform:uppercase; font-weight:bold;">LOGIN</button>
+    </div>
+    <button id="auth-toggle"
+      style="width:100%; margin-top:12px; background:transparent; border:none; color:#fff; font-family:inherit; padding:8px; cursor:pointer; opacity:0.5; font-size:10px;">NO
+      ACCOUNT? REGISTER</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
 <script>
-  const themeToggle = document.getElementById('theme-toggle');
-  const storedTheme = localStorage.getItem('theme');
+  // Elements
+  const gunUrlInput = document.getElementById('gun-url');
+  const userDisplay = document.getElementById('user-display');
+  const authBtn = document.getElementById('auth-btn');
+  const authModal = document.getElementById('auth-modal');
+  const authTitle = document.getElementById('auth-title');
+  const authUser = document.getElementById('auth-user');
+  const authPass = document.getElementById('auth-pass');
+  const authSubmit = document.getElementById('auth-submit');
+  const authToggle = document.getElementById('auth-toggle');
+  const defaultUrl = 'http://localhost:4000/gun';
+  let isLogin = true;
+  let gun, user;
 
-  if (storedTheme) {
-    document.documentElement.setAttribute('data-theme', storedTheme);
-  } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', 'light');
+  // Ensure relay URL in localStorage
+  if (!localStorage.getItem('gun-relay-url')) {
+    localStorage.setItem('gun-relay-url', defaultUrl);
   }
+  gunUrlInput.value = localStorage.getItem('gun-relay-url');
 
-  themeToggle.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+  // Initialize Gun
+  gun = Gun({ localStorage: false, peers: [localStorage.getItem('gun-relay-url')] });
+  user = gun.user().recall({ sessionStorage: true });
+
+  // Check if already logged in
+  gun.on('auth', () => {
+    const alias = user.is?.alias || 'USER';
+    userDisplay.textContent = alias.toUpperCase();
+    authBtn.textContent = 'LOGOUT';
+    localStorage.setItem('gun-user-alias', alias);
+  });
+
+  // URL input handler
+  gunUrlInput.addEventListener('change', (e) => {
+    const url = e.target.value.trim() || defaultUrl;
+    localStorage.setItem('gun-relay-url', url);
+    gunUrlInput.value = url;
+    gunUrlInput.style.color = '#22c55e';
+    setTimeout(() => gunUrlInput.style.color = '#fff', 1000);
+  });
+
+  // Auth button
+  authBtn.addEventListener('click', () => {
+    if (user.is) {
+      // Logout
+      user.leave();
+      userDisplay.textContent = 'NOT LOGGED IN';
+      authBtn.textContent = 'LOGIN';
+      localStorage.removeItem('gun-user-alias');
+    } else {
+      // Show login modal
+      authModal.style.display = 'flex';
+      authUser.focus();
+    }
+  });
+
+  // Toggle login/register
+  authToggle.addEventListener('click', () => {
+    isLogin = !isLogin;
+    authTitle.textContent = isLogin ? 'LOGIN' : 'REGISTER';
+    authSubmit.textContent = isLogin ? 'LOGIN' : 'REGISTER';
+    authToggle.textContent = isLogin ? 'NO ACCOUNT? REGISTER' : 'HAVE ACCOUNT? LOGIN';
+  });
+
+  // Cancel
+  document.getElementById('auth-cancel').addEventListener('click', () => {
+    authModal.style.display = 'none';
+    authUser.value = '';
+    authPass.value = '';
+  });
+
+  // Submit auth
+  authSubmit.addEventListener('click', async () => {
+    const username = authUser.value.trim();
+    const password = authPass.value;
+    if (!username || !password) return;
+
+    authSubmit.textContent = 'PLEASE WAIT...';
+    authSubmit.disabled = true;
+
+    if (isLogin) {
+      user.auth(username, password, (ack) => {
+        if (ack.err) {
+          alert('LOGIN FAILED: ' + ack.err);
+          authSubmit.textContent = 'LOGIN';
+          authSubmit.disabled = false;
+        } else {
+          authModal.style.display = 'none';
+          authUser.value = '';
+          authPass.value = '';
+          authSubmit.textContent = 'LOGIN';
+          authSubmit.disabled = false;
+        }
+      });
+    } else {
+      user.create(username, password, (ack) => {
+        if (ack.err) {
+          alert('REGISTER FAILED: ' + ack.err);
+          authSubmit.textContent = 'REGISTER';
+          authSubmit.disabled = false;
+        } else {
+          // Auto login after register
+          user.auth(username, password, () => {
+            authModal.style.display = 'none';
+            authUser.value = '';
+            authPass.value = '';
+            authSubmit.textContent = 'LOGIN';
+            authSubmit.disabled = false;
+          });
+        }
+      });
+    }
+  });
+
+  // Enter key to submit
+  authPass.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') authSubmit.click();
   });
 </script>

@@ -1,38 +1,14 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pic</title>
+<title>PIC</title>
 <style>
     :root {
-        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        --text-color: #e0e0e0;
-        --card-bg: rgba(255, 255, 255, 0.05);
-        --card-border: rgba(255, 255, 255, 0.08);
-        --drop-zone-border: rgba(255, 255, 255, 0.2);
-        --drop-zone-hover-bg: rgba(139, 92, 246, 0.1);
-        --drop-zone-hover-border: #8b5cf6;
-        --input-bg: rgba(255, 255, 255, 0.1);
-        --input-focus-bg: rgba(255, 255, 255, 0.15);
-        --btn-secondary-bg: rgba(255, 255, 255, 0.1);
-        --btn-secondary-hover: rgba(255, 255, 255, 0.2);
-        --warning-bg: rgba(245, 158, 11, 0.2);
-        --warning-color: #fbbf24;
-    }
-
-    [data-theme="light"] {
-        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-        --text-color: #102a43;
-        --card-bg: rgba(255, 255, 255, 0.6);
-        --card-border: rgba(0, 0, 0, 0.05);
-        --drop-zone-border: rgba(0, 0, 0, 0.2);
-        --drop-zone-hover-bg: rgba(139, 92, 246, 0.1);
-        --drop-zone-hover-border: #8b5cf6;
-        --input-bg: rgba(0, 0, 0, 0.05);
-        --input-focus-bg: rgba(0, 0, 0, 0.08);
-        --btn-secondary-bg: rgba(0, 0, 0, 0.05);
-        --btn-secondary-hover: rgba(0, 0, 0, 0.1);
-        --warning-bg: rgba(245, 158, 11, 0.1);
-        --warning-color: #d97706;
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --border-color: #ffffff;
+        --accent-color: #d71920;
+        --font-stack: 'Courier New', Courier, monospace;
     }
 
     * {
@@ -41,112 +17,57 @@
         box-sizing: border-box;
     }
 
-    html {
-        background: var(--bg-gradient);
-        color: var(--text-color);
-        min-height: 100vh;
-        transition: background 0.3s, color 0.3s;
-    }
-
     body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
         padding: 20px;
-        font: 16px/1.5 system-ui;
-        max-width: 500px;
-        margin: 0 auto;
+        padding-bottom: 100px;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
     }
 
-    .header-bar {
-        display: flex;
-        align-items: center;
+    .container {
         width: 100%;
-        margin-bottom: 24px;
+        max-width: 500px;
     }
 
-    .home-link {
-        text-decoration: none;
-        font-size: 20px;
-        margin-right: 16px;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-    }
-
-    .home-link:hover {
-        opacity: 1;
+    header {
+        text-align: center;
+        margin-bottom: 30px;
     }
 
     h1 {
-        flex: 1;
-        text-align: center;
-        margin: 0;
         font-size: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        line-height: 1;
-    }
-
-    h1 span {
-        display: flex;
-        align-items: center;
-    }
-
-    .theme-toggle {
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        font-size: 20px;
-        padding: 0 0 0 16px;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-    }
-
-    .theme-toggle:hover {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-
-    .subtitle {
-        opacity: 0.7;
-        margin-bottom: 24px;
-        text-align: center;
-        font-size: 14px;
-    }
-
-    .card {
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 20px;
-        padding: 24px;
-        width: 100%;
-        margin-bottom: 16px;
-        text-align: center;
+        font-weight: normal;
+        letter-spacing: 4px;
+        text-transform: uppercase;
     }
 
     .drop-zone {
-        border: 3px dashed var(--drop-zone-border);
-        border-radius: 16px;
+        border: 1px dashed var(--border-color);
         padding: 40px 20px;
+        text-align: center;
         cursor: pointer;
-        transition: all 0.2s;
+        margin-bottom: 20px;
+        text-transform: uppercase;
     }
 
-    .drop-zone:hover,
-    .drop-zone.dragover {
-        border-color: var(--drop-zone-hover-border);
-        background: var(--drop-zone-hover-bg);
+    .drop-zone:hover {
+        background: #111;
+        border-style: solid;
     }
 
     .drop-zone p {
+        font-size: 14px;
         margin-bottom: 8px;
     }
 
     .drop-zone small {
+        font-size: 10px;
         opacity: 0.5;
-        font-size: 12px;
     }
 
     input[type=file] {
@@ -155,234 +76,233 @@
 
     img {
         max-width: 100%;
-        max-height: 400px;
-        border-radius: 12px;
+        border: 1px solid var(--border-color);
         margin-bottom: 16px;
+        display: block;
     }
 
     button {
         width: 100%;
         padding: 14px;
-        border: none;
-        border-radius: 12px;
-        font: inherit;
-        font-weight: 600;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        text-transform: uppercase;
         cursor: pointer;
-        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-        color: white;
         margin-bottom: 12px;
-        transition: all 0.2s;
+        font-weight: bold;
     }
 
     button:hover {
-        opacity: 0.9;
-        transform: scale(1.02);
-    }
-
-    .secondary {
-        background: var(--btn-secondary-bg);
-        color: inherit;
-    }
-
-    .secondary:hover {
-        background: var(--btn-secondary-hover);
-        opacity: 1;
-        transform: none;
-    }
-
-    .info {
-        font-size: 12px;
-        opacity: 0.5;
-        margin-top: 8px;
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
     .caption-input {
         width: 100%;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
         padding: 12px;
-        border: none;
-        border-radius: 10px;
-        background: var(--input-bg);
-        color: inherit;
-        font: inherit;
-        text-align: center;
         margin-bottom: 16px;
-    }
-
-    .caption-input:focus {
+        text-align: center;
         outline: none;
-        background: var(--input-focus-bg);
     }
 
-    .caption {
-        font-size: 14px;
-        opacity: 0.7;
+    .info {
+        font-size: 10px;
+        text-align: center;
+        opacity: 0.5;
         margin-top: 8px;
+        text-transform: uppercase;
+    }
+
+    /* Toolbar */
+    .toolbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-color);
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-around;
+        padding: 16px;
+    }
+
+    .toolbar a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-family: var(--font-stack);
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+
+    .warning {
+        color: var(--accent-color);
+        border: 1px solid var(--accent-color);
+        padding: 10px;
+        text-align: center;
+        font-size: 12px;
+        margin-bottom: 16px;
+        display: none;
+        text-transform: uppercase;
     }
 
     .toast {
         position: fixed;
-        bottom: 20px;
+        top: 20px;
         left: 50%;
-        transform: translateX(-50%) translateY(100px);
+        transform: translateX(-50%);
+        background: var(--text-color);
+        color: var(--bg-color);
         padding: 8px 16px;
-        background: #22c55e;
-        color: white;
-        border-radius: 20px;
-        font-size: 14px;
+        font-size: 12px;
+        text-transform: uppercase;
         opacity: 0;
-        transition: all 0.3s;
         pointer-events: none;
+        transition: opacity 0.3s;
     }
 
     .toast.show {
-        transform: translateX(-50%) translateY(0);
         opacity: 1;
-    }
-
-    .warning {
-        padding: 12px;
-        background: var(--warning-bg);
-        border-radius: 10px;
-        color: var(--warning-color);
-        font-size: 13px;
-        margin-bottom: 16px;
     }
 </style>
 
-<div class="header-bar">
-    <a href="index.html" class="home-link" title="Home">🏠</a>
-    <h1><span>🖼️</span><span>Pic</span></h1>
-    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
-</div>
-<p class="subtitle">Share images via URL</p>
+<div class="container">
+    <header>
+        <h1>PIC</h1>
+    </header>
 
-<div class="drop-zone" id="drop-zone">
-    <p>📷 Click or drag an image</p>
-    <small>Max ~100KB to fit in URL</small>
-</div>
-<input type="file" id="file-input" accept="image/*">
-<div class="warning" id="warning" style="display:none">⚠️ Image too large, will be compressed</div>
-</div>
-
-<div class="card" id="preview-view" style="display:none">
-    <img id="preview">
-    <input type="text" class="caption-input" id="caption" placeholder="Add a caption...">
-    <div class="actions">
-        <button id="share">🔗 Share URL</button>
+    <div id="upload-view">
+        <div class="drop-zone" id="drop-zone">
+            <p>[UPLOAD IMAGE]</p>
+            <small>MAX ~100KB FOR URL</small>
+        </div>
+        <input type="file" id="file-input" accept="image/*">
+        <div class="warning" id="warning">[!] LARGE FILE - COMPRESSING</div>
     </div>
-    <button class="secondary" id="download">💾 Download</button>
-    <button class="secondary" id="new-pic">🔄 New image</button>
-    <div class="info" id="size-info"></div>
+
+    <div id="preview-view" style="display:none">
+        <img id="preview">
+        <input type="text" class="caption-input" id="caption" placeholder="CAPTION...">
+        <button id="share">SHARE URL</button>
+        <button id="download">DOWNLOAD</button>
+        <button id="new-pic">NEW IMAGE</button>
+        <div class="info" id="size-info"></div>
+    </div>
+
+    <div id="view-mode" style="display:none">
+        <img id="shared-img">
+        <div class="caption-input" style="border:none;" id="shared-caption"></div>
+        <button id="dl-shared">DOWNLOAD</button>
+    </div>
 </div>
 
-<div class="card" id="view-mode" style="display:none">
-    <img id="shared-img">
-    <div class="caption" id="shared-caption"></div>
-    <button class="secondary" id="dl-shared">💾 Download</button>
+<div class="toolbar">
+    <a href="index.html">[HOME]</a>
 </div>
 
-<div class="toast" id="toast"></div>
-
-<footer style="text-align:center; margin-top:40px; padding:20px; opacity:0.5; font-size:12px;">
-    <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
-</footer>
+<div class="toast" id="toast">LINK COPIED</div>
 
 <script>
-    const toast = document.getElementById('toast'), dropZone = document.getElementById('drop-zone'), fileInput = document.getElementById('file-input'), preview = document.getElementById('preview')
-    let imageData = '', caption = ''
+    const toast = document.getElementById('toast'),
+        dropZone = document.getElementById('drop-zone'),
+        fileInput = document.getElementById('file-input'),
+        preview = document.getElementById('preview');
 
-    // Theme logic
-    const themeToggle = document.getElementById('theme-toggle');
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-        document.documentElement.setAttribute('data-theme', storedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.documentElement.setAttribute('data-theme', 'light');
-    }
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+    let imageData = '', caption = '';
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.background = '#111'; });
+    dropZone.addEventListener('dragleave', () => dropZone.style.background = 'transparent');
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.style.background = 'transparent';
+        handleFile(e.dataTransfer.files[0]);
     });
-    dropZone.addEventListener('click', () => fileInput.click())
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover') })
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'))
-    dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]) })
-    fileInput.addEventListener('change', () => handleFile(fileInput.files[0]))
-    document.getElementById('caption').addEventListener('input', e => { caption = e.target.value; saveToUrl() })
-    document.getElementById('share').addEventListener('click', async () => { try { await navigator.clipboard.writeText(location.href); showToast('Link copied!') } catch { } })
-    document.getElementById('download').addEventListener('click', () => downloadImage(imageData, 'pic.png'))
-    document.getElementById('dl-shared').addEventListener('click', () => downloadImage(document.getElementById('shared-img').src, 'pic.png'))
-    document.getElementById('new-pic').addEventListener('click', () => { location.hash = ''; location.reload() })
+
+    fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
+    document.getElementById('caption').addEventListener('input', e => { caption = e.target.value; saveToUrl(); });
+
+    document.getElementById('share').addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(location.href); showToast(); } catch { }
+    });
+
+    document.getElementById('download').addEventListener('click', () => downloadImage(imageData, 'pic.png'));
+    document.getElementById('dl-shared').addEventListener('click', () => downloadImage(document.getElementById('shared-img').src, 'pic.png'));
+    document.getElementById('new-pic').addEventListener('click', () => { location.hash = ''; location.reload(); });
 
     async function handleFile(file) {
-        if (!file || !file.type.startsWith('image/')) return
+        if (!file || !file.type.startsWith('image/')) return;
 
-        const warn = document.getElementById('warning')
-        warn.style.display = file.size > 100000 ? 'block' : 'none'
+        const warn = document.getElementById('warning');
+        warn.style.display = file.size > 100000 ? 'block' : 'none';
 
-        // Compress if needed
-        const img = new Image()
+        const img = new Image();
         img.onload = async () => {
-            const canvas = document.createElement('canvas')
-            let w = img.width, h = img.height
-            const maxSize = 800
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const maxSize = 800;
             if (w > maxSize || h > maxSize) {
-                if (w > h) { h = h * maxSize / w; w = maxSize }
-                else { w = w * maxSize / h; h = maxSize }
+                if (w > h) { h = h * maxSize / w; w = maxSize; }
+                else { w = w * maxSize / h; h = maxSize; }
             }
-            canvas.width = w; canvas.height = h
-            const ctx = canvas.getContext('2d')
-            ctx.drawImage(img, 0, 0, w, h)
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
 
-            // Try different quality levels
-            let quality = 0.8
-            imageData = canvas.toDataURL('image/jpeg', quality)
+            let quality = 0.8;
+            imageData = canvas.toDataURL('image/jpeg', quality);
             while (imageData.length > 120000 && quality > 0.1) {
-                quality -= 0.1
-                imageData = canvas.toDataURL('image/jpeg', quality)
+                quality -= 0.1;
+                imageData = canvas.toDataURL('image/jpeg', quality);
             }
 
-            showPreview()
-            saveToUrl()
-        }
-        img.src = URL.createObjectURL(file)
+            showPreview();
+            saveToUrl();
+        };
+        img.src = URL.createObjectURL(file);
     }
 
     function showPreview() {
-        document.getElementById('upload-view').style.display = 'none'
-        document.getElementById('preview-view').style.display = 'block'
-        preview.src = imageData
-        document.getElementById('size-info').textContent = `URL: ~${Math.round(imageData.length / 1024)}KB`
+        document.getElementById('upload-view').style.display = 'none';
+        document.getElementById('preview-view').style.display = 'block';
+        preview.src = imageData;
+        document.getElementById('size-info').textContent = `SIZE: ~${Math.round(imageData.length / 1024)}KB`;
     }
 
     async function saveToUrl() {
-        const data = { img: imageData, cap: caption }
-        const hash = await compress(JSON.stringify(data))
-        history.replaceState({}, '', '#' + hash)
+        const data = { img: imageData, cap: caption };
+        const hash = await compress(JSON.stringify(data));
+        history.replaceState({}, '', '#' + hash);
     }
 
     async function loadShared() {
         try {
-            const data = JSON.parse(await decompress(location.hash.slice(1)))
-            document.getElementById('upload-view').style.display = 'none'
-            document.getElementById('view-mode').style.display = 'block'
-            document.getElementById('shared-img').src = data.img
-            document.getElementById('shared-caption').textContent = data.cap || ''
-            document.title = 'Shared pic'
-        } catch { showToast('Failed to load') }
+            const data = JSON.parse(await decompress(location.hash.slice(1)));
+            document.getElementById('upload-view').style.display = 'none';
+            document.getElementById('view-mode').style.display = 'block';
+            document.getElementById('shared-img').src = data.img;
+            document.getElementById('shared-caption').textContent = data.cap || '';
+            document.title = 'PIC';
+        } catch { }
     }
 
     function downloadImage(dataUrl, filename) {
-        const a = document.createElement('a')
-        a.href = dataUrl; a.download = filename; a.click()
+        const a = document.createElement('a');
+        a.href = dataUrl; a.download = filename; a.click();
     }
 
-    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
-    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
-    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
+    function showToast() {
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
 
-    // Load shared image on page load if hash is present
-    if (location.hash) loadShared()
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()); }
+
+    if (location.hash) loadShared();
 </script>

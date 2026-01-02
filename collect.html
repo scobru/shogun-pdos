@@ -1,36 +1,14 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Collect</title>
+<title>COLLECT</title>
 <style>
     :root {
-        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        --text-color: #e0e0e0;
-        --card-bg: rgba(255, 255, 255, 0.05);
-        --card-border: rgba(255, 255, 255, 0.08);
-        --input-bg: rgba(255, 255, 255, 0.1);
-        --input-focus-bg: rgba(255, 255, 255, 0.15);
-        --btn-bg: linear-gradient(135deg, #8b5cf6, #6d28d9);
-        --btn-color: white;
-        --btn-secondary-bg: rgba(255, 255, 255, 0.1);
-        --btn-secondary-hover: rgba(255, 255, 255, 0.2);
-        --item-bg: rgba(255, 255, 255, 0.03);
-        --item-hover-bg: rgba(255, 255, 255, 0.06);
-        --del-color: #ef4444;
-        --accent-color: #8b5cf6;
-    }
-
-    [data-theme="light"] {
-        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-        --text-color: #102a43;
-        --card-bg: rgba(255, 255, 255, 0.6);
-        --card-border: rgba(0, 0, 0, 0.05);
-        --input-bg: rgba(0, 0, 0, 0.05);
-        --input-focus-bg: rgba(0, 0, 0, 0.08);
-        --btn-secondary-bg: rgba(0, 0, 0, 0.05);
-        --btn-secondary-hover: rgba(0, 0, 0, 0.1);
-        --item-bg: rgba(255, 255, 255, 0.4);
-        --item-hover-bg: rgba(255, 255, 255, 0.7);
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --border-color: #ffffff;
+        --accent-color: #d71920;
+        --font-stack: 'Courier New', Courier, monospace;
     }
 
     * {
@@ -39,513 +17,343 @@
         box-sizing: border-box;
     }
 
-    html {
-        background: var(--bg-gradient);
-        color: var(--text-color);
-        min-height: 100vh;
-        transition: background 0.3s, color 0.3s;
-    }
-
     body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
         padding: 20px;
-        font: 16px/1.5 system-ui, -apple-system, sans-serif;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    .header-bar {
+        padding-bottom: 100px;
+        min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        margin-bottom: 24px;
-        gap: 16px;
     }
 
-    .home-link {
-        text-decoration: none;
-        font-size: 20px;
-        opacity: 0.7;
-        transition: opacity 0.2s;
+    .container {
+        width: 100%;
+        max-width: 500px;
     }
 
-    .home-link:hover {
-        opacity: 1;
+    header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
     }
 
     h1 {
-        flex: 1;
-        text-align: center;
-        margin: 0;
         font-size: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        line-height: 1;
-    }
-
-    h1 span {
-        display: flex;
-        align-items: center;
-    }
-
-    .theme-toggle {
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        font-size: 20px;
-        opacity: 0.7;
-        transition: all 0.2s;
-        padding: 8px;
-        border-radius: 50%;
-    }
-
-    .theme-toggle:hover {
-        opacity: 1;
-        background: var(--btn-secondary-bg);
-    }
-
-    .card {
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 20px;
-        padding: 24px;
-        margin-bottom: 24px;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-
-    .meta-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-    .collection-title {
-        background: transparent;
-        border: none;
-        font-size: 18px;
-        font-weight: 700;
-        color: inherit;
-        width: 100%;
-        flex: 1;
-        padding: 4px 8px;
-        border-radius: 6px;
-        border: 1px solid transparent;
-        transition: all 0.2s;
-    }
-
-    .collection-title:focus {
-        outline: none;
-        background: var(--input-bg);
-        border-color: var(--accent-color);
-    }
-
-    .collection-title:hover {
-        background: var(--input-bg);
-    }
-
-    .version-badge {
-        font-size: 12px;
-        padding: 2px 8px;
-        background: var(--btn-secondary-bg);
-        border-radius: 12px;
-        opacity: 0.8;
-        font-family: monospace;
-    }
-
-    .add-form {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 20px;
+        font-weight: normal;
+        letter-spacing: 4px;
+        text-transform: uppercase;
     }
 
     input {
-        padding: 12px;
-        border: none;
-        border-radius: 12px;
-        font: inherit;
-        background: var(--input-bg);
-        color: inherit;
         width: 100%;
-        transition: all 0.2s;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        padding: 12px;
+        margin-bottom: 12px;
+        outline: none;
     }
 
     input:focus {
-        outline: none;
-        background: var(--input-focus-bg);
-        box-shadow: 0 0 0 2px var(--accent-color);
+        border-color: var(--accent-color);
     }
 
-    .btn {
-        padding: 12px 20px;
+    .collection-title {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
         border: none;
-        border-radius: 12px;
-        font: inherit;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        white-space: nowrap;
+        border-bottom: 1px dashed var(--border-color);
     }
 
-    .btn-primary {
-        background: var(--btn-bg);
-        color: var(--btn-color);
+    .card {
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        margin-bottom: 20px;
     }
 
-    .btn-primary:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
+    h2 {
+        font-size: 14px;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+        border-bottom: 1px dashed var(--border-color);
+        padding-bottom: 8px;
     }
 
-    .btn-secondary {
-        background: var(--btn-secondary-bg);
-        color: inherit;
-    }
-
-    .btn-secondary:hover {
-        background: var(--btn-secondary-hover);
-    }
-
-    .link-list {
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .link-item {
+    .item {
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 12px;
-        background: var(--item-bg);
-        border-radius: 12px;
-        transition: all 0.2s;
-        border: 1px solid transparent;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px dotted #333;
     }
 
-    .link-item:hover {
-        background: var(--item-hover-bg);
-        transform: translateX(2px);
+    .item:last-child {
+        border-bottom: none;
     }
 
-    .favicon {
-        width: 24px;
-        height: 24px;
-        border-radius: 4px;
-        object-fit: contain;
-        background: white;
-        padding: 2px;
-    }
-
-    .link-info {
+    .item-content {
         flex: 1;
-        min-width: 0;
+        overflow: hidden;
     }
 
-    .link-label {
-        font-weight: 600;
+    .item-title {
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .item-url {
+        font-size: 12px;
+        opacity: 0.7;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
-    .link-url {
-        font-size: 12px;
-        opacity: 0.6;
-        word-break: break-all;
+    .del-btn,
+    .visit-btn {
+        padding: 8px;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        cursor: pointer;
+        font-size: 10px;
+        text-transform: uppercase;
+    }
+
+    .del-btn:hover,
+    .visit-btn:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
+    }
+
+    .add-btn {
+        width: 100%;
+        padding: 12px;
+        background: var(--text-color);
+        border: 1px solid var(--text-color);
+        color: var(--bg-color);
+        font-family: var(--font-stack);
+        text-transform: uppercase;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 8px;
+    }
+
+    .add-btn:hover {
+        background: var(--bg-color);
+        color: var(--text-color);
     }
 
     .actions {
         display: flex;
-        gap: 4px;
-        opacity: 0;
-        transition: opacity 0.2s;
-    }
-
-    .link-item:hover .actions {
-        opacity: 1;
+        gap: 16px;
     }
 
     .action-btn {
-        padding: 6px;
+        flex: 1;
+        padding: 12px;
         background: transparent;
-        border: none;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        text-transform: uppercase;
         cursor: pointer;
-        opacity: 0.6;
-        color: inherit;
-        border-radius: 6px;
     }
 
     .action-btn:hover {
-        opacity: 1;
-        background: var(--btn-secondary-bg);
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
-    .btn-delete:hover {
-        background: rgba(239, 68, 68, 0.2);
-        color: var(--del-color);
-    }
-
-    .empty-state {
-        text-align: center;
-        opacity: 0.5;
-        padding: 40px;
-        font-style: italic;
-    }
-
-    .footer-actions {
+    /* Toolbar */
+    .toolbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-color);
+        border-top: 1px solid var(--border-color);
         display: flex;
-        gap: 12px;
-        margin-top: 24px;
+        justify-content: space-around;
+        padding: 16px;
     }
 
-    .footer-actions .btn {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
+    .toolbar a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-family: var(--font-stack);
+        font-size: 14px;
+        text-transform: uppercase;
     }
 
     .toast {
         position: fixed;
-        bottom: 20px;
+        top: 20px;
         left: 50%;
-        transform: translateX(-50%) translateY(100px);
+        transform: translateX(-50%);
+        background: var(--text-color);
+        color: var(--bg-color);
         padding: 8px 16px;
-        background: #22c55e;
-        color: white;
-        border-radius: 20px;
-        font-size: 14px;
+        font-size: 12px;
+        text-transform: uppercase;
         opacity: 0;
-        transition: all 0.3s;
         pointer-events: none;
-        z-index: 100;
+        transition: opacity 0.3s;
     }
 
     .toast.show {
-        transform: translateX(-50%) translateY(0);
         opacity: 1;
     }
 </style>
 
-<div class="header-bar">
-    <a href="index.html" class="home-link" title="Home">🏠</a>
-    <h1><span>📂</span><span id="header-title">Collect</span></h1>
-    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌓</button>
-</div>
+<div class="container">
+    <header>
+        <h1>COLLECT</h1>
+    </header>
 
-<div class="card">
-    <div class="meta-row">
-        <input type="text" class="collection-title" id="title-input" value="My Links" placeholder="Collection Title">
-        <span class="version-badge" id="version-display">v1</span>
+    <input type="text" class="collection-title" id="title" value="MY COLLECTION">
+
+    <div class="card">
+        <div id="list"></div>
+        <div style="margin-top:20px; border-top:1px solid var(--border-color); padding-top:16px;">
+            <input type="text" id="label-input" placeholder="LABEL">
+            <input type="text" id="url-input" placeholder="URL">
+            <button class="add-btn" id="add">ADD LINK</button>
+        </div>
     </div>
 
-    <div class="add-form">
-        <input type="text" id="new-label" placeholder="Label (e.g., Google)" style="flex: 1">
-        <input type="url" id="new-url" placeholder="https://..." style="flex: 2">
-        <button class="btn btn-primary" id="add-btn">Add</button>
+    <div class="actions">
+        <button class="action-btn" id="new">NEW</button>
+        <button class="action-btn" id="share">SHARE</button>
     </div>
-
-    <ul class="link-list" id="list">
-        <!-- Items go here -->
-    </ul>
-    <div class="empty-state" id="empty-msg">No links yet. Add one above!</div>
 </div>
 
-<div class="footer-actions">
-    <button class="btn btn-primary" id="share-btn">📋 Share Collection</button>
-    <button class="btn btn-secondary" id="new-btn">🔄 Start New</button>
+<div class="toolbar">
+    <a href="index.html">[HOME]</a>
 </div>
-<footer style="text-align:center; margin-top:20px; padding:20px; opacity:0.5; font-size:12px;">
-    <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
-</footer>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast">LINK COPIED</div>
 
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
 <script>
-    // State
-    const state = {
-        title: "My Link Collection",
-        version: 1,
-        updatedAt: Date.now(),
-        links: []
-    };
-
-    // DOM Elements
-    const titleInput = document.getElementById('title-input');
-    const versionDisplay = document.getElementById('version-display');
-    const newLabel = document.getElementById('new-label');
-    const newUrl = document.getElementById('new-url');
-    const addBtn = document.getElementById('add-btn');
-    const list = document.getElementById('list');
-    const emptyMsg = document.getElementById('empty-msg');
+    let data = { title: 'MY COLLECTION', items: [] };
     const toast = document.getElementById('toast');
-    const shareBtn = document.getElementById('share-btn');
-    const newBtn = document.getElementById('new-btn');
-    const headerTitle = document.getElementById('header-title');
+    let gun, gunNode, user;
 
-    // Theme logic
-    const themeToggle = document.getElementById('theme-toggle');
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-        document.documentElement.setAttribute('data-theme', storedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.documentElement.setAttribute('data-theme', 'light');
+    // Initialize Gun
+    const relayUrl = localStorage.getItem('gun-relay-url');
+    if (relayUrl) {
+        gun = Gun({ localStorage: false, peers: [relayUrl] });
+        user = gun.user().recall({ sessionStorage: true });
+
+        if (user.is) {
+            gunNode = user.get('shogun-collect');
+        } else {
+            gunNode = gun.get('shogun-collect');
+        }
+
+        gunNode.on((nodeData) => {
+            if (nodeData && nodeData.state) {
+                try {
+                    const d = JSON.parse(nodeData.state);
+                    if (JSON.stringify(d) !== JSON.stringify(data)) {
+                        data = d;
+                        render();
+                        updateHash();
+                    }
+                } catch (e) { }
+            }
+        });
     }
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+
+    document.getElementById('add').addEventListener('click', addItem);
+    document.getElementById('share').addEventListener('click', async () => {
+        await save();
+        try { await navigator.clipboard.writeText(location.href); showToast('LINK COPIED'); } catch { }
+    });
+    document.getElementById('new').addEventListener('click', () => {
+        if (confirm('NEW COLLECTION?')) {
+            data = { title: 'MY COLLECTION', items: [] };
+            render(); save();
+        }
+    });
+    document.getElementById('title').addEventListener('input', (e) => {
+        data.title = e.target.value.toUpperCase();
+        save();
     });
 
-    // Core Functions
-    function render() {
-        titleInput.value = state.title;
-        headerTitle.textContent = state.title || 'Collect';
-        document.title = state.title ? `${state.title} - Collect` : 'Collect';
-        versionDisplay.textContent = `v${state.version}`;
+    function addItem() {
+        const label = document.getElementById('label-input').value.toUpperCase();
+        let url = document.getElementById('url-input').value;
+        if (!label || !url) return;
+        if (!url.startsWith('http')) url = 'https://' + url;
 
-        list.innerHTML = '';
-        if (state.links.length === 0) {
-            emptyMsg.style.display = 'block';
-        } else {
-            emptyMsg.style.display = 'none';
-            state.links.forEach(link => {
-                const li = document.createElement('li');
-                li.className = 'link-item';
+        data.items.push({ label, url });
+        document.getElementById('label-input').value = '';
+        document.getElementById('url-input').value = '';
+        render(); save();
+    }
 
-                // Favicon
-                let hostname = '';
-                try { hostname = new URL(link.url).hostname; } catch { }
-                const faviconUrl = hostname ? `https://www.google.com/s2/favicons?domain=${hostname}&sz=32` : '';
-
-                li.innerHTML = `
-                    ${faviconUrl ? `<img src="${faviconUrl}" class="favicon" alt="icon">` : '<div class="favicon">🔗</div>'}
-                    <div class="link-info">
-                        <div class="link-label" contenteditable="true" onblur="updateLink('${link.id}', 'label', this.textContent)">${link.label}</div>
-                        <a href="${link.url}" target="_blank" class="link-url" title="${link.url}">${hostname || link.url.slice(0, 30)}</a>
-                    </div>
-                    <div class="actions">
-                        <button class="action-btn" onclick="openLink('${link.url}')" title="Open">↗️</button>
-                        <button class="action-btn btn-delete" onclick="deleteLink('${link.id}')" title="Delete">🗑️</button>
-                    </div>
-                `;
-                list.appendChild(li);
-            });
+    window.removeItem = (i) => {
+        if (confirm('REMOVE?')) {
+            data.items.splice(i, 1);
+            render(); save();
         }
+    };
+
+    function render() {
+        document.getElementById('title').value = data.title;
+        const list = document.getElementById('list');
+        if (data.items.length === 0) {
+            list.innerHTML = '<div style="text-align:center; opacity:0.5; padding:20px;">EMPTY COLLECTION</div>';
+            return;
+        }
+        list.innerHTML = data.items.map((item, i) => `
+      <div class="item">
+        <div class="item-content">
+          <div class="item-title">${item.label}</div>
+          <div class="item-url">${item.url}</div>
+        </div>
+        <a href="${item.url}" target="_blank" class="visit-btn">GO</a>
+        <button class="del-btn" onclick="removeItem(${i})">X</button>
+      </div>
+    `).join('');
     }
 
     async function save() {
-        state.version++;
-        state.updatedAt = Date.now();
-        render(); // Update version display
-        const hash = await compress(JSON.stringify(state));
-        history.replaceState(null, '', '#' + hash);
-        try { localStorage.setItem('collect-autosave', hash); } catch { }
+        // Sync to Gun
+        if (gunNode) {
+            gunNode.put({ state: JSON.stringify(data) });
+        }
+        updateHash();
+    }
+
+    async function updateHash() {
+        const h = await compress(JSON.stringify(data));
+        history.replaceState({}, '', '#' + h);
+        try { localStorage.setItem('collect-hash', h); } catch { }
     }
 
     async function load() {
         try {
-            let hash = location.hash.slice(1);
-            if (!hash) hash = localStorage.getItem('collect-autosave');
-
-            if (hash) {
-                const data = JSON.parse(await decompress(hash));
-                state.title = data.title || state.title;
-                state.version = data.version || 1;
-                state.updatedAt = data.updatedAt || Date.now();
-                state.links = Array.isArray(data.links) ? data.links : [];
-            }
-        } catch (e) {
-            console.error('Failed to load state', e);
-        }
+            let h = location.hash.slice(1); if (!h) h = localStorage.getItem('collect-hash');
+            if (h) data = JSON.parse(await decompress(h));
+        } catch { }
         render();
     }
 
-    // Actions
-    function addLink() {
-        const label = newLabel.value.trim();
-        let url = newUrl.value.trim();
+    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()); }
+    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); }
 
-        if (!label || !url) return showToast('Please enter both label and URL');
-        if (!url.startsWith('http')) url = 'https://' + url;
-
-        state.links.push({
-            id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-            label,
-            url,
-            createdAt: Date.now()
-        });
-
-        newLabel.value = '';
-        newUrl.value = '';
-        save();
-        render();
-    }
-
-    window.deleteLink = (id) => {
-        if (!confirm('Delete this link?')) return;
-        state.links = state.links.filter(l => l.id !== id);
-        save();
-        render();
-    };
-
-    window.updateLink = (id, field, value) => {
-        const link = state.links.find(l => l.id === id);
-        if (link && link[field] !== value) {
-            link[field] = value;
-            save();
-        }
-    };
-
-    window.openLink = (url) => window.open(url, '_blank');
-
-    // Event Listeners
-    addBtn.addEventListener('click', addLink);
-
-    // Enter key handling
-    newUrl.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') addLink();
-    });
-    newLabel.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') newUrl.focus();
-    });
-
-    titleInput.addEventListener('change', (e) => {
-        state.title = e.target.value;
-        save();
-        render(); // Updating header title
-    });
-
-    shareBtn.addEventListener('click', async () => {
-        const hash = await compress(JSON.stringify(state));
-        const url = location.origin + location.pathname + '#' + hash;
-        try {
-            await navigator.clipboard.writeText(url);
-            showToast('Link copied to clipboard! 📋');
-        } catch {
-            prompt('Copy this URL:', url);
-        }
-    });
-
-    newBtn.addEventListener('click', () => {
-        if (confirm('Start a new collection? Unsaved changes will be lost.')) {
-            history.pushState(null, '', location.pathname); // Clear hash
-            location.reload();
-        }
-    });
-
-    // Hash Logic
-    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '') }
-    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()) }
-    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000) }
-
-    // Init
-    load();
+    addEventListener('DOMContentLoaded', load);
 </script>

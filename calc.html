@@ -1,32 +1,14 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Calculator</title>
+<title>CALC</title>
 <style>
     :root {
-        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        --text-color: #e0e0e0;
-        --toolbar-bg: rgba(255, 255, 255, 0.1);
-        --toolbar-border: rgba(255, 255, 255, 0.1);
-        --btn-hover-bg: rgba(255, 255, 255, 0.1);
-        --btn-hover-color: #fff;
-        --card-bg: rgba(255, 255, 255, 0.05);
-        --card-border: rgba(255, 255, 255, 0.08);
-        --key-bg: rgba(255, 255, 255, 0.08);
-        --key-hover: rgba(255, 255, 255, 0.15);
-    }
-
-    [data-theme="light"] {
-        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-        --text-color: #102a43;
-        --toolbar-bg: rgba(255, 255, 255, 0.9);
-        --toolbar-border: rgba(0, 0, 0, 0.1);
-        --btn-hover-bg: rgba(0, 0, 0, 0.05);
-        --btn-hover-color: #102a43;
-        --card-bg: rgba(255, 255, 255, 0.6);
-        --card-border: rgba(0, 0, 0, 0.05);
-        --key-bg: rgba(255, 255, 255, 0.8);
-        --key-hover: rgba(0, 0, 0, 0.08);
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --border-color: #ffffff;
+        --accent-color: #d71920;
+        --font-stack: 'Courier New', Courier, monospace;
     }
 
     * {
@@ -35,99 +17,86 @@
         box-sizing: border-box;
     }
 
-    html {
-        background: var(--bg-gradient);
-        color: var(--text-color);
-        min-height: 100vh;
-        transition: background 0.3s, color 0.3s;
-    }
-
     body {
-        font: 16px / 1.5 system-ui;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
         padding: 20px;
         padding-bottom: 100px;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 100vh;
     }
 
     .container {
         width: 100%;
-        max-width: 340px;
+        max-width: 320px;
     }
 
-    .header-bar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 24px;
+    header {
+        text-align: center;
+        margin-bottom: 20px;
     }
 
-    .header-bar h1 {
+    h1 {
         font-size: 24px;
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-weight: normal;
+        letter-spacing: 4px;
+        text-transform: uppercase;
     }
 
     .calculator {
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 20px;
+        border: 1px solid var(--border-color);
         padding: 20px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        background: var(--bg-color);
     }
 
     .display {
-        background: var(--key-bg);
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 16px;
         text-align: right;
-        min-height: 100px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 12px;
     }
 
     .expression {
-        font-size: 16px;
-        opacity: 0.5;
-        min-height: 24px;
+        font-size: 14px;
+        opacity: 0.7;
+        min-height: 20px;
+        margin-bottom: 4px;
         word-break: break-all;
     }
 
     .result {
-        font-size: 42px;
-        font-weight: 600;
+        font-size: 48px;
+        letter-spacing: -2px;
         word-break: break-all;
     }
 
     .keypad {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
+        gap: 12px;
     }
 
     .key {
-        background: var(--key-bg);
-        border: none;
-        border-radius: 12px;
-        padding: 18px;
-        font-size: 22px;
+        aspect-ratio: 1;
+        background: transparent;
+        border: 1px solid #333;
         color: var(--text-color);
+        font-family: var(--font-stack);
+        font-size: 24px;
         cursor: pointer;
-        transition: all 0.15s;
-        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.1s;
     }
 
     .key:hover {
-        background: var(--key-hover);
-        transform: scale(1.05);
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
     .key:active {
@@ -135,129 +104,100 @@
     }
 
     .key.operator {
-        background: rgba(139, 92, 246, 0.2);
-    }
-
-    .key.operator:hover {
-        background: rgba(139, 92, 246, 0.3);
+        border-color: var(--border-color);
     }
 
     .key.equals {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        color: white;
+        background: var(--text-color);
+        color: var(--bg-color);
         grid-column: span 2;
+        aspect-ratio: auto;
     }
 
     .key.equals:hover {
-        opacity: 0.9;
+        background: var(--accent-color);
+        color: var(--text-color);
     }
 
     .key.clear {
-        background: rgba(239, 68, 68, 0.2);
-        color: #ef4444;
+        color: var(--accent-color);
+        border-color: var(--accent-color);
     }
 
     .key.clear:hover {
-        background: rgba(239, 68, 68, 0.3);
+        background: var(--accent-color);
+        color: var(--text-color);
     }
 
     .key.zero {
         grid-column: span 2;
+        aspect-ratio: auto;
     }
 
-    .toolbar {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--toolbar-bg);
-        backdrop-filter: blur(10px);
-        padding: 8px 16px;
-        border-radius: 50px;
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        border: 1px solid var(--toolbar-border);
-        z-index: 100;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn {
-        background: transparent;
-        border: none;
-        color: var(--text-color);
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s, color 0.2s;
-        text-decoration: none;
-        font-size: 20px;
-        width: 40px;
-        height: 40px;
-    }
-
-    .btn:hover {
-        background: var(--btn-hover-bg);
-        color: var(--btn-hover-color);
-    }
-
+    /* History */
     .history-panel {
-        margin-top: 16px;
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 12px;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s;
+        margin-top: 20px;
+        border: 1px solid var(--border-color);
+        display: none;
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 10px;
     }
 
     .history-panel.show {
-        max-height: 200px;
+        display: block;
     }
 
     .history-list {
         list-style: none;
-        padding: 12px;
-        max-height: 180px;
-        overflow-y: auto;
     }
 
     .history-item {
-        padding: 8px;
-        border-bottom: 1px solid var(--card-border);
-        font-size: 14px;
+        font-size: 12px;
+        border-bottom: 1px solid #333;
+        padding: 8px 0;
+        cursor: pointer;
         display: flex;
         justify-content: space-between;
-        cursor: pointer;
-    }
-
-    .history-item:last-child {
-        border-bottom: none;
     }
 
     .history-item:hover {
-        background: var(--key-hover);
-        border-radius: 6px;
+        opacity: 0.7;
     }
 
-    .history-item .expr {
-        opacity: 0.6;
+    /* Toolbar */
+    .toolbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-color);
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-around;
+        padding: 16px;
     }
 
-    .history-item .res {
-        font-weight: 600;
+    .toolbar a,
+    .toolbar button {
+        color: var(--text-color);
+        text-decoration: none;
+        background: transparent;
+        border: none;
+        font-family: var(--font-stack);
+        font-size: 14px;
+        text-transform: uppercase;
+        cursor: pointer;
+        padding: 8px;
+    }
+
+    .toolbar a:hover,
+    .toolbar button:hover {
+        text-decoration: underline;
     }
 </style>
 
 <div class="container">
-    <div class="header-bar">
-        <span>🧮</span>
-        <h1>Calculator</h1>
-    </div>
-
     <div class="calculator">
         <div class="display">
             <div class="expression" id="expression"></div>
@@ -266,19 +206,19 @@
 
         <div class="keypad">
             <button class="key clear" data-action="clear">C</button>
-            <button class="key operator" data-action="backspace">⌫</button>
+            <button class="key operator" data-action="backspace">&lt;</button>
             <button class="key operator" data-action="percent">%</button>
-            <button class="key operator" data-value="/">÷</button>
+            <button class="key operator" data-value="/">/</button>
 
             <button class="key" data-value="7">7</button>
             <button class="key" data-value="8">8</button>
             <button class="key" data-value="9">9</button>
-            <button class="key operator" data-value="*">×</button>
+            <button class="key operator" data-value="*">X</button>
 
             <button class="key" data-value="4">4</button>
             <button class="key" data-value="5">5</button>
             <button class="key" data-value="6">6</button>
-            <button class="key operator" data-value="-">−</button>
+            <button class="key operator" data-value="-">-</button>
 
             <button class="key" data-value="1">1</button>
             <button class="key" data-value="2">2</button>
@@ -297,14 +237,9 @@
 </div>
 
 <div class="toolbar">
-    <a href="index.html" class="btn" title="Home">🏠</a>
-    <button class="btn" id="theme-toggle" title="Toggle Theme">🌓</button>
-    <button class="btn" id="history-toggle" title="History">📜</button>
+    <a href="index.html">[HOME]</a>
+    <button id="history-toggle">[HISTORY]</button>
 </div>
-
-<footer style="text-align:center; padding:20px; opacity:0.5; font-size:12px; transition: opacity 0.3s;">
-    <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
-</footer>
 
 <script>
     let currentInput = '0';
@@ -316,21 +251,6 @@
     const expressionEl = document.getElementById('expression');
     const historyPanel = document.getElementById('history-panel');
     const historyList = document.getElementById('history-list');
-
-    // Theme logic
-    const themeToggle = document.getElementById('theme-toggle');
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-        document.documentElement.setAttribute('data-theme', storedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.documentElement.setAttribute('data-theme', 'light');
-    }
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    });
 
     document.getElementById('history-toggle').addEventListener('click', () => {
         historyPanel.classList.toggle('show');
@@ -347,25 +267,6 @@
         });
     });
 
-    document.addEventListener('keydown', (e) => {
-        const keyMap = {
-            '0': '0', '1': '1', '2': '2', '3': '3', '4': '4',
-            '5': '5', '6': '6', '7': '7', '8': '8', '9': '9',
-            '.': '.', '+': '+', '-': '-', '*': '*', '/': '/',
-            'Enter': 'equals', '=': 'equals', 'Escape': 'clear',
-            'Backspace': 'backspace', '%': 'percent'
-        };
-
-        if (keyMap[e.key]) {
-            e.preventDefault();
-            if (['equals', 'clear', 'backspace', 'percent'].includes(keyMap[e.key])) {
-                handleAction(keyMap[e.key]);
-            } else {
-                handleInput(keyMap[e.key]);
-            }
-        }
-    });
-
     function handleInput(value) {
         if (shouldReset && !isOperator(value)) {
             currentInput = '0';
@@ -375,7 +276,7 @@
 
         if (isOperator(value)) {
             if (currentInput !== '0' || expression) {
-                expression += currentInput + ' ' + getDisplayOperator(value) + ' ';
+                expression += currentInput + ' ' + value + ' ';
                 currentInput = '0';
             }
         } else if (value === '.') {
@@ -421,14 +322,12 @@
         if (!expression && currentInput === '0') return;
 
         const fullExpr = expression + currentInput;
-        const calcExpr = fullExpr
-            .replace(/×/g, '*')
-            .replace(/÷/g, '/')
-            .replace(/−/g, '-')
-            .replace(/\s/g, '');
+        // Replace X with * for calculation if used in display, here we used X in button but value was *
+        // so actually handled by value being *
 
         try {
-            const result = Function('"use strict"; return (' + calcExpr + ')')();
+            // safe eval-ish
+            const result = Function('"use strict"; return (' + fullExpr + ')')();
             const formattedResult = formatNumber(result);
 
             history.unshift({ expr: fullExpr, result: formattedResult });
@@ -440,7 +339,7 @@
             expression = '';
             shouldReset = true;
         } catch (e) {
-            currentInput = 'Error';
+            currentInput = 'ERR';
             shouldReset = true;
         }
     }
@@ -449,17 +348,10 @@
         return ['+', '-', '*', '/'].includes(value);
     }
 
-    function getDisplayOperator(op) {
-        const map = { '+': '+', '-': '−', '*': '×', '/': '÷' };
-        return map[op] || op;
-    }
-
     function formatNumber(num) {
-        if (isNaN(num) || !isFinite(num)) return 'Error';
+        if (isNaN(num) || !isFinite(num)) return 'ERR';
         const str = String(num);
-        if (str.length > 12) {
-            return num.toExponential(6);
-        }
+        if (str.length > 10) return num.toExponential(4);
         return str;
     }
 
@@ -472,13 +364,13 @@
 
     function renderHistory() {
         if (history.length === 0) {
-            historyList.innerHTML = '<li style="text-align:center;opacity:0.5;padding:20px;">No history yet</li>';
+            historyList.innerHTML = '<li style="text-align:center; opacity:0.5; font-size:10px;">EMPTY</li>';
             return;
         }
         historyList.innerHTML = history.map((h, i) => `
       <li class="history-item" onclick="restoreHistory(${i})">
-        <span class="expr">${h.expr}</span>
-        <span class="res">= ${h.result}</span>
+        <span>${h.expr}</span>
+        <strong>${h.result}</strong>
       </li>
     `).join('');
     }

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PASS</title>
+<style>
+    :root {
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --border-color: #ffffff;
+        --accent-color: #d71920;
+        --font-stack: 'Courier New', Courier, monospace;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        padding: 20px;
+        padding-bottom: 100px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 24px;
+        font-weight: normal;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+    }
+
+    .unlock-view,
+    .vault-view {
+        display: none;
+    }
+
+    .unlock-view.active,
+    .vault-view.active {
+        display: block;
+    }
+
+    .field {
+        margin-bottom: 16px;
+    }
+
+    label {
+        display: block;
+        font-size: 10px;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+        opacity: 0.7;
+    }
+
+    input {
+        width: 100%;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        padding: 12px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    input:focus {
+        border-color: var(--accent-color);
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
+        text-transform: uppercase;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 8px;
+    }
+
+    button:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
+    }
+
+    .entry {
+        border: 1px solid var(--border-color);
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    .entry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .entry-name {
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 14px;
+    }
+
+    .entry-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .entry-actions button {
+        width: auto;
+        padding: 6px 10px;
+        font-size: 10px;
+        margin: 0;
+    }
+
+    .entry-field {
+        font-size: 12px;
+        margin-bottom: 4px;
+        opacity: 0.8;
+    }
+
+    .entry-value {
+        font-family: var(--font-stack);
+        font-size: 12px;
+        background: #111;
+        padding: 4px 8px;
+        margin-bottom: 8px;
+        word-break: break-all;
+    }
+
+    .add-btn {
+        border-style: dashed;
+        margin-bottom: 20px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
+        padding: 24px;
+        width: 90%;
+        max-width: 400px;
+    }
+
+    .modal-content h3 {
+        text-transform: uppercase;
+        font-size: 14px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .modal-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .modal-buttons button {
+        flex: 1;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 40px;
+        opacity: 0.5;
+        text-transform: uppercase;
+        font-size: 12px;
+        border: 1px dashed var(--border-color);
+    }
+
+    .toolbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-color);
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-around;
+        padding: 16px;
+    }
+
+    .toolbar a,
+    .toolbar button {
+        color: var(--text-color);
+        text-decoration: none;
+        font-family: var(--font-stack);
+        font-size: 14px;
+        text-transform: uppercase;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--text-color);
+        color: var(--bg-color);
+        padding: 8px 16px;
+        font-size: 12px;
+        text-transform: uppercase;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+    }
+
+    .toast.show {
+        opacity: 1;
+    }
+
+    .warning {
+        font-size: 10px;
+        opacity: 0.5;
+        text-align: center;
+        margin-top: 16px;
+        text-transform: uppercase;
+    }
+</style>
+
+<div class="container">
+    <header>
+        <h1>PASS</h1>
+    </header>
+
+    <div class="unlock-view active" id="unlock-view">
+        <div class="field">
+            <label>MASTER PASSWORD</label>
+            <input type="password" id="master-pass" placeholder="ENTER MASTER PASSWORD">
+        </div>
+        <button id="unlock-btn">UNLOCK VAULT</button>
+        <div class="warning">YOUR PASSWORDS ARE ENCRYPTED LOCALLY<br>MASTER PASSWORD IS NEVER STORED</div>
+    </div>
+
+    <div class="vault-view" id="vault-view">
+        <button class="add-btn" id="add-btn">+ ADD PASSWORD</button>
+        <div id="entries"></div>
+    </div>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h3 id="modal-title">ADD PASSWORD</h3>
+        <div class="field">
+            <label>NAME / SITE</label>
+            <input type="text" id="entry-name" placeholder="GOOGLE, BANK, ETC">
+        </div>
+        <div class="field">
+            <label>USERNAME / EMAIL</label>
+            <input type="text" id="entry-user" placeholder="USERNAME">
+        </div>
+        <div class="field">
+            <label>PASSWORD</label>
+            <input type="text" id="entry-pass" placeholder="PASSWORD">
+        </div>
+        <button id="gen-pass" style="border-style:dashed; font-size:10px;">GENERATE RANDOM</button>
+        <div class="modal-buttons">
+            <button id="cancel-btn">CANCEL</button>
+            <button id="save-btn">SAVE</button>
+        </div>
+    </div>
+</div>
+
+<div class="toolbar">
+    <a href="index.html">[HOME]</a>
+    <button id="lock-btn" style="display:none;">[LOCK]</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+<script>
+    const unlockView = document.getElementById('unlock-view');
+    const vaultView = document.getElementById('vault-view');
+    const entriesEl = document.getElementById('entries');
+    const modal = document.getElementById('modal');
+    const lockBtn = document.getElementById('lock-btn');
+    const toast = document.getElementById('toast');
+
+    let masterKey = null;
+    let entries = [];
+    let editIndex = -1;
+    let gun, gunNode, user;
+
+    // Initialize Gun
+    const relayUrl = localStorage.getItem('gun-relay-url');
+    if (relayUrl) {
+        gun = Gun({ localStorage: false, peers: [relayUrl] });
+        user = gun.user().recall({ sessionStorage: true });
+
+        if (user.is) {
+            gunNode = user.get('shogun-pass');
+        } else {
+            gunNode = gun.get('shogun-pass');
+        }
+    }
+
+    document.getElementById('unlock-btn').addEventListener('click', unlock);
+    document.getElementById('master-pass').addEventListener('keypress', e => { if (e.key === 'Enter') unlock(); });
+
+    document.getElementById('add-btn').addEventListener('click', () => {
+        editIndex = -1;
+        document.getElementById('modal-title').textContent = 'ADD PASSWORD';
+        document.getElementById('entry-name').value = '';
+        document.getElementById('entry-user').value = '';
+        document.getElementById('entry-pass').value = '';
+        modal.classList.add('show');
+    });
+
+    document.getElementById('cancel-btn').addEventListener('click', () => modal.classList.remove('show'));
+    document.getElementById('save-btn').addEventListener('click', saveEntry);
+
+    document.getElementById('gen-pass').addEventListener('click', () => {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
+        let pass = '';
+        for (let i = 0; i < 16; i++) pass += chars[Math.floor(Math.random() * chars.length)];
+        document.getElementById('entry-pass').value = pass;
+    });
+
+    lockBtn.addEventListener('click', lock);
+
+    async function unlock() {
+        const pass = document.getElementById('master-pass').value;
+        if (!pass) { showToast('ENTER PASSWORD'); return; }
+
+        masterKey = await deriveKey(pass);
+
+        // Try to load and decrypt existing data
+        const stored = localStorage.getItem('pass-vault');
+        if (stored) {
+            try {
+                const decrypted = await decrypt(stored, masterKey);
+                entries = JSON.parse(decrypted);
+            } catch {
+                showToast('WRONG PASSWORD');
+                return;
+            }
+        }
+
+        // Also try to sync from Gun
+        if (gunNode) {
+            gunNode.once(async (data) => {
+                if (data && data.vault) {
+                    try {
+                        const decrypted = await decrypt(data.vault, masterKey);
+                        const remote = JSON.parse(decrypted);
+                        if (remote.length > entries.length) {
+                            entries = remote;
+                            render();
+                        }
+                    } catch { }
+                }
+            });
+        }
+
+        unlockView.classList.remove('active');
+        vaultView.classList.add('active');
+        lockBtn.style.display = 'block';
+        document.getElementById('master-pass').value = '';
+        render();
+    }
+
+    function lock() {
+        masterKey = null;
+        entries = [];
+        vaultView.classList.remove('active');
+        unlockView.classList.add('active');
+        lockBtn.style.display = 'none';
+    }
+
+    async function saveEntry() {
+        const name = document.getElementById('entry-name').value.trim();
+        const username = document.getElementById('entry-user').value.trim();
+        const password = document.getElementById('entry-pass').value;
+
+        if (!name) { showToast('ENTER NAME'); return; }
+
+        const entry = { name, username, password };
+
+        if (editIndex >= 0) {
+            entries[editIndex] = entry;
+        } else {
+            entries.push(entry);
+        }
+
+        modal.classList.remove('show');
+        await saveVault();
+        render();
+    }
+
+    window.editEntry = (i) => {
+        editIndex = i;
+        const entry = entries[i];
+        document.getElementById('modal-title').textContent = 'EDIT PASSWORD';
+        document.getElementById('entry-name').value = entry.name;
+        document.getElementById('entry-user').value = entry.username;
+        document.getElementById('entry-pass').value = entry.password;
+        modal.classList.add('show');
+    };
+
+    window.deleteEntry = async (i) => {
+        if (confirm('DELETE THIS PASSWORD?')) {
+            entries.splice(i, 1);
+            await saveVault();
+            render();
+        }
+    };
+
+    window.copyPass = (i) => {
+        navigator.clipboard.writeText(entries[i].password);
+        showToast('COPIED');
+    };
+
+    async function saveVault() {
+        const encrypted = await encrypt(JSON.stringify(entries), masterKey);
+        localStorage.setItem('pass-vault', encrypted);
+
+        // Sync to Gun
+        if (gunNode) {
+            gunNode.put({ vault: encrypted });
+        }
+    }
+
+    function render() {
+        if (entries.length === 0) {
+            entriesEl.innerHTML = '<div class="empty">NO PASSWORDS SAVED</div>';
+            return;
+        }
+
+        entriesEl.innerHTML = entries.map((e, i) => `
+            <div class="entry">
+                <div class="entry-header">
+                    <div class="entry-name">${escapeHtml(e.name)}</div>
+                    <div class="entry-actions">
+                        <button onclick="copyPass(${i})">COPY</button>
+                        <button onclick="editEntry(${i})">EDIT</button>
+                        <button onclick="deleteEntry(${i})">DEL</button>
+                    </div>
+                </div>
+                <div class="entry-field">USER: ${escapeHtml(e.username || '-')}</div>
+                <div class="entry-value">••••••••</div>
+            </div>
+        `).join('');
+    }
+
+    async function deriveKey(password) {
+        const enc = new TextEncoder();
+        const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits', 'deriveKey']);
+        return await crypto.subtle.deriveKey(
+            { name: 'PBKDF2', salt: enc.encode('shogun-pass-salt'), iterations: 100000, hash: 'SHA-256' },
+            keyMaterial,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['encrypt', 'decrypt']
+        );
+    }
+
+    async function encrypt(text, key) {
+        const enc = new TextEncoder();
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(text));
+        return btoa(String.fromCharCode(...iv, ...new Uint8Array(encrypted)));
+    }
+
+    async function decrypt(data, key) {
+        const bytes = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+        const iv = bytes.slice(0, 12);
+        const ciphertext = bytes.slice(12);
+        const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+        return new TextDecoder().decode(decrypted);
+    }
+
+    function escapeHtml(text) {
+        return (text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+</script>

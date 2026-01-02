@@ -1,32 +1,14 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Calendar</title>
+<title>CALENDAR</title>
 <style>
     :root {
-        --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-        --text-color: #e0e0e0;
-        --toolbar-bg: rgba(255, 255, 255, 0.1);
-        --toolbar-border: rgba(255, 255, 255, 0.1);
-        --btn-hover-bg: rgba(255, 255, 255, 0.1);
-        --btn-hover-color: #fff;
-        --card-bg: rgba(255, 255, 255, 0.05);
-        --card-border: rgba(255, 255, 255, 0.08);
-        --today-bg: rgba(139, 92, 246, 0.3);
-        --event-bg: rgba(34, 197, 94, 0.3);
-    }
-
-    [data-theme="light"] {
-        --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-        --text-color: #102a43;
-        --toolbar-bg: rgba(255, 255, 255, 0.9);
-        --toolbar-border: rgba(0, 0, 0, 0.1);
-        --btn-hover-bg: rgba(0, 0, 0, 0.05);
-        --btn-hover-color: #102a43;
-        --card-bg: rgba(255, 255, 255, 0.6);
-        --card-border: rgba(0, 0, 0, 0.05);
-        --today-bg: rgba(139, 92, 246, 0.2);
-        --event-bg: rgba(34, 197, 94, 0.2);
+        --bg-color: #000000;
+        --text-color: #ffffff;
+        --border-color: #ffffff;
+        --accent-color: #d71920;
+        --font-stack: 'Courier New', Courier, monospace;
     }
 
     * {
@@ -35,160 +17,172 @@
         box-sizing: border-box;
     }
 
-    html {
-        background: var(--bg-gradient);
-        color: var(--text-color);
-        min-height: 100vh;
-        transition: background 0.3s, color 0.3s;
-    }
-
     body {
-        font: 16px / 1.5 system-ui;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
         padding: 20px;
         padding-bottom: 100px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .container {
+        width: 100%;
         max-width: 500px;
-        margin: 0 auto;
     }
 
-    .header-bar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 20px;
+    header {
+        text-align: center;
+        margin-bottom: 40px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
     }
 
-    .header-bar h1 {
+    h1 {
         font-size: 24px;
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-weight: normal;
+        letter-spacing: 4px;
+        text-transform: uppercase;
     }
 
+    /* Calendar Nav */
     .nav {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        margin-bottom: 16px;
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 12px;
-        padding: 8px 16px;
+        align-items: center;
+        margin-bottom: 24px;
+        border: 1px solid var(--border-color);
+        padding: 8px;
     }
 
     .nav button {
         background: transparent;
         border: none;
         color: var(--text-color);
-        font-size: 20px;
+        font-family: var(--font-stack);
+        font-size: 18px;
         cursor: pointer;
-        padding: 8px;
-        border-radius: 50%;
-        transition: background 0.2s;
+        padding: 8px 16px;
     }
 
     .nav button:hover {
-        background: var(--btn-hover-bg);
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
-    .nav .month-year {
-        font-weight: 600;
+    .month-year {
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 2px;
     }
 
     .weekdays {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 4px;
         margin-bottom: 8px;
         text-align: center;
         font-size: 12px;
-        opacity: 0.6;
+        opacity: 0.7;
+        text-transform: uppercase;
     }
 
     .calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 4px;
+        gap: 1px;
+        border: 1px solid var(--border-color);
+        background: var(--border-color);
     }
 
     .day {
+        background: var(--bg-color);
         aspect-ratio: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 8px;
         cursor: pointer;
-        font-size: 14px;
-        transition: all 0.2s;
         position: relative;
+        transition: all 0.2s;
     }
 
     .day:hover {
-        background: var(--btn-hover-bg);
-        transform: scale(1.05);
+        background: #333;
+    }
+
+    .day.current-month {
+        color: var(--text-color);
     }
 
     .day.other-month {
-        opacity: 0.3;
+        color: #666;
     }
 
     .day.today {
-        background: var(--today-bg);
+        color: var(--accent-color);
         font-weight: bold;
+        border: 1px solid var(--accent-color);
+    }
+
+    .day.selected {
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
     .day.has-event::after {
         content: '';
+        width: 4px;
+        height: 4px;
+        background: var(--accent-color);
         position: absolute;
         bottom: 4px;
-        width: 6px;
-        height: 6px;
-        background: #22c55e;
         border-radius: 50%;
     }
 
-    .day.selected {
-        border-color: #8b5cf6;
-        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+    .day.selected.has-event::after {
+        background: var(--bg-color);
     }
 
+    /* Events Panel */
     .events-panel {
-        margin-top: 20px;
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 12px;
+        margin-top: 32px;
+        border: 1px solid var(--border-color);
         padding: 16px;
     }
 
     .events-header {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        margin-bottom: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 8px;
     }
 
     .events-header h3 {
         font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: normal;
     }
 
     .add-btn {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        border: none;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-family: var(--font-stack);
         font-size: 12px;
+        padding: 4px 12px;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 4px;
+        text-transform: uppercase;
+    }
+
+    .add-btn:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
     .event-list {
@@ -197,46 +191,36 @@
 
     .event-item {
         display: flex;
-        align-items: center;
         justify-content: space-between;
+        align-items: center;
         padding: 8px;
-        background: var(--event-bg);
-        border-radius: 8px;
+        border: 1px solid #333;
         margin-bottom: 8px;
-        font-size: 14px;
     }
 
-    .event-item .delete-btn {
+    .event-item button {
         background: transparent;
         border: none;
-        color: var(--text-color);
+        color: var(--accent-color);
+        font-family: var(--font-stack);
         cursor: pointer;
-        opacity: 0.5;
-        font-size: 16px;
+        font-weight: bold;
+        padding: 4px;
     }
 
-    .event-item .delete-btn:hover {
-        opacity: 1;
-    }
-
-    .no-events {
-        text-align: center;
-        opacity: 0.5;
-        font-size: 14px;
-        padding: 20px;
-    }
-
+    /* Modal */
     .modal {
         display: none;
         position: fixed;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(2px);
+        z-index: 100;
         align-items: center;
         justify-content: center;
-        z-index: 200;
     }
 
     .modal.show {
@@ -244,181 +228,168 @@
     }
 
     .modal-content {
-        background: var(--card-bg);
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--card-border);
-        border-radius: 16px;
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
         padding: 24px;
         width: 90%;
         max-width: 320px;
     }
 
-    .modal-content h3 {
-        margin-bottom: 16px;
-        font-size: 18px;
-    }
-
     .modal-content input {
         width: 100%;
-        padding: 12px;
-        border: 1px solid var(--card-border);
-        border-radius: 8px;
-        background: var(--card-bg);
+        background: transparent;
+        border: 1px solid var(--border-color);
         color: var(--text-color);
-        font-size: 16px;
-        margin-bottom: 16px;
+        padding: 12px;
+        font-family: var(--font-stack);
+        margin: 16px 0;
+        outline: none;
+    }
+
+    .modal-content input:focus {
+        border-color: var(--accent-color);
     }
 
     .modal-buttons {
         display: flex;
-        gap: 12px;
+        gap: 16px;
     }
 
     .modal-buttons button {
         flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    .modal-buttons .cancel-btn {
-        background: var(--card-bg);
+        background: transparent;
+        border: 1px solid var(--border-color);
         color: var(--text-color);
-        border: 1px solid var(--card-border);
+        padding: 12px;
+        font-family: var(--font-stack);
+        text-transform: uppercase;
+        cursor: pointer;
     }
 
-    .modal-buttons .save-btn {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        color: white;
+    .modal-buttons button:hover {
+        background: var(--text-color);
+        color: var(--bg-color);
     }
 
+    .modal-buttons button.save-btn {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+
+    .modal-buttons button.save-btn:hover {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    /* Toolbar */
     .toolbar {
         position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--toolbar-bg);
-        backdrop-filter: blur(10px);
-        padding: 8px 16px;
-        border-radius: 50px;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-color);
+        border-top: 1px solid var(--border-color);
         display: flex;
-        gap: 12px;
-        align-items: center;
-        border: 1px solid var(--toolbar-border);
-        z-index: 100;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        justify-content: space-around;
+        padding: 16px;
     }
 
-    .btn {
+    .toolbar a,
+    .toolbar button {
+        color: var(--text-color);
+        text-decoration: none;
         background: transparent;
         border: none;
-        color: var(--text-color);
+        font-family: var(--font-stack);
+        font-size: 14px;
+        text-transform: uppercase;
         cursor: pointer;
         padding: 8px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s, color 0.2s;
-        text-decoration: none;
-        font-size: 20px;
-        width: 40px;
-        height: 40px;
+        border: 1px solid transparent;
     }
 
-    .btn:hover {
-        background: var(--btn-hover-bg);
-        color: var(--btn-hover-color);
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #8b5cf6, #22c55e);
-        color: white !important;
+    .toolbar a:hover,
+    .toolbar button:hover {
+        border-color: var(--border-color);
     }
 
     .toast {
         position: fixed;
-        bottom: 80px;
+        top: 20px;
         left: 50%;
-        transform: translateX(-50%) translateY(20px);
+        transform: translateX(-50%);
+        background: var(--text-color);
+        color: var(--bg-color);
         padding: 8px 16px;
-        background: #22c55e;
-        color: white;
-        border-radius: 20px;
-        font-size: 14px;
+        font-size: 12px;
+        text-transform: uppercase;
         opacity: 0;
         pointer-events: none;
-        transition: all 0.3s;
+        transition: opacity 0.3s;
     }
 
     .toast.show {
-        transform: translateX(-50%) translateY(0);
         opacity: 1;
     }
 </style>
 
 <div class="container">
-    <div class="header-bar">
-        <span>📅</span>
-        <h1>Calendar</h1>
-    </div>
+    <header>
+        <h1>CALENDAR</h1>
+    </header>
 
     <div class="nav">
-        <button id="prev-month">◀</button>
+        <button id="prev-month">&lt;</button>
         <span class="month-year" id="month-year"></span>
-        <button id="next-month">▶</button>
+        <button id="next-month">&gt;</button>
     </div>
 
     <div class="weekdays">
-        <div>Sun</div>
-        <div>Mon</div>
-        <div>Tue</div>
-        <div>Wed</div>
-        <div>Thu</div>
-        <div>Fri</div>
-        <div>Sat</div>
+        <div>Su</div>
+        <div>Mo</div>
+        <div>Tu</div>
+        <div>We</div>
+        <div>Th</div>
+        <div>Fr</div>
+        <div>Sa</div>
     </div>
 
     <div class="calendar-grid" id="calendar-grid"></div>
 
     <div class="events-panel">
         <div class="events-header">
-            <h3 id="selected-date">Select a date</h3>
-            <button class="add-btn" id="add-event">➕ Add</button>
+            <h3 id="selected-date">SELECT DATE</h3>
+            <button class="add-btn" id="add-event">ADD +</button>
         </div>
         <ul class="event-list" id="event-list"></ul>
     </div>
 </div>
 
+<!-- Add Event Modal -->
 <div class="modal" id="modal">
     <div class="modal-content">
-        <h3>Add Event</h3>
-        <input type="text" id="event-input" placeholder="Event description...">
+        <h3 style="text-transform:uppercase; font-size:14px; margin-bottom:12px;">New Event</h3>
+        <input type="text" id="event-input" placeholder="DESCRIPTION...">
         <div class="modal-buttons">
-            <button class="cancel-btn" id="cancel-btn">Cancel</button>
-            <button class="save-btn" id="save-btn">Save</button>
+            <button id="cancel-btn">CANCEL</button>
+            <button class="save-btn" id="save-btn">SAVE</button>
         </div>
     </div>
 </div>
 
 <div class="toolbar">
-    <a href="index.html" class="btn" title="Home">🏠</a>
-    <button class="btn" id="theme-toggle" title="Toggle Theme">🌓</button>
-    <button class="btn" id="today-btn" title="Go to Today">📍</button>
-    <button class="btn btn-primary" id="share" title="Share URL">🔗</button>
+    <a href="index.html">[HOME]</a>
+    <button id="today-btn">[TODAY]</button>
+    <button id="share">[SHARE]</button>
 </div>
 
-<div class="toast" id="toast">Link copied!</div>
+<div class="toast" id="toast">LINK COPIED</div>
 
-<footer style="text-align:center; padding:20px; opacity:0.5; font-size:12px; transition: opacity 0.3s;">
-    <a href="https://shogun-eco.xyz" target="_blank" style="color:inherit;text-decoration:none;">shogun-eco.xyz</a>
-</footer>
-
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
 <script>
-    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'];
+    const MONTHS = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+        'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
 
     let currentDate = new Date();
     let selectedDate = null;
@@ -431,22 +402,35 @@
     const modal = document.getElementById('modal');
     const eventInput = document.getElementById('event-input');
     const toastEl = document.getElementById('toast');
+    let gun, gunNode, user;
 
-    // Theme logic
-    const themeToggle = document.getElementById('theme-toggle');
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-        document.documentElement.setAttribute('data-theme', storedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.documentElement.setAttribute('data-theme', 'light');
+    // Initialize Gun
+    const relayUrl = localStorage.getItem('gun-relay-url');
+    if (relayUrl) {
+        gun = Gun({ localStorage: false, peers: [relayUrl] });
+        user = gun.user().recall({ sessionStorage: true });
+
+        if (user.is) {
+            gunNode = user.get('shogun-calendar');
+        } else {
+            gunNode = gun.get('shogun-calendar');
+        }
+
+        gunNode.on((data) => {
+            if (data && data.events) {
+                try {
+                    const remoteEvents = JSON.parse(data.events);
+                    if (JSON.stringify(remoteEvents) !== JSON.stringify(events)) {
+                        events = remoteEvents;
+                        render();
+                        updateHash();
+                    }
+                } catch (e) { }
+            }
+        });
     }
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    });
 
+    // Navigation
     document.getElementById('prev-month').addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
         render();
@@ -463,6 +447,7 @@
         render();
     });
 
+    // Modal logic
     document.getElementById('add-event').addEventListener('click', () => {
         if (!selectedDate) {
             selectedDate = formatDate(new Date());
@@ -482,6 +467,7 @@
         if (e.key === 'Enter') saveEvent();
     });
 
+    // Share logic
     document.getElementById('share').addEventListener('click', async () => {
         await saveData();
         try {
@@ -532,11 +518,10 @@
 
         calendarGrid.innerHTML = '';
 
-        // Previous month days
+        // Previous month filler
         for (let i = 0; i < firstDay.getDay(); i++) {
-            const prevDate = new Date(year, month, -firstDay.getDay() + i + 1);
-            const dateStr = formatDate(prevDate);
-            const dayEl = createDayElement(prevDate.getDate(), dateStr, true);
+            const dayEl = createDayElement('', '', true);
+            dayEl.style.pointerEvents = 'none'; // blank spaces
             calendarGrid.appendChild(dayEl);
         }
 
@@ -544,53 +529,57 @@
         for (let day = 1; day <= lastDay.getDate(); day++) {
             const dateStr = formatDate(new Date(year, month, day));
             const dayEl = createDayElement(day, dateStr, false);
+
+            dayEl.classList.add('current-month');
             if (dateStr === today) dayEl.classList.add('today');
             if (dateStr === selectedDate) dayEl.classList.add('selected');
             if (events[dateStr]?.length) dayEl.classList.add('has-event');
+
             calendarGrid.appendChild(dayEl);
         }
 
-        // Next month days
-        const remaining = 42 - calendarGrid.children.length;
-        for (let i = 1; i <= remaining; i++) {
-            const nextDate = new Date(year, month + 1, i);
-            const dateStr = formatDate(nextDate);
-            const dayEl = createDayElement(i, dateStr, true);
-            calendarGrid.appendChild(dayEl);
-        }
-
-        // Render events for selected date
+        // Render events list
         if (selectedDate) {
             selectedDateEl.textContent = formatDateDisplay(selectedDate);
             const dayEvents = events[selectedDate] || [];
             if (dayEvents.length === 0) {
-                eventList.innerHTML = '<li class="no-events">No events for this day</li>';
+                eventList.innerHTML = '<li style="padding:10px; opacity:0.5; font-size:12px; text-align:center;">NO EVENTS</li>';
             } else {
                 eventList.innerHTML = dayEvents.map((e, i) => `
           <li class="event-item">
-            <span>${e}</span>
-            <button class="delete-btn" onclick="deleteEvent('${selectedDate}', ${i})">✕</button>
+            <span style="font-size:12px; text-transform:uppercase;">${e}</span>
+            <button onclick="deleteEvent('${selectedDate}', ${i})">[X]</button>
           </li>
         `).join('');
             }
         } else {
-            selectedDateEl.textContent = 'Select a date';
-            eventList.innerHTML = '<li class="no-events">Tap a date to view events</li>';
+            selectedDateEl.textContent = 'SELECT DATE';
+            eventList.innerHTML = '<li style="padding:10px; opacity:0.5; font-size:12px; text-align:center;">TAP A DATE</li>';
         }
     }
 
-    function createDayElement(day, dateStr, isOtherMonth) {
+    function createDayElement(day, dateStr, isMetric) {
         const dayEl = document.createElement('div');
-        dayEl.className = 'day' + (isOtherMonth ? ' other-month' : '');
+        dayEl.className = 'day';
         dayEl.textContent = day;
-        dayEl.addEventListener('click', () => {
-            selectedDate = dateStr;
-            render();
-        });
+        if (!isMetric) {
+            dayEl.addEventListener('click', () => {
+                selectedDate = dateStr;
+                render();
+            });
+        }
         return dayEl;
     }
 
     async function saveData() {
+        // Sync to Gun
+        if (gunNode) {
+            gunNode.put({ events: JSON.stringify(events) });
+        }
+        updateHash();
+    }
+
+    async function updateHash() {
         const hash = '#' + await compress(JSON.stringify(events));
         if (location.hash !== hash) history.replaceState({}, '', hash);
         try { localStorage.setItem('calendar-events', JSON.stringify(events)); } catch (e) { }
@@ -604,10 +593,7 @@
                 const stored = localStorage.getItem('calendar-events');
                 if (stored) events = JSON.parse(stored);
             }
-        } catch (e) {
-            console.error('Load failed', e);
-            events = {};
-        }
+        } catch (e) { events = {}; }
         render();
     }
 
@@ -616,31 +602,28 @@
         setTimeout(() => toastEl.classList.remove('show'), 2000);
     }
 
+    // Compression utils
     async function compress(string) {
-        try {
-            const byteArray = new TextEncoder().encode(string);
-            const stream = new CompressionStream('deflate-raw');
-            const writer = stream.writable.getWriter();
-            writer.write(byteArray);
-            writer.close();
-            const buffer = await new Response(stream.readable).arrayBuffer();
-            return btoa(String.fromCharCode(...new Uint8Array(buffer)))
-                .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-        } catch (e) { return ''; }
+        const byteArray = new TextEncoder().encode(string);
+        const stream = new CompressionStream('deflate-raw');
+        const writer = stream.writable.getWriter();
+        writer.write(byteArray);
+        writer.close();
+        const buffer = await new Response(stream.readable).arrayBuffer();
+        return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     }
 
     async function decompress(b64) {
-        try {
-            const binStr = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
-            const byteArray = new Uint8Array(binStr.length);
-            for (let i = 0; i < binStr.length; i++) byteArray[i] = binStr.charCodeAt(i);
-            const stream = new DecompressionStream('deflate-raw');
-            const writer = stream.writable.getWriter();
-            writer.write(byteArray);
-            writer.close();
-            const buffer = await new Response(stream.readable).arrayBuffer();
-            return new TextDecoder().decode(buffer);
-        } catch (e) { return '{}'; }
+        const binStr = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+        const byteArray = new Uint8Array(binStr.length);
+        for (let i = 0; i < binStr.length; i++) byteArray[i] = binStr.charCodeAt(i);
+        const stream = new DecompressionStream('deflate-raw');
+        const writer = stream.writable.getWriter();
+        writer.write(byteArray);
+        writer.close();
+        const buffer = await new Response(stream.readable).arrayBuffer();
+        return new TextDecoder().decode(buffer);
     }
 
     addEventListener('DOMContentLoaded', loadData);
