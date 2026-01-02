@@ -1,396 +1,440 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SHOGUN</title>
-<style>
-  :root {
-    --bg-color: #000000;
-    --text-color: #ffffff;
-    --border-color: #ffffff;
-    --accent-color: #d71920;
-    --font-stack: 'Courier New', Courier, monospace;
-  }
+<html lang="en">
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: var(--font-stack);
-    padding: 20px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .container {
-    width: 100%;
-    max-width: 600px;
-  }
-
-  header {
-    margin-bottom: 40px;
-    text-align: center;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .logo {
-    width: 80px;
-    height: 80px;
-    fill: var(--text-color);
-  }
-
-  h1 {
-    font-size: 24px;
-    font-weight: normal;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-  }
-
-  .subtitle {
-    font-size: 12px;
-    opacity: 0.7;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-
-  a.card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--border-color);
-    padding: 24px 16px;
-    text-decoration: none;
-    color: var(--text-color);
-    transition: all 0.2s;
-    text-align: center;
-    background: transparent;
-  }
-
-  a.card:hover {
-    background: var(--text-color);
-    color: var(--bg-color);
-  }
-
-  .card-name {
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-weight: bold;
-  }
-
-  .card-desc {
-    font-size: 10px;
-    margin-top: 8px;
-    opacity: 0.7;
-    text-transform: uppercase;
-  }
-
-  footer {
-    margin-top: 60px;
-    font-size: 10px;
-    text-transform: uppercase;
-    opacity: 0.5;
-    text-align: center;
-    width: 100%;
-    border-top: 1px solid var(--border-color);
-    padding-top: 20px;
-  }
-
-  footer a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  /* Dot matrix effect overlay */
-  .matrix-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
-    background-size: 20px 20px;
-    opacity: 0.05;
-    pointer-events: none;
-    z-index: 9999;
-  }
-</style>
-
-<div class="matrix-overlay"></div>
-
-<div class="container">
-  <header>
-    <svg class="logo" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
-      <path fill="currentColor"
-        d="M23.7,-34.6C34.4,-34.8,49.4,-36,53.2,-30.4C57,-24.8,49.5,-12.4,41.3,-4.7C33.2,3,24.4,6,18.2,7.4C12.1,8.8,8.5,8.6,5.9,8C3.2,7.4,1.6,6.4,-2.7,11.1C-7.1,15.8,-14.1,26.3,-14.2,25.4C-14.3,24.6,-7.5,12.5,-17.5,6.3C-27.5,0.2,-54.3,0.1,-55.5,-0.7C-56.7,-1.5,-32.2,-2.9,-19.9,-5.2C-7.7,-7.4,-7.6,-10.3,-6.4,-15.5C-5.1,-20.8,-2.5,-28.3,2,-31.7C6.5,-35.1,13,-34.4,23.7,-34.6Z"
-        transform="translate(100 100) scale(2)" />
-    </svg>
-    <h1>SHOGUN</h1>
-    <div class="subtitle">NO BACKEND TOOLS</div>
-  </header>
-
-  <div class="grid">
-    <!-- Essential -->
-    <a href="calendar.html" class="card">
-      <div class="card-name">CALENDAR</div>
-      <div class="card-desc">PLANNER</div>
-    </a>
-    <a href="contacts.html" class="card">
-      <div class="card-name">CONTACTS</div>
-      <div class="card-desc">DIRECTORY</div>
-    </a>
-    <a href="chat.html" class="card">
-      <div class="card-name">CHAT</div>
-      <div class="card-desc">ROOMS</div>
-    </a>
-    <a href="pass.html" class="card">
-      <div class="card-name">PASS</div>
-      <div class="card-desc">VAULT</div>
-    </a>
-    <a href="files.html" class="card">
-      <div class="card-name">FILES</div>
-      <div class="card-desc">STORAGE</div>
-    </a>
-    <a href="calc.html" class="card">
-      <div class="card-name">CALC</div>
-      <div class="card-desc">MATH</div>
-    </a>
-    <a href="alarm.html" class="card">
-      <div class="card-name">ALARM</div>
-      <div class="card-desc">WAKE UP</div>
-    </a>
-    <a href="timer.html" class="card">
-      <div class="card-name">TIMER</div>
-      <div class="card-desc">CHRONO</div>
-    </a>
-
-    <!-- Utilities -->
-    <a href="notes.html" class="card">
-      <div class="card-name">NOTES</div>
-      <div class="card-desc">MULTI</div>
-    </a>
-    <a href="pad.html" class="card">
-      <div class="card-name">PAD</div>
-      <div class="card-desc">QUICK</div>
-    </a>
-    <a href="list.html" class="card">
-      <div class="card-name">LIST</div>
-      <div class="card-desc">TASKS</div>
-    </a>
-    <a href="split.html" class="card">
-      <div class="card-name">SPLIT</div>
-      <div class="card-desc">FINANCE</div>
-    </a>
-    <a href="where.html" class="card">
-      <div class="card-name">WHERE</div>
-      <div class="card-desc">GPS</div>
-    </a>
-    <a href="qr.html" class="card">
-      <div class="card-name">QR</div>
-      <div class="card-desc">SCAN</div>
-    </a>
-
-    <!-- Misc -->
-    <a href="pic.html" class="card">
-      <div class="card-name">PIC</div>
-      <div class="card-desc">IMAGE</div>
-    </a>
-    <a href="poll.html" class="card">
-      <div class="card-name">POLL</div>
-      <div class="card-desc">VOTE</div>
-    </a>
-    <a href="wheel.html" class="card">
-      <div class="card-name">WHEEL</div>
-      <div class="card-desc">RNG</div>
-    </a>
-    <a href="snippet.html" class="card">
-      <div class="card-name">CODE</div>
-      <div class="card-desc">DEV</div>
-    </a>
-    <a href="secret.html" class="card">
-      <div class="card-name">SECRET</div>
-      <div class="card-desc">CRYPT</div>
-    </a>
-    <a href="collect.html" class="card">
-      <div class="card-name">COLLECT</div>
-      <div class="card-desc">LINKS</div>
-    </a>
-  </div>
-
-  <footer style="display:flex; flex-direction:column; gap:12px;">
-    <div id="auth-status" style="display:flex; gap:8px; align-items:center; justify-content:center;">
-      <span id="user-display" style="font-size:12px; opacity:0.7;">NOT LOGGED IN</span>
-      <button id="auth-btn"
-        style="background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; font-size:10px; padding:4px 12px; cursor:pointer;">LOGIN</button>
-    </div>
-    <div style="display:flex; gap:8px; align-items:center; justify-content:center; opacity:0.5;">
-      <span style="font-size:10px;">SYNC SERVER:</span>
-      <input id="gun-url" type="text" placeholder="http://localhost:4000/gun"
-        style="background:transparent; border:none; border-bottom:1px solid #fff; color:#fff; font-family:inherit; font-size:10px; width:150px; text-transform:lowercase; text-align:center;">
-    </div>
-    <a href="https://shogun-eco.xyz" target="_blank">SHOGUN-ECO.XYZ</a>
-  </footer>
-</div>
-
-<!-- Auth Modal -->
-<div id="auth-modal"
-  style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center;">
-  <div style="background:#000; border:1px solid #fff; padding:24px; width:90%; max-width:320px;">
-    <h3 id="auth-title" style="text-transform:uppercase; font-size:14px; margin-bottom:20px; text-align:center;">LOGIN
-    </h3>
-    <input id="auth-user" type="text" placeholder="USERNAME"
-      style="width:100%; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; margin-bottom:12px;">
-    <input id="auth-pass" type="password" placeholder="PASSWORD"
-      style="width:100%; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; margin-bottom:20px;">
-    <div style="display:flex; gap:12px;">
-      <button id="auth-cancel"
-        style="flex:1; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; cursor:pointer; text-transform:uppercase;">CANCEL</button>
-      <button id="auth-submit"
-        style="flex:1; background:#fff; border:1px solid #fff; color:#000; font-family:inherit; padding:12px; cursor:pointer; text-transform:uppercase; font-weight:bold;">LOGIN</button>
-    </div>
-    <button id="auth-toggle"
-      style="width:100%; margin-top:12px; background:transparent; border:none; color:#fff; font-family:inherit; padding:8px; cursor:pointer; opacity:0.5; font-size:10px;">NO
-      ACCOUNT? REGISTER</button>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
-<script>
-  // Elements
-  const gunUrlInput = document.getElementById('gun-url');
-  const userDisplay = document.getElementById('user-display');
-  const authBtn = document.getElementById('auth-btn');
-  const authModal = document.getElementById('auth-modal');
-  const authTitle = document.getElementById('auth-title');
-  const authUser = document.getElementById('auth-user');
-  const authPass = document.getElementById('auth-pass');
-  const authSubmit = document.getElementById('auth-submit');
-  const authToggle = document.getElementById('auth-toggle');
-  const defaultUrl = 'http://localhost:4000/gun';
-  let isLogin = true;
-  let gun, user;
-
-  // Ensure relay URL in localStorage
-  if (!localStorage.getItem('gun-relay-url')) {
-    localStorage.setItem('gun-relay-url', defaultUrl);
-  }
-  gunUrlInput.value = localStorage.getItem('gun-relay-url');
-
-  // Initialize Gun
-  gun = Gun({ localStorage: false, peers: [localStorage.getItem('gun-relay-url')] });
-  user = gun.user().recall({ sessionStorage: true });
-
-  // Check if already logged in
-  gun.on('auth', () => {
-    const alias = user.is?.alias || 'USER';
-    userDisplay.textContent = alias.toUpperCase();
-    authBtn.textContent = 'LOGOUT';
-    localStorage.setItem('gun-user-alias', alias);
-  });
-
-  // URL input handler
-  gunUrlInput.addEventListener('change', (e) => {
-    const url = e.target.value.trim() || defaultUrl;
-    localStorage.setItem('gun-relay-url', url);
-    gunUrlInput.value = url;
-    gunUrlInput.style.color = '#22c55e';
-    setTimeout(() => gunUrlInput.style.color = '#fff', 1000);
-  });
-
-  // Auth button
-  authBtn.addEventListener('click', () => {
-    if (user.is) {
-      // Logout
-      user.leave();
-      userDisplay.textContent = 'NOT LOGGED IN';
-      authBtn.textContent = 'LOGIN';
-      localStorage.removeItem('gun-user-alias');
-    } else {
-      // Show login modal
-      authModal.style.display = 'flex';
-      authUser.focus();
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SHOGUN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      padding: 20px;
+      align-items: center;
     }
-  });
 
-  // Toggle login/register
-  authToggle.addEventListener('click', () => {
-    isLogin = !isLogin;
-    authTitle.textContent = isLogin ? 'LOGIN' : 'REGISTER';
-    authSubmit.textContent = isLogin ? 'LOGIN' : 'REGISTER';
-    authToggle.textContent = isLogin ? 'NO ACCOUNT? REGISTER' : 'HAVE ACCOUNT? LOGIN';
-  });
+    header {
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
 
-  // Cancel
-  document.getElementById('auth-cancel').addEventListener('click', () => {
-    authModal.style.display = 'none';
-    authUser.value = '';
-    authPass.value = '';
-  });
+    .logo {
+      width: 80px;
+      height: 80px;
+      fill: var(--text-color);
+    }
 
-  // Submit auth
-  authSubmit.addEventListener('click', async () => {
-    const username = authUser.value.trim();
-    const password = authPass.value;
-    if (!username || !password) return;
+    .subtitle {
+      font-size: 12px;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-    authSubmit.textContent = 'PLEASE WAIT...';
-    authSubmit.disabled = true;
+    footer {
+      margin-top: 60px;
+      font-size: 10px;
+      text-transform: uppercase;
+      opacity: 0.5;
+      text-align: center;
+      width: 100%;
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
+    }
+  </style>
+</head>
 
-    if (isLogin) {
-      user.auth(username, password, (ack) => {
-        if (ack.err) {
-          alert('LOGIN FAILED: ' + ack.err);
-          authSubmit.textContent = 'LOGIN';
-          authSubmit.disabled = false;
-        } else {
-          authModal.style.display = 'none';
-          authUser.value = '';
-          authPass.value = '';
-          authSubmit.textContent = 'LOGIN';
-          authSubmit.disabled = false;
-        }
-      });
-    } else {
-      user.create(username, password, (ack) => {
-        if (ack.err) {
-          alert('REGISTER FAILED: ' + ack.err);
-          authSubmit.textContent = 'REGISTER';
-          authSubmit.disabled = false;
-        } else {
-          // Auto login after register
-          user.auth(username, password, () => {
+<body>
+
+  <div class="matrix-overlay"></div>
+
+  <div class="container">
+    <header>
+      <svg class="logo" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+        <path fill="currentColor"
+          d="M23.7,-34.6C34.4,-34.8,49.4,-36,53.2,-30.4C57,-24.8,49.5,-12.4,41.3,-4.7C33.2,3,24.4,6,18.2,7.4C12.1,8.8,8.5,8.6,5.9,8C3.2,7.4,1.6,6.4,-2.7,11.1C-7.1,15.8,-14.1,26.3,-14.2,25.4C-14.3,24.6,-7.5,12.5,-17.5,6.3C-27.5,0.2,-54.3,0.1,-55.5,-0.7C-56.7,-1.5,-32.2,-2.9,-19.9,-5.2C-7.7,-7.4,-7.6,-10.3,-6.4,-15.5C-5.1,-20.8,-2.5,-28.3,2,-31.7C6.5,-35.1,13,-34.4,23.7,-34.6Z"
+          transform="translate(100 100) scale(2)" />
+      </svg>
+      <h1>SHOGUN</h1>
+      <div class="subtitle">NO BACKEND TOOLS</div>
+    </header>
+
+    <div class="grid">
+      <!-- Essential -->
+      <a href="calendar.html" class="card">
+        <div class="card-name">CALENDAR</div>
+        <div class="card-desc">PLANNER</div>
+      </a>
+      <a href="contacts.html" class="card">
+        <div class="card-name">CONTACTS</div>
+        <div class="card-desc">DIRECTORY</div>
+      </a>
+      <a href="chat.html" class="card">
+        <div class="card-name">CHAT</div>
+        <div class="card-desc">ROOMS</div>
+      </a>
+      <a href="pass.html" class="card">
+        <div class="card-name">PASS</div>
+        <div class="card-desc">VAULT</div>
+      </a>
+      <a href="files.html" class="card">
+        <div class="card-name">FILES</div>
+        <div class="card-desc">STORAGE</div>
+      </a>
+      <a href="calc.html" class="card">
+        <div class="card-name">CALC</div>
+        <div class="card-desc">MATH</div>
+      </a>
+      <a href="alarm.html" class="card">
+        <div class="card-name">ALARM</div>
+        <div class="card-desc">WAKE UP</div>
+      </a>
+      <a href="timer.html" class="card">
+        <div class="card-name">TIMER</div>
+        <div class="card-desc">CHRONO</div>
+      </a>
+
+      <!-- Utilities -->
+      <a href="notes.html" class="card">
+        <div class="card-name">NOTES</div>
+        <div class="card-desc">MULTI</div>
+      </a>
+      <a href="pad.html" class="card">
+        <div class="card-name">PAD</div>
+        <div class="card-desc">QUICK</div>
+      </a>
+      <a href="list.html" class="card">
+        <div class="card-name">LIST</div>
+        <div class="card-desc">TASKS</div>
+      </a>
+      <a href="split.html" class="card">
+        <div class="card-name">SPLIT</div>
+        <div class="card-desc">FINANCE</div>
+      </a>
+      <a href="where.html" class="card">
+        <div class="card-name">WHERE</div>
+        <div class="card-desc">GPS</div>
+      </a>
+      <a href="qr.html" class="card">
+        <div class="card-name">QR</div>
+        <div class="card-desc">SCAN</div>
+      </a>
+
+      <!-- Misc -->
+      <a href="pic.html" class="card">
+        <div class="card-name">PIC</div>
+        <div class="card-desc">IMAGE</div>
+      </a>
+      <a href="poll.html" class="card">
+        <div class="card-name">POLL</div>
+        <div class="card-desc">VOTE</div>
+      </a>
+      <a href="wheel.html" class="card">
+        <div class="card-name">WHEEL</div>
+        <div class="card-desc">RNG</div>
+      </a>
+      <a href="snippet.html" class="card">
+        <div class="card-name">CODE</div>
+        <div class="card-desc">DEV</div>
+      </a>
+      <a href="secret.html" class="card">
+        <div class="card-name">SECRET</div>
+        <div class="card-desc">CRYPT</div>
+      </a>
+      <a href="collect.html" class="card">
+        <div class="card-name">COLLECT</div>
+        <div class="card-desc">LINKS</div>
+      </a>
+    </div>
+
+    <footer style="display:flex; flex-direction:column; gap:12px;">
+      <div id="auth-status" style="display:flex; gap:8px; align-items:center; justify-content:center;">
+        <span id="user-display" style="font-size:12px; opacity:0.7;">NOT LOGGED IN</span>
+        <button id="auth-btn"
+          style="background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; font-size:10px; padding:4px 12px; cursor:pointer;">LOGIN</button>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; justify-content:center;">
+        <span style="font-size:10px; opacity:0.5;">SYNC SERVER:</span>
+        <input id="gun-url" type="text" placeholder="http://localhost:4000/gun"
+          style="background:transparent; border:none; border-bottom:1px solid #666; color:#fff; font-family:inherit; font-size:10px; width:180px; text-transform:lowercase; text-align:center;">
+      </div>
+      <div style="display:flex; gap:16px; align-items:center; justify-content:center;">
+        <button id="about-btn"
+          style="background:transparent; border:none; color:#fff; font-family:inherit; font-size:10px; cursor:pointer; opacity:0.7;">ABOUT</button>
+        <button id="selfhost-btn"
+          style="background:transparent; border:none; color:#fff; font-family:inherit; font-size:10px; cursor:pointer; opacity:0.7;">SELF
+          HOST</button>
+        <a href="https://shogun-eco.xyz" target="_blank">SHOGUN-ECO.XYZ</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- About Modal -->
+  <div id="about-modal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; overflow-y:auto;">
+    <div style="background:#000; border:1px solid #fff; padding:32px; width:90%; max-width:480px; margin:20px auto;">
+      <h3 style="text-transform:uppercase; font-size:16px; margin-bottom:24px; text-align:center; letter-spacing:2px;">
+        ABOUT SHOGUN</h3>
+
+      <div style="font-size:13px; line-height:1.8; opacity:0.9;">
+        <p style="margin-bottom:16px;">
+          <strong>SHOGUN</strong> is a <strong>privacy-first</strong> toolkit that works without centralized servers.
+        </p>
+
+        <p style="margin-bottom:16px;">
+          📱 <strong>Your data stays yours</strong><br>
+          Data is stored locally on your device. No tracking, no ads, no mandatory accounts.
+        </p>
+
+        <p style="margin-bottom:16px;">
+          🔐 <strong>Identity & Sync</strong><br>
+          Create an optional account to sync across devices using Gun's user space. Your identity is cryptographically
+          secured.
+        </p>
+
+        <p style="margin-bottom:16px;">
+          🔗 <strong>URL Compression</strong><br>
+          Share data instantly via compressed URLs. State is encoded directly in the link - no server needed.
+        </p>
+
+        <p style="margin-bottom:16px;">
+          🛠️ <strong>Included tools</strong><br>
+          Calendar, contacts, chat, password manager, file manager, notes, calculator, timer, QR scanner, polls and
+          more.
+        </p>
+
+        <p style="margin-bottom:20px; opacity:0.7; font-size:11px;">
+          Open source project, part of the Shogun ecosystem.<br>
+          Built with ❤️ for the community.
+        </p>
+      </div>
+
+      <button id="about-close"
+        style="width:100%; background:#fff; border:1px solid #fff; color:#000; font-family:inherit; padding:14px; cursor:pointer; text-transform:uppercase; font-weight:bold;">CLOSE</button>
+    </div>
+  </div>
+
+  <!-- Self Host Modal -->
+  <div id="selfhost-modal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; overflow-y:auto;">
+    <div style="background:#000; border:1px solid #fff; padding:32px; width:90%; max-width:520px; margin:20px auto;">
+      <h3 style="text-transform:uppercase; font-size:16px; margin-bottom:24px; text-align:center; letter-spacing:2px;">
+        SELF HOSTING</h3>
+
+      <div style="font-size:12px; line-height:1.7; opacity:0.9;">
+        <p style="margin-bottom:16px;">
+          Run your own instance of Shogun NoBackend. Choose your preferred method:
+        </p>
+
+        <div style="margin-bottom:20px;">
+          <p style="margin-bottom:8px;"><strong>🐳 Docker</strong></p>
+          <code
+            style="display:block; background:#111; padding:12px; font-size:11px; overflow-x:auto; border:1px solid #333;">docker run -p 4000:4000 ghcr.io/scobru/shogun-nobackend</code>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <p style="margin-bottom:8px;"><strong>📦 Docker Compose</strong></p>
+          <code
+            style="display:block; background:#111; padding:12px; font-size:11px; overflow-x:auto; border:1px solid #333;">git clone https://github.com/scobru/shogun-nobackend<br>cd shogun-nobackend<br>docker-compose up -d</code>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <p style="margin-bottom:8px;"><strong>📁 npm / yarn</strong></p>
+          <code
+            style="display:block; background:#111; padding:12px; font-size:11px; overflow-x:auto; border:1px solid #333;">git clone https://github.com/scobru/shogun-nobackend<br>cd shogun-nobackend<br>yarn install<br>yarn start</code>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <p style="margin-bottom:8px;"><strong>▲ Vercel / Netlify</strong></p>
+          <p style="opacity:0.7; font-size:11px;">Deploy directly from GitHub. Static files only, no server needed for
+            basic usage.</p>
+        </div>
+
+        <p style="opacity:0.5; font-size:10px; margin-bottom:16px;">
+          Default port: 4000 • Sync requires a Gun relay server
+        </p>
+      </div>
+
+      <button id="selfhost-close"
+        style="width:100%; background:#fff; border:1px solid #fff; color:#000; font-family:inherit; padding:14px; cursor:pointer; text-transform:uppercase; font-weight:bold;">CLOSE</button>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="auth-modal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:#000; border:1px solid #fff; padding:24px; width:90%; max-width:320px;">
+      <h3 id="auth-title" style="text-transform:uppercase; font-size:14px; margin-bottom:20px; text-align:center;">LOGIN
+      </h3>
+      <input id="auth-user" type="text" placeholder="USERNAME"
+        style="width:100%; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; margin-bottom:12px;">
+      <input id="auth-pass" type="password" placeholder="PASSWORD"
+        style="width:100%; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; margin-bottom:20px;">
+      <div style="display:flex; gap:12px;">
+        <button id="auth-cancel"
+          style="flex:1; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; cursor:pointer; text-transform:uppercase;">CANCEL</button>
+        <button id="auth-submit"
+          style="flex:1; background:#fff; border:1px solid #fff; color:#000; font-family:inherit; padding:12px; cursor:pointer; text-transform:uppercase; font-weight:bold;">LOGIN</button>
+      </div>
+      <button id="auth-toggle"
+        style="width:100%; margin-top:12px; background:transparent; border:none; color:#fff; font-family:inherit; padding:8px; cursor:pointer; opacity:0.5; font-size:10px;">NO
+        ACCOUNT? REGISTER</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+  <script>
+    // Elements
+    const gunUrlInput = document.getElementById('gun-url');
+    const userDisplay = document.getElementById('user-display');
+    const authBtn = document.getElementById('auth-btn');
+    const authModal = document.getElementById('auth-modal');
+    const authTitle = document.getElementById('auth-title');
+    const authUser = document.getElementById('auth-user');
+    const authPass = document.getElementById('auth-pass');
+    const authSubmit = document.getElementById('auth-submit');
+    const authToggle = document.getElementById('auth-toggle');
+    const aboutBtn = document.getElementById('about-btn');
+    const aboutModal = document.getElementById('about-modal');
+    const aboutClose = document.getElementById('about-close');
+    const selfhostBtn = document.getElementById('selfhost-btn');
+    const selfhostModal = document.getElementById('selfhost-modal');
+    const selfhostClose = document.getElementById('selfhost-close');
+    const defaultUrl = 'http://localhost:4000/gun';
+    let isLogin = true;
+    let gun, user;
+
+    // About modal handlers
+    aboutBtn.addEventListener('click', () => {
+      aboutModal.style.display = 'flex';
+    });
+    aboutClose.addEventListener('click', () => {
+      aboutModal.style.display = 'none';
+    });
+    aboutModal.addEventListener('click', (e) => {
+      if (e.target === aboutModal) aboutModal.style.display = 'none';
+    });
+
+    // Self Host modal handlers
+    selfhostBtn.addEventListener('click', () => {
+      selfhostModal.style.display = 'flex';
+    });
+    selfhostClose.addEventListener('click', () => {
+      selfhostModal.style.display = 'none';
+    });
+    selfhostModal.addEventListener('click', (e) => {
+      if (e.target === selfhostModal) selfhostModal.style.display = 'none';
+    });
+
+    // Ensure relay URL in localStorage
+    if (!localStorage.getItem('gun-relay-url')) {
+      localStorage.setItem('gun-relay-url', defaultUrl);
+    }
+    gunUrlInput.value = localStorage.getItem('gun-relay-url');
+
+    // Initialize Gun
+    gun = Gun({ localStorage: false, peers: [localStorage.getItem('gun-relay-url')] });
+    user = gun.user().recall({ sessionStorage: true });
+
+    // Check if already logged in
+    gun.on('auth', () => {
+      const alias = user.is?.alias || 'USER';
+      userDisplay.textContent = alias.toUpperCase();
+      authBtn.textContent = 'LOGOUT';
+      localStorage.setItem('gun-user-alias', alias);
+    });
+
+    // URL input handler
+    gunUrlInput.addEventListener('change', (e) => {
+      const url = e.target.value.trim() || defaultUrl;
+      localStorage.setItem('gun-relay-url', url);
+      gunUrlInput.value = url;
+      gunUrlInput.style.color = '#22c55e';
+      setTimeout(() => gunUrlInput.style.color = '#fff', 1000);
+    });
+
+    // Auth button
+    authBtn.addEventListener('click', () => {
+      if (user.is) {
+        // Logout
+        user.leave();
+        userDisplay.textContent = 'NOT LOGGED IN';
+        authBtn.textContent = 'LOGIN';
+        localStorage.removeItem('gun-user-alias');
+      } else {
+        // Show login modal
+        authModal.style.display = 'flex';
+        authUser.focus();
+      }
+    });
+
+    // Toggle login/register
+    authToggle.addEventListener('click', () => {
+      isLogin = !isLogin;
+      authTitle.textContent = isLogin ? 'LOGIN' : 'REGISTER';
+      authSubmit.textContent = isLogin ? 'LOGIN' : 'REGISTER';
+      authToggle.textContent = isLogin ? 'NO ACCOUNT? REGISTER' : 'HAVE ACCOUNT? LOGIN';
+    });
+
+    // Cancel
+    document.getElementById('auth-cancel').addEventListener('click', () => {
+      authModal.style.display = 'none';
+      authUser.value = '';
+      authPass.value = '';
+    });
+
+    // Submit auth
+    authSubmit.addEventListener('click', async () => {
+      const username = authUser.value.trim();
+      const password = authPass.value;
+      if (!username || !password) return;
+
+      authSubmit.textContent = 'PLEASE WAIT...';
+      authSubmit.disabled = true;
+
+      if (isLogin) {
+        user.auth(username, password, (ack) => {
+          if (ack.err) {
+            alert('LOGIN FAILED: ' + ack.err);
+            authSubmit.textContent = 'LOGIN';
+            authSubmit.disabled = false;
+          } else {
             authModal.style.display = 'none';
             authUser.value = '';
             authPass.value = '';
             authSubmit.textContent = 'LOGIN';
             authSubmit.disabled = false;
-          });
-        }
-      });
-    }
-  });
+          }
+        });
+      } else {
+        user.create(username, password, (ack) => {
+          if (ack.err) {
+            alert('REGISTER FAILED: ' + ack.err);
+            authSubmit.textContent = 'REGISTER';
+            authSubmit.disabled = false;
+          } else {
+            // Auto login after register
+            user.auth(username, password, () => {
+              authModal.style.display = 'none';
+              authUser.value = '';
+              authPass.value = '';
+              authSubmit.textContent = 'LOGIN';
+              authSubmit.disabled = false;
+            });
+          }
+        });
+      }
+    });
 
-  // Enter key to submit
-  authPass.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') authSubmit.click();
-  });
-</script>
+    // Enter key to submit
+    authPass.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') authSubmit.click();
+    });
+  </script>

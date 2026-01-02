@@ -1,31 +1,18 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CALENDAR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 <style>
-    :root {
-        --bg-color: #000000;
-        --text-color: #ffffff;
-        --border-color: #ffffff;
-        --accent-color: #d71920;
-        --font-stack: 'Courier New', Courier, monospace;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
     body {
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
         padding: 20px;
         padding-bottom: 100px;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
+        
         align-items: center;
     }
 
@@ -39,16 +26,7 @@
         margin-bottom: 40px;
         border-bottom: 1px solid var(--border-color);
         padding-bottom: 20px;
-    }
-
-    h1 {
-        font-size: 24px;
-        font-weight: normal;
-        letter-spacing: 4px;
-        text-transform: uppercase;
-    }
-
-    /* Calendar Nav */
+    }/* Calendar Nav */
     .nav {
         display: flex;
         justify-content: space-between;
@@ -281,56 +259,14 @@
         color: var(--text-color);
     }
 
-    /* Toolbar */
-    .toolbar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: var(--bg-color);
-        border-top: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-around;
-        padding: 16px;
-    }
-
-    .toolbar a,
-    .toolbar button {
-        color: var(--text-color);
-        text-decoration: none;
-        background: transparent;
-        border: none;
-        font-family: var(--font-stack);
-        font-size: 14px;
-        text-transform: uppercase;
-        cursor: pointer;
-        padding: 8px;
-        border: 1px solid transparent;
-    }
+    
 
     .toolbar a:hover,
     .toolbar button:hover {
         border-color: var(--border-color);
     }
 
-    .toast {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--text-color);
-        color: var(--bg-color);
-        padding: 8px 16px;
-        font-size: 12px;
-        text-transform: uppercase;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s;
-    }
-
-    .toast.show {
-        opacity: 1;
-    }
+    
 </style>
 
 <div class="container">
