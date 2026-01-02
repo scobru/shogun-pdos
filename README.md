@@ -19,7 +19,7 @@ yarn install
 yarn start
 ```
 
-Open `http://localhost:4000` to access the dashboard.
+Open `http://localhost:8765` to access the dashboard.
 
 ## Docker Deployment
 
@@ -33,10 +33,10 @@ docker-compose up -d
 
 ```bash
 docker build -t shogun-nobackend .
-docker run -d -p 4000:4000 --name shogun-nobackend shogun-nobackend
+docker run -d -p 8765:8765 --name shogun-nobackend shogun-nobackend
 ```
 
-Access at `http://localhost:4000`
+Access at `http://localhost:8765`
 
 ## Tools
 
