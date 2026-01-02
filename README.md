@@ -1,11 +1,12 @@
 # Shogun NoBackend
 
-A suite of **20+ minimalist web tools** with real-time sync via GunDB.
+A suite of **19 minimalist web tools** with real-time sync via GunDB.
 No backend required, privacy-first, 100% shareable.
 
 ## Features
 
 - **Real-Time Sync**: Login once, sync across all your devices via GunDB
+- **End-to-End Encryption**: All synced data is encrypted with your SEA keypair
 - **User Space**: Private data encrypted and synced in your personal space
 - **URL Sharing**: Share any state via URL hash (works without login too)
 - **Zero Tracking**: Your data never touches our servers (except Gun relay)
@@ -61,10 +62,9 @@ Access at `http://localhost:4000`
 | **Pass** | Encrypted password manager (AES-256) |
 | **Secret** | Client-side encrypted text (AES-GCM) |
 
-### Files & Media
+### Media
 | Tool | Description |
 |------|-------------|
-| **Files** | Local file manager with drag & drop |
 | **Pic** | Image viewer/sharer (Base64 encoded) |
 | **QR** | QR code generator and scanner |
 
@@ -102,6 +102,20 @@ Access at `http://localhost:4000`
 2. Click **LOGIN** in the footer
 3. Register or login with username/password
 4. Your data now syncs across devices!
+
+## Security
+
+When logged in, all data synced to GunDB is **end-to-end encrypted** using your SEA keypair:
+
+- **Encryption**: `SEA.encrypt(data, user._.sea)` before writing to Gun
+- **Decryption**: `SEA.decrypt(data, user._.sea)` when reading from Gun
+- **Fallback**: Anonymous users data is stored in URL hash + localStorage (unencrypted on Gun)
+
+Apps with E2E encryption:
+- Calendar, Contacts, Collect, List, Notes, Pad, Split
+
+Additional encryption:
+- **Pass** (password manager): Uses AES-GCM with master password (double encryption)
 
 ## Tech Stack
 

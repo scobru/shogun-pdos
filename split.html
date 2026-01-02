@@ -1,436 +1,447 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SPLIT</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<style>
-    body {
-        padding: 20px;
-        padding-bottom: 100px;
-        
-        align-items: center;
-    }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SPLIT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 100px;
 
-    .container {
-        width: 100%;
-        max-width: 500px;
-    }
-
-    header {
-        text-align: center;
-        margin-bottom: 30px;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 20px;
-    }.mode-toggle {
-        display: flex;
-        margin-bottom: 24px;
-        border: 1px solid var(--border-color);
-    }
-
-    .mode-btn {
-        flex: 1;
-        padding: 12px;
-        background: transparent;
-        border: none;
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        text-transform: uppercase;
-        cursor: pointer;
-        font-size: 12px;
-    }
-
-    .mode-btn.active {
-        background: var(--text-color);
-        color: var(--bg-color);
-        font-weight: bold;
-    }
-
-    .card {
-        border: 1px solid var(--border-color);
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-
-    h2 {
-        font-size: 14px;
-        text-transform: uppercase;
-        margin-bottom: 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px dashed var(--border-color);
-        padding-bottom: 8px;
-    }
-
-    input,
-    select {
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        padding: 10px;
-        outline: none;
-        width: 100%;
-    }
-
-    input:focus,
-    select:focus {
-        border-color: var(--accent-color);
-    }
-
-    .simple-input {
-        font-size: 32px;
-        text-align: center;
-        margin-bottom: 16px;
-        border: none;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .people-row {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-        margin-bottom: 24px;
-    }
-
-    .people-btn {
-        width: 40px;
-        height: 40px;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-size: 24px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .people-btn:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    .people-count {
-        font-size: 32px;
-        font-weight: bold;
-        min-width: 60px;
-        text-align: center;
-    }
-
-    .tip-row {
-        display: flex;
-        gap: 8px;
-    }
-
-    .tip-btn {
-        flex: 1;
-        padding: 8px;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        cursor: pointer;
-    }
-
-    .tip-btn.active {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    .result {
-        text-align: center;
-        border-top: 1px solid var(--border-color);
-        padding-top: 20px;
-        margin-top: 20px;
-    }
-
-    .total {
-        font-size: 32px;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-
-    /* Advanced Mode */
-    .item {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 8px;
-    }
-
-    .person {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 8px;
-        align-items: center;
-    }
-
-    .del-btn {
-        padding: 8px 12px;
-        background: transparent;
-        border: 1px solid var(--accent-color);
-        color: var(--accent-color);
-        cursor: pointer;
-    }
-
-    .add-btn {
-        width: 100%;
-        padding: 10px;
-        border: 1px dashed var(--border-color);
-        background: transparent;
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        cursor: pointer;
-        text-transform: uppercase;
-        margin-top: 8px;
-    }
-
-    .add-btn:hover {
-        background: #111;
-    }
-
-    .breakdown-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 0;
-        border-bottom: 1px dotted var(--border-color);
-        text-transform: uppercase;
-        font-size: 14px;
-    }
-
-    .actions {
-        display: flex;
-        gap: 16px;
-        margin-top: 24px;
-    }
-
-    .actions button {
-        flex: 1;
-        padding: 14px;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        text-transform: uppercase;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    .actions button:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    /* Toolbar */
-    .toolbar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: var(--bg-color);
-        border-top: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-around;
-        padding: 16px;
-    }
-
-    .toolbar a {
-        color: var(--text-color);
-        text-decoration: none;
-        font-family: var(--font-stack);
-        font-size: 14px;
-        text-transform: uppercase;
-    }
-
-    
-
-    .currency-select {
-        width: auto;
-        border: none;
-        font-size: 14px;
-        padding: 0;
-    }
-</style>
-
-<div class="container">
-    <header>
-        <h1>SPLIT</h1>
-    </header>
-
-    <div class="mode-toggle">
-        <button class="mode-btn active" data-mode="simple">SIMPLE</button>
-        <button class="mode-btn" data-mode="advanced">ADVANCED</button>
-    </div>
-
-    <!-- SIMPLE MODE -->
-    <div id="simple-mode">
-        <div class="card">
-            <h2>TOTAL
-                <select class="currency-select" id="currency">
-                    <option>€</option>
-                    <option>$</option>
-                    <option>£</option>
-                </select>
-            </h2>
-            <input type="number" class="simple-input" id="simple-total" placeholder="0.00" step="0.01">
-
-            <h2>PEOPLE</h2>
-            <div class="people-row">
-                <button class="people-btn" id="minus">-</button>
-                <div class="people-count" id="simple-people">2</div>
-                <button class="people-btn" id="plus">+</button>
-            </div>
-
-            <h2>TIP</h2>
-            <div class="tip-row">
-                <button class="tip-btn" data-tip="0">0%</button>
-                <button class="tip-btn" data-tip="10">10%</button>
-                <button class="tip-btn active" data-tip="15">15%</button>
-                <button class="tip-btn" data-tip="20">20%</button>
-            </div>
-
-            <div class="result">
-                <div style="font-size:12px; text-transform:uppercase;">EACH PAYS</div>
-                <div class="total" id="simple-result">€ 0.00</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ADVANCED MODE -->
-    <div id="advanced-mode" style="display:none">
-        <div class="card">
-            <h2>PARTICIPANTS</h2>
-            <div id="people-list"></div>
-            <button class="add-btn" id="add-person">+ ADD PERSON</button>
-        </div>
-
-        <div class="card">
-            <h2>EXPENSES</h2>
-            <div id="items-list"></div>
-            <button class="add-btn" id="add-item">+ ADD ITEM</button>
-        </div>
-
-        <div class="card">
-            <h2>WHO OWES WHAT</h2>
-            <div id="breakdown"></div>
-        </div>
-    </div>
-
-    <div class="actions">
-        <button id="share">SHARE</button>
-        <button id="reset">RESET</button>
-    </div>
-</div>
-
-<div class="toolbar">
-    <a href="index.html">[HOME]</a>
-</div>
-
-<div class="toast" id="toast">LINK COPIED</div>
-
-<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
-<script>
-    let mode = 'simple', simplePeople = 2, tip = 15, currency = '€';
-    let people = [{ id: 1, name: 'YOU' }, { id: 2, name: 'FRIEND' }];
-    let items = [{ id: 1, name: '', price: '', paidBy: 1, splitWith: [1, 2] }];
-    const toast = document.getElementById('toast');
-    let gun, gunNode, user;
-
-    // Initialize Gun
-    const relayUrl = localStorage.getItem('gun-relay-url');
-    if (relayUrl) {
-        gun = Gun({ localStorage: false, peers: [relayUrl] });
-        user = gun.user().recall({ sessionStorage: true });
-
-        // Determine node based on user auth
-        if (user.is) {
-            gunNode = user.get('shogun-split');
-        } else {
-            gunNode = gun.get('shogun-split');
+            align-items: center;
         }
 
-        // Update from Gun
-        gunNode.on((data) => {
-            if (data && data.state) {
-                try {
-                    const d = JSON.parse(data.state);
-                    if (JSON.stringify(d) !== JSON.stringify(getState())) {
-                        applyState(d);
-                        updateHash(d);
-                    }
-                } catch (e) { }
-            }
-        });
-    }
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
 
-    // Mode Toggle
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            mode = btn.dataset.mode;
-            document.getElementById('simple-mode').style.display = mode === 'simple' ? 'block' : 'none';
-            document.getElementById('advanced-mode').style.display = mode === 'advanced' ? 'block' : 'none';
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            text-transform: uppercase;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .mode-btn.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+            font-weight: bold;
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        input,
+        select {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            padding: 10px;
+            outline: none;
+            width: 100%;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--accent-color);
+        }
+
+        .simple-input {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 16px;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .people-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .people-btn {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .people-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .people-count {
+            font-size: 32px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .tip-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tip-btn {
+            flex: 1;
+            padding: 8px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            cursor: pointer;
+        }
+
+        .tip-btn.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .result {
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .total {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Advanced Mode */
+        .item {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .person {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .del-btn {
+            padding: 8px 12px;
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .add-btn:hover {
+            background: #111;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dotted var(--border-color);
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .actions button {
+            flex: 1;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            text-transform: uppercase;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .actions button:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* Toolbar */
+        .toolbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 16px;
+        }
+
+        .toolbar a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-family: var(--font-stack);
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+
+
+        .currency-select {
+            width: auto;
+            border: none;
+            font-size: 14px;
+            padding: 0;
+        }
+    </style>
+
+    <div class="container">
+        <header>
+            <h1>SPLIT</h1>
+        </header>
+
+        <div class="mode-toggle">
+            <button class="mode-btn active" data-mode="simple">SIMPLE</button>
+            <button class="mode-btn" data-mode="advanced">ADVANCED</button>
+        </div>
+
+        <!-- SIMPLE MODE -->
+        <div id="simple-mode">
+            <div class="card">
+                <h2>TOTAL
+                    <select class="currency-select" id="currency">
+                        <option>€</option>
+                        <option>$</option>
+                        <option>£</option>
+                    </select>
+                </h2>
+                <input type="number" class="simple-input" id="simple-total" placeholder="0.00" step="0.01">
+
+                <h2>PEOPLE</h2>
+                <div class="people-row">
+                    <button class="people-btn" id="minus">-</button>
+                    <div class="people-count" id="simple-people">2</div>
+                    <button class="people-btn" id="plus">+</button>
+                </div>
+
+                <h2>TIP</h2>
+                <div class="tip-row">
+                    <button class="tip-btn" data-tip="0">0%</button>
+                    <button class="tip-btn" data-tip="10">10%</button>
+                    <button class="tip-btn active" data-tip="15">15%</button>
+                    <button class="tip-btn" data-tip="20">20%</button>
+                </div>
+
+                <div class="result">
+                    <div style="font-size:12px; text-transform:uppercase;">EACH PAYS</div>
+                    <div class="total" id="simple-result">€ 0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADVANCED MODE -->
+        <div id="advanced-mode" style="display:none">
+            <div class="card">
+                <h2>PARTICIPANTS</h2>
+                <div id="people-list"></div>
+                <button class="add-btn" id="add-person">+ ADD PERSON</button>
+            </div>
+
+            <div class="card">
+                <h2>EXPENSES</h2>
+                <div id="items-list"></div>
+                <button class="add-btn" id="add-item">+ ADD ITEM</button>
+            </div>
+
+            <div class="card">
+                <h2>WHO OWES WHAT</h2>
+                <div id="breakdown"></div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button id="share">SHARE</button>
+            <button id="reset">RESET</button>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+    </div>
+
+    <div class="toast" id="toast">LINK COPIED</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <script>
+        let mode = 'simple', simplePeople = 2, tip = 15, currency = '€';
+        let people = [{ id: 1, name: 'YOU' }, { id: 2, name: 'FRIEND' }];
+        let items = [{ id: 1, name: '', price: '', paidBy: 1, splitWith: [1, 2] }];
+        const toast = document.getElementById('toast');
+        let gun, gunNode, user;
+
+        // Initialize Gun
+        const relayUrl = localStorage.getItem('gun-relay-url');
+        if (relayUrl) {
+            gun = Gun({ localStorage: false, peers: [relayUrl] });
+            user = gun.user().recall({ sessionStorage: true });
+
+            // Determine node based on user auth
+            if (user.is) {
+                gunNode = user.get('shogun-split');
+            } else {
+                gunNode = gun.get('shogun-split');
+            }
+
+            // Update from Gun
+            gunNode.on(async (data) => {
+                if (data && data.state) {
+                    try {
+                        let stateData = data.state;
+                        // Try to decrypt if user is logged in
+                        if (user.is && user._.sea) {
+                            try {
+                                const decrypted = await SEA.decrypt(stateData, user._.sea);
+                                if (decrypted) stateData = decrypted;
+                            } catch (e) { /* Not encrypted or wrong key */ }
+                        }
+                        const d = JSON.parse(stateData);
+                        if (JSON.stringify(d) !== JSON.stringify(getState())) {
+                            applyState(d);
+                            updateHash(d);
+                        }
+                    } catch (e) { }
+                }
+            });
+        }
+
+        // Mode Toggle
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                mode = btn.dataset.mode;
+                document.getElementById('simple-mode').style.display = mode === 'simple' ? 'block' : 'none';
+                document.getElementById('advanced-mode').style.display = mode === 'advanced' ? 'block' : 'none';
+                save();
+            });
+        });
+
+        // Simple Mode Logic
+        document.getElementById('simple-total').addEventListener('input', calcSimple);
+        document.getElementById('minus').addEventListener('click', () => { if (simplePeople > 1) { simplePeople--; document.getElementById('simple-people').textContent = simplePeople; calcSimple(); } });
+        document.getElementById('plus').addEventListener('click', () => { if (simplePeople < 20) { simplePeople++; document.getElementById('simple-people').textContent = simplePeople; calcSimple(); } });
+        document.getElementById('currency').addEventListener('change', e => { currency = e.target.value; calcSimple(); });
+        document.querySelectorAll('.tip-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                tip = parseInt(btn.dataset.tip);
+                calcSimple();
+            });
+        });
+
+        function calcSimple() {
+            const total = parseFloat(document.getElementById('simple-total').value) || 0;
+            const withTip = total * (1 + tip / 100);
+            const perPerson = withTip / simplePeople;
+            document.getElementById('simple-result').textContent = `${currency} ${perPerson.toFixed(2)}`;
+            save();
+        }
+
+        // Advanced Mode Logic
+        document.getElementById('add-person').addEventListener('click', () => {
+            people.push({ id: Date.now(), name: `PERSON ${people.length + 1}` });
+            renderPeople();
             save();
         });
-    });
 
-    // Simple Mode Logic
-    document.getElementById('simple-total').addEventListener('input', calcSimple);
-    document.getElementById('minus').addEventListener('click', () => { if (simplePeople > 1) { simplePeople--; document.getElementById('simple-people').textContent = simplePeople; calcSimple(); } });
-    document.getElementById('plus').addEventListener('click', () => { if (simplePeople < 20) { simplePeople++; document.getElementById('simple-people').textContent = simplePeople; calcSimple(); } });
-    document.getElementById('currency').addEventListener('change', e => { currency = e.target.value; calcSimple(); });
-    document.querySelectorAll('.tip-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            tip = parseInt(btn.dataset.tip);
-            calcSimple();
+        document.getElementById('add-item').addEventListener('click', () => {
+            items.push({ id: Date.now(), name: '', price: '', paidBy: people[0]?.id, splitWith: people.map(p => p.id) });
+            renderItems();
+            save();
         });
-    });
 
-    function calcSimple() {
-        const total = parseFloat(document.getElementById('simple-total').value) || 0;
-        const withTip = total * (1 + tip / 100);
-        const perPerson = withTip / simplePeople;
-        document.getElementById('simple-result').textContent = `${currency} ${perPerson.toFixed(2)}`;
-        save();
-    }
-
-    // Advanced Mode Logic
-    document.getElementById('add-person').addEventListener('click', () => {
-        people.push({ id: Date.now(), name: `PERSON ${people.length + 1}` });
-        renderPeople();
-        save();
-    });
-
-    document.getElementById('add-item').addEventListener('click', () => {
-        items.push({ id: Date.now(), name: '', price: '', paidBy: people[0]?.id, splitWith: people.map(p => p.id) });
-        renderItems();
-        save();
-    });
-
-    function renderPeople() {
-        const el = document.getElementById('people-list');
-        el.innerHTML = people.map(p => `
+        function renderPeople() {
+            const el = document.getElementById('people-list');
+            el.innerHTML = people.map(p => `
       <div class="person">
         <input type="text" value="${p.name}" onchange="updatePerson(${p.id},this.value)">
         ${people.length > 1 ? `<button class="del-btn" onclick="removePerson(${p.id})">X</button>` : ''}
       </div>
     `).join('');
-    }
+        }
 
-    function renderItems() {
-        const el = document.getElementById('items-list');
-        const peopleOpts = people.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-        el.innerHTML = items.map(item => `
+        function renderItems() {
+            const el = document.getElementById('items-list');
+            const peopleOpts = people.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            el.innerHTML = items.map(item => `
       <div class="item">
         <input type="text" placeholder="WHAT?" value="${item.name}" onchange="updateItem(${item.id},'name',this.value)">
         <input type="number" placeholder="0.00" value="${item.price}" onchange="updateItem(${item.id},'price',this.value)" style="width:80px;">
@@ -438,100 +449,105 @@
         <button class="del-btn" onclick="removeItem(${item.id})">X</button>
       </div>
     `).join('');
-        calcAdvanced();
-    }
+            calcAdvanced();
+        }
 
-    window.updatePerson = (id, name) => { const p = people.find(x => x.id === id); if (p) p.name = name; renderItems(); save(); };
-    window.removePerson = id => { people = people.filter(p => p.id !== id); items.forEach(i => { i.splitWith = i.splitWith.filter(x => x !== id); if (i.paidBy === id && people.length) i.paidBy = people[0].id; }); renderPeople(); renderItems(); save(); };
-    window.updateItem = (id, field, val) => { const i = items.find(x => x.id === id); if (i) { i[field] = field === 'paidBy' ? parseInt(val) : val; } calcAdvanced(); save(); };
-    window.removeItem = id => { items = items.filter(i => i.id !== id); renderItems(); save(); };
+        window.updatePerson = (id, name) => { const p = people.find(x => x.id === id); if (p) p.name = name; renderItems(); save(); };
+        window.removePerson = id => { people = people.filter(p => p.id !== id); items.forEach(i => { i.splitWith = i.splitWith.filter(x => x !== id); if (i.paidBy === id && people.length) i.paidBy = people[0].id; }); renderPeople(); renderItems(); save(); };
+        window.updateItem = (id, field, val) => { const i = items.find(x => x.id === id); if (i) { i[field] = field === 'paidBy' ? parseInt(val) : val; } calcAdvanced(); save(); };
+        window.removeItem = id => { items = items.filter(i => i.id !== id); renderItems(); save(); };
 
-    function calcAdvanced() {
-        const balances = {};
-        people.forEach(p => balances[p.id] = { name: p.name, paid: 0, owes: 0 });
+        function calcAdvanced() {
+            const balances = {};
+            people.forEach(p => balances[p.id] = { name: p.name, paid: 0, owes: 0 });
 
-        items.forEach(item => {
-            const price = parseFloat(item.price) || 0;
-            if (item.paidBy && balances[item.paidBy]) balances[item.paidBy].paid += price;
-            const splitCount = people.length;
-            const perPerson = price / splitCount;
-            people.forEach(p => {
-                if (balances[p.id]) balances[p.id].owes += perPerson;
+            items.forEach(item => {
+                const price = parseFloat(item.price) || 0;
+                if (item.paidBy && balances[item.paidBy]) balances[item.paidBy].paid += price;
+                const splitCount = people.length;
+                const perPerson = price / splitCount;
+                people.forEach(p => {
+                    if (balances[p.id]) balances[p.id].owes += perPerson;
+                });
             });
+
+            const el = document.getElementById('breakdown');
+            el.innerHTML = Object.values(balances).map(b => {
+                const net = b.paid - b.owes;
+                const sign = net >= 0 ? '+' : '';
+                return `<div class="breakdown-item"><span>${b.name}</span><span>${sign}€${net.toFixed(2)}</span></div>`;
+            }).join('');
+        }
+
+        document.getElementById('share').addEventListener('click', async () => {
+            await save();
+            try { await navigator.clipboard.writeText(location.href); showToast('LINK COPIED'); } catch { }
         });
 
-        const el = document.getElementById('breakdown');
-        el.innerHTML = Object.values(balances).map(b => {
-            const net = b.paid - b.owes;
-            const sign = net >= 0 ? '+' : '';
-            return `<div class="breakdown-item"><span>${b.name}</span><span>${sign}€${net.toFixed(2)}</span></div>`;
-        }).join('');
-    }
+        document.getElementById('reset').addEventListener('click', () => {
+            simplePeople = 2; tip = 15;
+            document.getElementById('simple-total').value = '';
+            document.getElementById('simple-people').textContent = '2';
+            people = [{ id: 1, name: 'YOU' }, { id: 2, name: 'FRIEND' }];
+            items = [{ id: 1, name: '', price: '', paidBy: 1, splitWith: [1, 2] }];
+            renderPeople(); renderItems(); calcSimple(); save();
+        });
 
-    document.getElementById('share').addEventListener('click', async () => {
-        await save();
-        try { await navigator.clipboard.writeText(location.href); showToast('LINK COPIED'); } catch { }
-    });
-
-    document.getElementById('reset').addEventListener('click', () => {
-        simplePeople = 2; tip = 15;
-        document.getElementById('simple-total').value = '';
-        document.getElementById('simple-people').textContent = '2';
-        people = [{ id: 1, name: 'YOU' }, { id: 2, name: 'FRIEND' }];
-        items = [{ id: 1, name: '', price: '', paidBy: 1, splitWith: [1, 2] }];
-        renderPeople(); renderItems(); calcSimple(); save();
-    });
-
-    function getState() {
-        return { mode, simplePeople, tip, currency, simpleTotal: document.getElementById('simple-total').value, people, items };
-    }
-
-    function applyState(d) {
-        mode = d.mode || 'simple'; simplePeople = d.simplePeople || 2; tip = d.tip || 15; currency = d.currency || '€';
-        document.getElementById('simple-total').value = d.simpleTotal || '';
-        document.getElementById('simple-people').textContent = simplePeople;
-        document.getElementById('currency').value = currency;
-
-        document.querySelectorAll('.tip-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.tip) === tip));
-        document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
-        document.getElementById('simple-mode').style.display = mode === 'simple' ? 'block' : 'none';
-        document.getElementById('advanced-mode').style.display = mode === 'advanced' ? 'block' : 'none';
-
-        if (d.people) people = d.people; if (d.items) items = d.items;
-        renderPeople(); renderItems(); calcSimple();
-    }
-
-    async function save() {
-        const d = getState();
-
-        // Sync to Gun
-        if (gunNode) {
-            gunNode.put({ state: JSON.stringify(d) });
+        function getState() {
+            return { mode, simplePeople, tip, currency, simpleTotal: document.getElementById('simple-total').value, people, items };
         }
-        updateHash(d);
-    }
 
-    async function updateHash(d) {
-        if (!d) d = getState();
-        const h = await compress(JSON.stringify(d));
-        history.replaceState({}, '', '#' + h);
-        try { localStorage.setItem('split2-hash', h); } catch { }
-    }
+        function applyState(d) {
+            mode = d.mode || 'simple'; simplePeople = d.simplePeople || 2; tip = d.tip || 15; currency = d.currency || '€';
+            document.getElementById('simple-total').value = d.simpleTotal || '';
+            document.getElementById('simple-people').textContent = simplePeople;
+            document.getElementById('currency').value = currency;
 
-    async function load() {
-        try {
-            let h = location.hash.slice(1); if (!h) h = localStorage.getItem('split2-hash');
-            if (h) {
-                const d = JSON.parse(await decompress(h));
-                applyState(d);
+            document.querySelectorAll('.tip-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.tip) === tip));
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+            document.getElementById('simple-mode').style.display = mode === 'simple' ? 'block' : 'none';
+            document.getElementById('advanced-mode').style.display = mode === 'advanced' ? 'block' : 'none';
+
+            if (d.people) people = d.people; if (d.items) items = d.items;
+            renderPeople(); renderItems(); calcSimple();
+        }
+
+        async function save() {
+            const d = getState();
+
+            // Sync to Gun with encryption
+            if (gunNode) {
+                let dataToSave = JSON.stringify(d);
+                // Encrypt if user is logged in
+                if (user.is && user._.sea) {
+                    dataToSave = await SEA.encrypt(dataToSave, user._.sea);
+                }
+                gunNode.put({ state: dataToSave });
             }
-        } catch { }
-        renderPeople(); renderItems(); calcSimple();
-    }
+            updateHash(d);
+        }
 
-    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
-    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()); }
-    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); }
+        async function updateHash(d) {
+            if (!d) d = getState();
+            const h = await compress(JSON.stringify(d));
+            history.replaceState({}, '', '#' + h);
+            try { localStorage.setItem('split2-hash', h); } catch { }
+        }
 
-    addEventListener('DOMContentLoaded', load);
-</script>
+        async function load() {
+            try {
+                let h = location.hash.slice(1); if (!h) h = localStorage.getItem('split2-hash');
+                if (h) {
+                    const d = JSON.parse(await decompress(h));
+                    applyState(d);
+                }
+            } catch { }
+            renderPeople(); renderItems(); calcSimple();
+        }
+
+        async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+        async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()); }
+        function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); }
+
+        addEventListener('DOMContentLoaded', load);
+    </script>

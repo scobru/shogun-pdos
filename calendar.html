@@ -1,567 +1,581 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CALENDAR</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<style>
-    body {
-        padding: 20px;
-        padding-bottom: 100px;
-        
-        align-items: center;
-    }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CALENDAR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 100px;
 
-    .container {
-        width: 100%;
-        max-width: 500px;
-    }
-
-    header {
-        text-align: center;
-        margin-bottom: 40px;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 20px;
-    }/* Calendar Nav */
-    .nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-        border: 1px solid var(--border-color);
-        padding: 8px;
-    }
-
-    .nav button {
-        background: transparent;
-        border: none;
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        font-size: 18px;
-        cursor: pointer;
-        padding: 8px 16px;
-    }
-
-    .nav button:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    .month-year {
-        text-transform: uppercase;
-        font-weight: bold;
-        letter-spacing: 2px;
-    }
-
-    .weekdays {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        margin-bottom: 8px;
-        text-align: center;
-        font-size: 12px;
-        opacity: 0.7;
-        text-transform: uppercase;
-    }
-
-    .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 1px;
-        border: 1px solid var(--border-color);
-        background: var(--border-color);
-    }
-
-    .day {
-        background: var(--bg-color);
-        aspect-ratio: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        position: relative;
-        transition: all 0.2s;
-    }
-
-    .day:hover {
-        background: #333;
-    }
-
-    .day.current-month {
-        color: var(--text-color);
-    }
-
-    .day.other-month {
-        color: #666;
-    }
-
-    .day.today {
-        color: var(--accent-color);
-        font-weight: bold;
-        border: 1px solid var(--accent-color);
-    }
-
-    .day.selected {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    .day.has-event::after {
-        content: '';
-        width: 4px;
-        height: 4px;
-        background: var(--accent-color);
-        position: absolute;
-        bottom: 4px;
-        border-radius: 50%;
-    }
-
-    .day.selected.has-event::after {
-        background: var(--bg-color);
-    }
-
-    /* Events Panel */
-    .events-panel {
-        margin-top: 32px;
-        border: 1px solid var(--border-color);
-        padding: 16px;
-    }
-
-    .events-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 8px;
-    }
-
-    .events-header h3 {
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: normal;
-    }
-
-    .add-btn {
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        font-size: 12px;
-        padding: 4px 12px;
-        cursor: pointer;
-        text-transform: uppercase;
-    }
-
-    .add-btn:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    .event-list {
-        list-style: none;
-    }
-
-    .event-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px;
-        border: 1px solid #333;
-        margin-bottom: 8px;
-    }
-
-    .event-item button {
-        background: transparent;
-        border: none;
-        color: var(--accent-color);
-        font-family: var(--font-stack);
-        cursor: pointer;
-        font-weight: bold;
-        padding: 4px;
-    }
-
-    /* Modal */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(2px);
-        z-index: 100;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal.show {
-        display: flex;
-    }
-
-    .modal-content {
-        background: var(--bg-color);
-        border: 1px solid var(--border-color);
-        padding: 24px;
-        width: 90%;
-        max-width: 320px;
-    }
-
-    .modal-content input {
-        width: 100%;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        padding: 12px;
-        font-family: var(--font-stack);
-        margin: 16px 0;
-        outline: none;
-    }
-
-    .modal-content input:focus {
-        border-color: var(--accent-color);
-    }
-
-    .modal-buttons {
-        display: flex;
-        gap: 16px;
-    }
-
-    .modal-buttons button {
-        flex: 1;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        padding: 12px;
-        font-family: var(--font-stack);
-        text-transform: uppercase;
-        cursor: pointer;
-    }
-
-    .modal-buttons button:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    .modal-buttons button.save-btn {
-        border-color: var(--accent-color);
-        color: var(--accent-color);
-    }
-
-    .modal-buttons button.save-btn:hover {
-        background: var(--accent-color);
-        color: var(--text-color);
-    }
-
-    
-
-    .toolbar a:hover,
-    .toolbar button:hover {
-        border-color: var(--border-color);
-    }
-
-    
-</style>
-
-<div class="container">
-    <header>
-        <h1>CALENDAR</h1>
-    </header>
-
-    <div class="nav">
-        <button id="prev-month">&lt;</button>
-        <span class="month-year" id="month-year"></span>
-        <button id="next-month">&gt;</button>
-    </div>
-
-    <div class="weekdays">
-        <div>Su</div>
-        <div>Mo</div>
-        <div>Tu</div>
-        <div>We</div>
-        <div>Th</div>
-        <div>Fr</div>
-        <div>Sa</div>
-    </div>
-
-    <div class="calendar-grid" id="calendar-grid"></div>
-
-    <div class="events-panel">
-        <div class="events-header">
-            <h3 id="selected-date">SELECT DATE</h3>
-            <button class="add-btn" id="add-event">ADD +</button>
-        </div>
-        <ul class="event-list" id="event-list"></ul>
-    </div>
-</div>
-
-<!-- Add Event Modal -->
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <h3 style="text-transform:uppercase; font-size:14px; margin-bottom:12px;">New Event</h3>
-        <input type="text" id="event-input" placeholder="DESCRIPTION...">
-        <div class="modal-buttons">
-            <button id="cancel-btn">CANCEL</button>
-            <button class="save-btn" id="save-btn">SAVE</button>
-        </div>
-    </div>
-</div>
-
-<div class="toolbar">
-    <a href="index.html">[HOME]</a>
-    <button id="today-btn">[TODAY]</button>
-    <button id="share">[SHARE]</button>
-</div>
-
-<div class="toast" id="toast">LINK COPIED</div>
-
-<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
-<script>
-    const MONTHS = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
-        'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
-
-    let currentDate = new Date();
-    let selectedDate = null;
-    let events = {};
-
-    const monthYearEl = document.getElementById('month-year');
-    const calendarGrid = document.getElementById('calendar-grid');
-    const eventList = document.getElementById('event-list');
-    const selectedDateEl = document.getElementById('selected-date');
-    const modal = document.getElementById('modal');
-    const eventInput = document.getElementById('event-input');
-    const toastEl = document.getElementById('toast');
-    let gun, gunNode, user;
-
-    // Initialize Gun
-    const relayUrl = localStorage.getItem('gun-relay-url');
-    if (relayUrl) {
-        gun = Gun({ localStorage: false, peers: [relayUrl] });
-        user = gun.user().recall({ sessionStorage: true });
-
-        if (user.is) {
-            gunNode = user.get('shogun-calendar');
-        } else {
-            gunNode = gun.get('shogun-calendar');
+            align-items: center;
         }
 
-        gunNode.on((data) => {
-            if (data && data.events) {
-                try {
-                    const remoteEvents = JSON.parse(data.events);
-                    if (JSON.stringify(remoteEvents) !== JSON.stringify(events)) {
-                        events = remoteEvents;
-                        render();
-                        updateHash();
-                    }
-                } catch (e) { }
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        /* Calendar Nav */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+            padding: 8px;
+        }
+
+        .nav button {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+
+        .nav button:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .month-year {
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            margin-bottom: 8px;
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            border: 1px solid var(--border-color);
+            background: var(--border-color);
+        }
+
+        .day {
+            background: var(--bg-color);
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .day:hover {
+            background: #333;
+        }
+
+        .day.current-month {
+            color: var(--text-color);
+        }
+
+        .day.other-month {
+            color: #666;
+        }
+
+        .day.today {
+            color: var(--accent-color);
+            font-weight: bold;
+            border: 1px solid var(--accent-color);
+        }
+
+        .day.selected {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .day.has-event::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--accent-color);
+            position: absolute;
+            bottom: 4px;
+            border-radius: 50%;
+        }
+
+        .day.selected.has-event::after {
+            background: var(--bg-color);
+        }
+
+        /* Events Panel */
+        .events-panel {
+            margin-top: 32px;
+            border: 1px solid var(--border-color);
+            padding: 16px;
+        }
+
+        .events-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .events-header h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: normal;
+        }
+
+        .add-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            font-size: 12px;
+            padding: 4px 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .add-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .event-list {
+            list-style: none;
+        }
+
+        .event-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid #333;
+            margin-bottom: 8px;
+        }
+
+        .event-item button {
+            background: transparent;
+            border: none;
+            color: var(--accent-color);
+            font-family: var(--font-stack);
+            cursor: pointer;
+            font-weight: bold;
+            padding: 4px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(2px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            width: 90%;
+            max-width: 320px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 12px;
+            font-family: var(--font-stack);
+            margin: 16px 0;
+            outline: none;
+        }
+
+        .modal-content input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 12px;
+            font-family: var(--font-stack);
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .modal-buttons button:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .modal-buttons button.save-btn {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .modal-buttons button.save-btn:hover {
+            background: var(--accent-color);
+            color: var(--text-color);
+        }
+
+
+
+        .toolbar a:hover,
+        .toolbar button:hover {
+            border-color: var(--border-color);
+        }
+    </style>
+
+    <div class="container">
+        <header>
+            <h1>CALENDAR</h1>
+        </header>
+
+        <div class="nav">
+            <button id="prev-month">&lt;</button>
+            <span class="month-year" id="month-year"></span>
+            <button id="next-month">&gt;</button>
+        </div>
+
+        <div class="weekdays">
+            <div>Su</div>
+            <div>Mo</div>
+            <div>Tu</div>
+            <div>We</div>
+            <div>Th</div>
+            <div>Fr</div>
+            <div>Sa</div>
+        </div>
+
+        <div class="calendar-grid" id="calendar-grid"></div>
+
+        <div class="events-panel">
+            <div class="events-header">
+                <h3 id="selected-date">SELECT DATE</h3>
+                <button class="add-btn" id="add-event">ADD +</button>
+            </div>
+            <ul class="event-list" id="event-list"></ul>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h3 style="text-transform:uppercase; font-size:14px; margin-bottom:12px;">New Event</h3>
+            <input type="text" id="event-input" placeholder="DESCRIPTION...">
+            <div class="modal-buttons">
+                <button id="cancel-btn">CANCEL</button>
+                <button class="save-btn" id="save-btn">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+        <button id="today-btn">[TODAY]</button>
+        <button id="share">[SHARE]</button>
+    </div>
+
+    <div class="toast" id="toast">LINK COPIED</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <script>
+        const MONTHS = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+            'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+
+        let currentDate = new Date();
+        let selectedDate = null;
+        let events = {};
+
+        const monthYearEl = document.getElementById('month-year');
+        const calendarGrid = document.getElementById('calendar-grid');
+        const eventList = document.getElementById('event-list');
+        const selectedDateEl = document.getElementById('selected-date');
+        const modal = document.getElementById('modal');
+        const eventInput = document.getElementById('event-input');
+        const toastEl = document.getElementById('toast');
+        let gun, gunNode, user;
+
+        // Initialize Gun
+        const relayUrl = localStorage.getItem('gun-relay-url');
+        if (relayUrl) {
+            gun = Gun({ localStorage: false, peers: [relayUrl] });
+            user = gun.user().recall({ sessionStorage: true });
+
+            if (user.is) {
+                gunNode = user.get('shogun-calendar');
+            } else {
+                gunNode = gun.get('shogun-calendar');
             }
+
+            gunNode.on(async (data) => {
+                if (data && data.events) {
+                    try {
+                        let eventsData = data.events;
+                        // Try to decrypt if user is logged in
+                        if (user.is && user._.sea) {
+                            try {
+                                const decrypted = await SEA.decrypt(eventsData, user._.sea);
+                                if (decrypted) eventsData = decrypted;
+                            } catch (e) { /* Not encrypted or wrong key, use as-is */ }
+                        }
+                        const remoteEvents = JSON.parse(eventsData);
+                        if (JSON.stringify(remoteEvents) !== JSON.stringify(events)) {
+                            events = remoteEvents;
+                            render();
+                            updateHash();
+                        }
+                    } catch (e) { }
+                }
+            });
+        }
+
+        // Navigation
+        document.getElementById('prev-month').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            render();
         });
-    }
 
-    // Navigation
-    document.getElementById('prev-month').addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        render();
-    });
+        document.getElementById('next-month').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            render();
+        });
 
-    document.getElementById('next-month').addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        render();
-    });
-
-    document.getElementById('today-btn').addEventListener('click', () => {
-        currentDate = new Date();
-        selectedDate = formatDate(new Date());
-        render();
-    });
-
-    // Modal logic
-    document.getElementById('add-event').addEventListener('click', () => {
-        if (!selectedDate) {
+        document.getElementById('today-btn').addEventListener('click', () => {
+            currentDate = new Date();
             selectedDate = formatDate(new Date());
             render();
-        }
-        modal.classList.add('show');
-        eventInput.focus();
-    });
+        });
 
-    document.getElementById('cancel-btn').addEventListener('click', () => {
-        modal.classList.remove('show');
-        eventInput.value = '';
-    });
+        // Modal logic
+        document.getElementById('add-event').addEventListener('click', () => {
+            if (!selectedDate) {
+                selectedDate = formatDate(new Date());
+                render();
+            }
+            modal.classList.add('show');
+            eventInput.focus();
+        });
 
-    document.getElementById('save-btn').addEventListener('click', saveEvent);
-    eventInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') saveEvent();
-    });
+        document.getElementById('cancel-btn').addEventListener('click', () => {
+            modal.classList.remove('show');
+            eventInput.value = '';
+        });
 
-    // Share logic
-    document.getElementById('share').addEventListener('click', async () => {
-        await saveData();
-        try {
-            await navigator.clipboard.writeText(location.href);
-            showToast();
-        } catch (e) {
-            console.error('Copy failed', e);
-        }
-    });
+        document.getElementById('save-btn').addEventListener('click', saveEvent);
+        eventInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') saveEvent();
+        });
 
-    function formatDate(date) {
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    }
+        // Share logic
+        document.getElementById('share').addEventListener('click', async () => {
+            await saveData();
+            try {
+                await navigator.clipboard.writeText(location.href);
+                showToast();
+            } catch (e) {
+                console.error('Copy failed', e);
+            }
+        });
 
-    function formatDateDisplay(dateStr) {
-        const [year, month, day] = dateStr.split('-');
-        return `${MONTHS[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
-    }
-
-    function saveEvent() {
-        const text = eventInput.value.trim();
-        if (!text || !selectedDate) return;
-
-        if (!events[selectedDate]) events[selectedDate] = [];
-        events[selectedDate].push(text);
-
-        eventInput.value = '';
-        modal.classList.remove('show');
-        render();
-        saveData();
-    }
-
-    function deleteEvent(date, index) {
-        events[date].splice(index, 1);
-        if (events[date].length === 0) delete events[date];
-        render();
-        saveData();
-    }
-
-    function render() {
-        monthYearEl.textContent = `${MONTHS[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const today = formatDate(new Date());
-
-        calendarGrid.innerHTML = '';
-
-        // Previous month filler
-        for (let i = 0; i < firstDay.getDay(); i++) {
-            const dayEl = createDayElement('', '', true);
-            dayEl.style.pointerEvents = 'none'; // blank spaces
-            calendarGrid.appendChild(dayEl);
+        function formatDate(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
 
-        // Current month days
-        for (let day = 1; day <= lastDay.getDate(); day++) {
-            const dateStr = formatDate(new Date(year, month, day));
-            const dayEl = createDayElement(day, dateStr, false);
-
-            dayEl.classList.add('current-month');
-            if (dateStr === today) dayEl.classList.add('today');
-            if (dateStr === selectedDate) dayEl.classList.add('selected');
-            if (events[dateStr]?.length) dayEl.classList.add('has-event');
-
-            calendarGrid.appendChild(dayEl);
+        function formatDateDisplay(dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            return `${MONTHS[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
         }
 
-        // Render events list
-        if (selectedDate) {
-            selectedDateEl.textContent = formatDateDisplay(selectedDate);
-            const dayEvents = events[selectedDate] || [];
-            if (dayEvents.length === 0) {
-                eventList.innerHTML = '<li style="padding:10px; opacity:0.5; font-size:12px; text-align:center;">NO EVENTS</li>';
-            } else {
-                eventList.innerHTML = dayEvents.map((e, i) => `
+        function saveEvent() {
+            const text = eventInput.value.trim();
+            if (!text || !selectedDate) return;
+
+            if (!events[selectedDate]) events[selectedDate] = [];
+            events[selectedDate].push(text);
+
+            eventInput.value = '';
+            modal.classList.remove('show');
+            render();
+            saveData();
+        }
+
+        function deleteEvent(date, index) {
+            events[date].splice(index, 1);
+            if (events[date].length === 0) delete events[date];
+            render();
+            saveData();
+        }
+
+        function render() {
+            monthYearEl.textContent = `${MONTHS[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const today = formatDate(new Date());
+
+            calendarGrid.innerHTML = '';
+
+            // Previous month filler
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                const dayEl = createDayElement('', '', true);
+                dayEl.style.pointerEvents = 'none'; // blank spaces
+                calendarGrid.appendChild(dayEl);
+            }
+
+            // Current month days
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dateStr = formatDate(new Date(year, month, day));
+                const dayEl = createDayElement(day, dateStr, false);
+
+                dayEl.classList.add('current-month');
+                if (dateStr === today) dayEl.classList.add('today');
+                if (dateStr === selectedDate) dayEl.classList.add('selected');
+                if (events[dateStr]?.length) dayEl.classList.add('has-event');
+
+                calendarGrid.appendChild(dayEl);
+            }
+
+            // Render events list
+            if (selectedDate) {
+                selectedDateEl.textContent = formatDateDisplay(selectedDate);
+                const dayEvents = events[selectedDate] || [];
+                if (dayEvents.length === 0) {
+                    eventList.innerHTML = '<li style="padding:10px; opacity:0.5; font-size:12px; text-align:center;">NO EVENTS</li>';
+                } else {
+                    eventList.innerHTML = dayEvents.map((e, i) => `
           <li class="event-item">
             <span style="font-size:12px; text-transform:uppercase;">${e}</span>
             <button onclick="deleteEvent('${selectedDate}', ${i})">[X]</button>
           </li>
         `).join('');
-            }
-        } else {
-            selectedDateEl.textContent = 'SELECT DATE';
-            eventList.innerHTML = '<li style="padding:10px; opacity:0.5; font-size:12px; text-align:center;">TAP A DATE</li>';
-        }
-    }
-
-    function createDayElement(day, dateStr, isMetric) {
-        const dayEl = document.createElement('div');
-        dayEl.className = 'day';
-        dayEl.textContent = day;
-        if (!isMetric) {
-            dayEl.addEventListener('click', () => {
-                selectedDate = dateStr;
-                render();
-            });
-        }
-        return dayEl;
-    }
-
-    async function saveData() {
-        // Sync to Gun
-        if (gunNode) {
-            gunNode.put({ events: JSON.stringify(events) });
-        }
-        updateHash();
-    }
-
-    async function updateHash() {
-        const hash = '#' + await compress(JSON.stringify(events));
-        if (location.hash !== hash) history.replaceState({}, '', hash);
-        try { localStorage.setItem('calendar-events', JSON.stringify(events)); } catch (e) { }
-    }
-
-    async function loadData() {
-        try {
-            if (location.hash && location.hash !== '#') {
-                events = JSON.parse(await decompress(location.hash.slice(1)));
+                }
             } else {
-                const stored = localStorage.getItem('calendar-events');
-                if (stored) events = JSON.parse(stored);
+                selectedDateEl.textContent = 'SELECT DATE';
+                eventList.innerHTML = '<li style="padding:10px; opacity:0.5; font-size:12px; text-align:center;">TAP A DATE</li>';
             }
-        } catch (e) { events = {}; }
-        render();
-    }
+        }
 
-    function showToast() {
-        toastEl.classList.add('show');
-        setTimeout(() => toastEl.classList.remove('show'), 2000);
-    }
+        function createDayElement(day, dateStr, isMetric) {
+            const dayEl = document.createElement('div');
+            dayEl.className = 'day';
+            dayEl.textContent = day;
+            if (!isMetric) {
+                dayEl.addEventListener('click', () => {
+                    selectedDate = dateStr;
+                    render();
+                });
+            }
+            return dayEl;
+        }
 
-    // Compression utils
-    async function compress(string) {
-        const byteArray = new TextEncoder().encode(string);
-        const stream = new CompressionStream('deflate-raw');
-        const writer = stream.writable.getWriter();
-        writer.write(byteArray);
-        writer.close();
-        const buffer = await new Response(stream.readable).arrayBuffer();
-        return btoa(String.fromCharCode(...new Uint8Array(buffer)))
-            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    }
+        async function saveData() {
+            // Sync to Gun with encryption
+            if (gunNode) {
+                let dataToSave = JSON.stringify(events);
+                // Encrypt if user is logged in
+                if (user.is && user._.sea) {
+                    dataToSave = await SEA.encrypt(dataToSave, user._.sea);
+                }
+                gunNode.put({ events: dataToSave });
+            }
+            updateHash();
+        }
 
-    async function decompress(b64) {
-        const binStr = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
-        const byteArray = new Uint8Array(binStr.length);
-        for (let i = 0; i < binStr.length; i++) byteArray[i] = binStr.charCodeAt(i);
-        const stream = new DecompressionStream('deflate-raw');
-        const writer = stream.writable.getWriter();
-        writer.write(byteArray);
-        writer.close();
-        const buffer = await new Response(stream.readable).arrayBuffer();
-        return new TextDecoder().decode(buffer);
-    }
+        async function updateHash() {
+            const hash = '#' + await compress(JSON.stringify(events));
+            if (location.hash !== hash) history.replaceState({}, '', hash);
+            try { localStorage.setItem('calendar-events', JSON.stringify(events)); } catch (e) { }
+        }
 
-    addEventListener('DOMContentLoaded', loadData);
-    addEventListener('hashchange', loadData);
-</script>
+        async function loadData() {
+            try {
+                if (location.hash && location.hash !== '#') {
+                    events = JSON.parse(await decompress(location.hash.slice(1)));
+                } else {
+                    const stored = localStorage.getItem('calendar-events');
+                    if (stored) events = JSON.parse(stored);
+                }
+            } catch (e) { events = {}; }
+            render();
+        }
+
+        function showToast() {
+            toastEl.classList.add('show');
+            setTimeout(() => toastEl.classList.remove('show'), 2000);
+        }
+
+        // Compression utils
+        async function compress(string) {
+            const byteArray = new TextEncoder().encode(string);
+            const stream = new CompressionStream('deflate-raw');
+            const writer = stream.writable.getWriter();
+            writer.write(byteArray);
+            writer.close();
+            const buffer = await new Response(stream.readable).arrayBuffer();
+            return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+                .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+
+        async function decompress(b64) {
+            const binStr = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+            const byteArray = new Uint8Array(binStr.length);
+            for (let i = 0; i < binStr.length; i++) byteArray[i] = binStr.charCodeAt(i);
+            const stream = new DecompressionStream('deflate-raw');
+            const writer = stream.writable.getWriter();
+            writer.write(byteArray);
+            writer.close();
+            const buffer = await new Response(stream.readable).arrayBuffer();
+            return new TextDecoder().decode(buffer);
+        }
+
+        addEventListener('DOMContentLoaded', loadData);
+        addEventListener('hashchange', loadData);
+    </script>

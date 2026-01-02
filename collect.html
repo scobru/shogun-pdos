@@ -1,284 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>COLLECT</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<style>
-    body {
-        padding: 20px;
-        padding-bottom: 100px;
-        
-        align-items: center;
-    }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>COLLECT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 100px;
 
-    .container {
-        width: 100%;
-        max-width: 500px;
-    }
+            align-items: center;
+        }
 
-    header {
-        text-align: center;
-        margin-bottom: 30px;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 20px;
-    }input {
-        width: 100%;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        padding: 12px;
-        margin-bottom: 12px;
-        outline: none;
-    }
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
 
-    input:focus {
-        border-color: var(--accent-color);
-    }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
 
-    .collection-title {
-        font-size: 18px;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 20px;
-        border: none;
-        border-bottom: 1px dashed var(--border-color);
-    }
+        input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            padding: 12px;
+            margin-bottom: 12px;
+            outline: none;
+        }
 
-    .card {
-        border: 1px solid var(--border-color);
-        padding: 20px;
-        margin-bottom: 20px;
-    }
+        input:focus {
+            border-color: var(--accent-color);
+        }
 
-    h2 {
-        font-size: 14px;
-        text-transform: uppercase;
-        margin-bottom: 16px;
-        border-bottom: 1px dashed var(--border-color);
-        padding-bottom: 8px;
-    }
+        .collection-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            border: none;
+            border-bottom: 1px dashed var(--border-color);
+        }
 
-    .item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
-        padding-bottom: 12px;
-        border-bottom: 1px dotted #333;
-    }
+        .card {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
 
-    .item:last-child {
-        border-bottom: none;
-    }
+        h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 8px;
+        }
 
-    .item-content {
-        flex: 1;
-        overflow: hidden;
-    }
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dotted #333;
+        }
 
-    .item-title {
-        font-weight: bold;
-        text-transform: uppercase;
-    }
+        .item:last-child {
+            border-bottom: none;
+        }
 
-    .item-url {
-        font-size: 12px;
-        opacity: 0.7;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+        .item-content {
+            flex: 1;
+            overflow: hidden;
+        }
 
-    .del-btn,
-    .visit-btn {
-        padding: 8px;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        cursor: pointer;
-        font-size: 10px;
-        text-transform: uppercase;
-    }
+        .item-title {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
-    .del-btn:hover,
-    .visit-btn:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
+        .item-url {
+            font-size: 12px;
+            opacity: 0.7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    .add-btn {
-        width: 100%;
-        padding: 12px;
-        background: var(--text-color);
-        border: 1px solid var(--text-color);
-        color: var(--bg-color);
-        font-family: var(--font-stack);
-        text-transform: uppercase;
-        cursor: pointer;
-        font-weight: bold;
-        margin-top: 8px;
-    }
+        .del-btn,
+        .visit-btn {
+            padding: 8px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
 
-    .add-btn:hover {
-        background: var(--bg-color);
-        color: var(--text-color);
-    }
+        .del-btn:hover,
+        .visit-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
 
-    .actions {
-        display: flex;
-        gap: 16px;
-    }
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--text-color);
+            border: 1px solid var(--text-color);
+            color: var(--bg-color);
+            font-family: var(--font-stack);
+            text-transform: uppercase;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 8px;
+        }
 
-    .action-btn {
-        flex: 1;
-        padding: 12px;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        text-transform: uppercase;
-        cursor: pointer;
-    }
+        .add-btn:hover {
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
 
-    .action-btn:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
+        .actions {
+            display: flex;
+            gap: 16px;
+        }
 
-    /* Toolbar */
-    .toolbar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: var(--bg-color);
-        border-top: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-around;
-        padding: 16px;
-    }
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            text-transform: uppercase;
+            cursor: pointer;
+        }
 
-    .toolbar a {
-        color: var(--text-color);
-        text-decoration: none;
-        font-family: var(--font-stack);
-        font-size: 14px;
-        text-transform: uppercase;
-    }
+        .action-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
 
-    
-</style>
+        /* Toolbar */
+        .toolbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 16px;
+        }
 
-<div class="container">
-    <header>
-        <h1>COLLECT</h1>
-    </header>
+        .toolbar a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-family: var(--font-stack);
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+    </style>
 
-    <input type="text" class="collection-title" id="title" value="MY COLLECTION">
+    <div class="container">
+        <header>
+            <h1>COLLECT</h1>
+        </header>
 
-    <div class="card">
-        <div id="list"></div>
-        <div style="margin-top:20px; border-top:1px solid var(--border-color); padding-top:16px;">
-            <input type="text" id="label-input" placeholder="LABEL">
-            <input type="text" id="url-input" placeholder="URL">
-            <button class="add-btn" id="add">ADD LINK</button>
+        <input type="text" class="collection-title" id="title" value="MY COLLECTION">
+
+        <div class="card">
+            <div id="list"></div>
+            <div style="margin-top:20px; border-top:1px solid var(--border-color); padding-top:16px;">
+                <input type="text" id="label-input" placeholder="LABEL">
+                <input type="text" id="url-input" placeholder="URL">
+                <button class="add-btn" id="add">ADD LINK</button>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="action-btn" id="new">NEW</button>
+            <button class="action-btn" id="share">SHARE</button>
         </div>
     </div>
 
-    <div class="actions">
-        <button class="action-btn" id="new">NEW</button>
-        <button class="action-btn" id="share">SHARE</button>
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
     </div>
-</div>
 
-<div class="toolbar">
-    <a href="index.html">[HOME]</a>
-</div>
+    <div class="toast" id="toast">LINK COPIED</div>
 
-<div class="toast" id="toast">LINK COPIED</div>
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <script>
+        let data = { title: 'MY COLLECTION', items: [] };
+        const toast = document.getElementById('toast');
+        let gun, gunNode, user;
 
-<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
-<script>
-    let data = { title: 'MY COLLECTION', items: [] };
-    const toast = document.getElementById('toast');
-    let gun, gunNode, user;
+        // Initialize Gun
+        const relayUrl = localStorage.getItem('gun-relay-url');
+        if (relayUrl) {
+            gun = Gun({ localStorage: false, peers: [relayUrl] });
+            user = gun.user().recall({ sessionStorage: true });
 
-    // Initialize Gun
-    const relayUrl = localStorage.getItem('gun-relay-url');
-    if (relayUrl) {
-        gun = Gun({ localStorage: false, peers: [relayUrl] });
-        user = gun.user().recall({ sessionStorage: true });
+            if (user.is) {
+                gunNode = user.get('shogun-collect');
+            } else {
+                gunNode = gun.get('shogun-collect');
+            }
 
-        if (user.is) {
-            gunNode = user.get('shogun-collect');
-        } else {
-            gunNode = gun.get('shogun-collect');
+            gunNode.on(async (nodeData) => {
+                if (nodeData && nodeData.state) {
+                    try {
+                        let stateData = nodeData.state;
+                        // Try to decrypt if user is logged in
+                        if (user.is && user._.sea) {
+                            try {
+                                const decrypted = await SEA.decrypt(stateData, user._.sea);
+                                if (decrypted) stateData = decrypted;
+                            } catch (e) { /* Not encrypted or wrong key */ }
+                        }
+                        const d = JSON.parse(stateData);
+                        if (JSON.stringify(d) !== JSON.stringify(data)) {
+                            data = d;
+                            render();
+                            updateHash();
+                        }
+                    } catch (e) { }
+                }
+            });
         }
 
-        gunNode.on((nodeData) => {
-            if (nodeData && nodeData.state) {
-                try {
-                    const d = JSON.parse(nodeData.state);
-                    if (JSON.stringify(d) !== JSON.stringify(data)) {
-                        data = d;
-                        render();
-                        updateHash();
-                    }
-                } catch (e) { }
+        document.getElementById('add').addEventListener('click', addItem);
+        document.getElementById('share').addEventListener('click', async () => {
+            await save();
+            try { await navigator.clipboard.writeText(location.href); showToast('LINK COPIED'); } catch { }
+        });
+        document.getElementById('new').addEventListener('click', () => {
+            if (confirm('NEW COLLECTION?')) {
+                data = { title: 'MY COLLECTION', items: [] };
+                render(); save();
             }
         });
-    }
+        document.getElementById('title').addEventListener('input', (e) => {
+            data.title = e.target.value.toUpperCase();
+            save();
+        });
 
-    document.getElementById('add').addEventListener('click', addItem);
-    document.getElementById('share').addEventListener('click', async () => {
-        await save();
-        try { await navigator.clipboard.writeText(location.href); showToast('LINK COPIED'); } catch { }
-    });
-    document.getElementById('new').addEventListener('click', () => {
-        if (confirm('NEW COLLECTION?')) {
-            data = { title: 'MY COLLECTION', items: [] };
+        function addItem() {
+            const label = document.getElementById('label-input').value.toUpperCase();
+            let url = document.getElementById('url-input').value;
+            if (!label || !url) return;
+            if (!url.startsWith('http')) url = 'https://' + url;
+
+            data.items.push({ label, url });
+            document.getElementById('label-input').value = '';
+            document.getElementById('url-input').value = '';
             render(); save();
         }
-    });
-    document.getElementById('title').addEventListener('input', (e) => {
-        data.title = e.target.value.toUpperCase();
-        save();
-    });
 
-    function addItem() {
-        const label = document.getElementById('label-input').value.toUpperCase();
-        let url = document.getElementById('url-input').value;
-        if (!label || !url) return;
-        if (!url.startsWith('http')) url = 'https://' + url;
+        window.removeItem = (i) => {
+            if (confirm('REMOVE?')) {
+                data.items.splice(i, 1);
+                render(); save();
+            }
+        };
 
-        data.items.push({ label, url });
-        document.getElementById('label-input').value = '';
-        document.getElementById('url-input').value = '';
-        render(); save();
-    }
-
-    window.removeItem = (i) => {
-        if (confirm('REMOVE?')) {
-            data.items.splice(i, 1);
-            render(); save();
-        }
-    };
-
-    function render() {
-        document.getElementById('title').value = data.title;
-        const list = document.getElementById('list');
-        if (data.items.length === 0) {
-            list.innerHTML = '<div style="text-align:center; opacity:0.5; padding:20px;">EMPTY COLLECTION</div>';
-            return;
-        }
-        list.innerHTML = data.items.map((item, i) => `
+        function render() {
+            document.getElementById('title').value = data.title;
+            const list = document.getElementById('list');
+            if (data.items.length === 0) {
+                list.innerHTML = '<div style="text-align:center; opacity:0.5; padding:20px;">EMPTY COLLECTION</div>';
+                return;
+            }
+            list.innerHTML = data.items.map((item, i) => `
       <div class="item">
         <div class="item-content">
           <div class="item-title">${item.label}</div>
@@ -288,33 +297,38 @@
         <button class="del-btn" onclick="removeItem(${i})">X</button>
       </div>
     `).join('');
-    }
-
-    async function save() {
-        // Sync to Gun
-        if (gunNode) {
-            gunNode.put({ state: JSON.stringify(data) });
         }
-        updateHash();
-    }
 
-    async function updateHash() {
-        const h = await compress(JSON.stringify(data));
-        history.replaceState({}, '', '#' + h);
-        try { localStorage.setItem('collect-hash', h); } catch { }
-    }
+        async function save() {
+            // Sync to Gun with encryption
+            if (gunNode) {
+                let dataToSave = JSON.stringify(data);
+                // Encrypt if user is logged in
+                if (user.is && user._.sea) {
+                    dataToSave = await SEA.encrypt(dataToSave, user._.sea);
+                }
+                gunNode.put({ state: dataToSave });
+            }
+            updateHash();
+        }
 
-    async function load() {
-        try {
-            let h = location.hash.slice(1); if (!h) h = localStorage.getItem('collect-hash');
-            if (h) data = JSON.parse(await decompress(h));
-        } catch { }
-        render();
-    }
+        async function updateHash() {
+            const h = await compress(JSON.stringify(data));
+            history.replaceState({}, '', '#' + h);
+            try { localStorage.setItem('collect-hash', h); } catch { }
+        }
 
-    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
-    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()); }
-    function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); }
+        async function load() {
+            try {
+                let h = location.hash.slice(1); if (!h) h = localStorage.getItem('collect-hash');
+                if (h) data = JSON.parse(await decompress(h));
+            } catch { }
+            render();
+        }
 
-    addEventListener('DOMContentLoaded', load);
-</script>
+        async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+        async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()); }
+        function showToast(m) { toast.textContent = m; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); }
+
+        addEventListener('DOMContentLoaded', load);
+    </script>

@@ -1,460 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CONTACTS</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<style>
-    body {
-        padding: 20px;
-        padding-bottom: 100px;
-        
-        align-items: center;
-    }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CONTACTS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 100px;
 
-    .container {
-        width: 100%;
-        max-width: 500px;
-    }
-
-    header {
-        text-align: center;
-        margin-bottom: 30px;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 20px;
-    }/* Search & Add */
-    .controls {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 24px;
-    }
-
-    .search-box {
-        flex: 1;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        padding: 12px;
-        font-size: 16px;
-        outline: none;
-    }
-
-    .search-box:focus {
-        border-color: var(--accent-color);
-    }
-
-    .add-btn {
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        font-size: 24px;
-        width: 48px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .add-btn:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    /* List */
-    .contacts-list {
-        list-style: none;
-    }
-
-    .contact-card {
-        border: 1px solid var(--border-color);
-        padding: 16px;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .contact-card:hover {
-        background: #111;
-        transform: translateX(4px);
-    }
-
-    .avatar {
-        width: 40px;
-        height: 40px;
-        border: 1px solid var(--border-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 18px;
-    }
-
-    .contact-info {
-        flex: 1;
-        overflow: hidden;
-    }
-
-    .contact-name {
-        font-weight: bold;
-        font-size: 16px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .contact-detail {
-        font-size: 12px;
-        opacity: 0.7;
-        margin-top: 4px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .call-btn {
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        padding: 8px;
-        font-size: 12px;
-        cursor: pointer;
-        text-transform: uppercase;
-    }
-
-    .call-btn:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    /* Modal */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        z-index: 100;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal.show {
-        display: flex;
-    }
-
-    .modal-content {
-        background: var(--bg-color);
-        border: 1px solid var(--border-color);
-        padding: 24px;
-        width: 90%;
-        max-width: 400px;
-    }
-
-    .modal-content h3 {
-        text-transform: uppercase;
-        margin-bottom: 24px;
-        text-align: center;
-        border-bottom: 1px solid #333;
-        padding-bottom: 12px;
-    }
-
-    .form-group {
-        margin-bottom: 16px;
-    }
-
-    .form-group label {
-        display: block;
-        font-size: 10px;
-        text-transform: uppercase;
-        margin-bottom: 6px;
-        opacity: 0.7;
-        letter-spacing: 1px;
-    }
-
-    .form-group input {
-        width: 100%;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        padding: 12px;
-        font-family: var(--font-stack);
-        font-size: 16px;
-        outline: none;
-    }
-
-    .form-group input:focus {
-        border-color: var(--accent-color);
-    }
-
-    .modal-buttons {
-        display: flex;
-        gap: 16px;
-        margin-top: 32px;
-    }
-
-    .modal-buttons button {
-        flex: 1;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        padding: 14px;
-        font-family: var(--font-stack);
-        text-transform: uppercase;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    .modal-buttons button:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    .modal-buttons .delete-btn {
-        border-color: var(--accent-color);
-        color: var(--accent-color);
-    }
-
-    .modal-buttons .delete-btn:hover {
-        background: var(--accent-color);
-        color: var(--text-color);
-    }
-
-    
-
-    .toolbar a:hover,
-    .toolbar button:hover {
-        text-decoration: underline;
-    }
-
-    
-
-    .no-contacts {
-        text-align: center;
-        padding: 40px;
-        border: 1px dashed #333;
-        opacity: 0.5;
-        text-transform: uppercase;
-        font-size: 12px;
-    }
-</style>
-
-<div class="container">
-    <header>
-        <h1>CONTACTS</h1>
-    </header>
-
-    <div class="controls">
-        <input type="text" class="search-box" id="search" placeholder="SEARCH...">
-        <button class="add-btn" id="add-contact">+</button>
-    </div>
-
-    <ul class="contacts-list" id="contacts-list"></ul>
-</div>
-
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <h3 id="modal-title">ADD CONTACT</h3>
-        <div class="form-group">
-            <label>Name</label>
-            <input type="text" id="input-name" placeholder="FULL NAME">
-        </div>
-        <div class="form-group">
-            <label>Phone</label>
-            <input type="tel" id="input-phone" placeholder="PHONE NUMBER">
-        </div>
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" id="input-email" placeholder="EMAIL ADDRESS">
-        </div>
-        <div class="form-group">
-            <label>Notes</label>
-            <input type="text" id="input-notes" placeholder="NOTES">
-        </div>
-        <div class="modal-buttons">
-            <button class="delete-btn" id="delete-btn" style="display:none;">DELETE</button>
-            <button id="cancel-btn">CANCEL</button>
-            <button id="save-btn">SAVE</button>
-        </div>
-    </div>
-</div>
-
-<div class="toolbar">
-    <a href="index.html">[HOME]</a>
-    <button id="share">[SHARE]</button>
-</div>
-
-<div class="toast" id="toast">LINK COPIED</div>
-
-<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
-<script>
-    let contacts = [];
-    let editIndex = -1;
-
-    const contactsList = document.getElementById('contacts-list');
-    const searchInput = document.getElementById('search');
-    const modal = document.getElementById('modal');
-    const modalTitle = document.getElementById('modal-title');
-    const toastEl = document.getElementById('toast');
-    const deleteBtn = document.getElementById('delete-btn');
-
-    const inputName = document.getElementById('input-name');
-    const inputPhone = document.getElementById('input-phone');
-    const inputEmail = document.getElementById('input-email');
-    const inputNotes = document.getElementById('input-notes');
-    let gun, gunNode, user;
-
-    // Initialize Gun
-    const relayUrl = localStorage.getItem('gun-relay-url');
-    if (relayUrl) {
-        gun = Gun({ localStorage: false, peers: [relayUrl] });
-        user = gun.user().recall({ sessionStorage: true });
-
-        if (user.is) {
-            gunNode = user.get('shogun-contacts');
-        } else {
-            gunNode = gun.get('shogun-contacts');
+            align-items: center;
         }
 
-        gunNode.on((data) => {
-            if (data && data.contacts) {
-                try {
-                    const remoteContacts = JSON.parse(data.contacts);
-                    if (JSON.stringify(remoteContacts) !== JSON.stringify(contacts)) {
-                        contacts = remoteContacts;
-                        render();
-                        updateHash();
-                    }
-                } catch (e) { }
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        /* Search & Add */
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .search-box {
+            flex: 1;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            padding: 12px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: var(--accent-color);
+        }
+
+        .add-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            font-size: 24px;
+            width: 48px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* List */
+        .contacts-list {
+            list-style: none;
+        }
+
+        .contact-card {
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .contact-card:hover {
+            background: #111;
+            transform: translateX(4px);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .contact-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .contact-name {
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contact-detail {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .call-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            padding: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .call-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h3 {
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 12px;
+            font-family: var(--font-stack);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 14px;
+            font-family: var(--font-stack);
+            text-transform: uppercase;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .modal-buttons button:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .modal-buttons .delete-btn {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .modal-buttons .delete-btn:hover {
+            background: var(--accent-color);
+            color: var(--text-color);
+        }
+
+
+
+        .toolbar a:hover,
+        .toolbar button:hover {
+            text-decoration: underline;
+        }
+
+
+
+        .no-contacts {
+            text-align: center;
+            padding: 40px;
+            border: 1px dashed #333;
+            opacity: 0.5;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+    </style>
+
+    <div class="container">
+        <header>
+            <h1>CONTACTS</h1>
+        </header>
+
+        <div class="controls">
+            <input type="text" class="search-box" id="search" placeholder="SEARCH...">
+            <button class="add-btn" id="add-contact">+</button>
+        </div>
+
+        <ul class="contacts-list" id="contacts-list"></ul>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">ADD CONTACT</h3>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="input-name" placeholder="FULL NAME">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="input-phone" placeholder="PHONE NUMBER">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="input-email" placeholder="EMAIL ADDRESS">
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <input type="text" id="input-notes" placeholder="NOTES">
+            </div>
+            <div class="modal-buttons">
+                <button class="delete-btn" id="delete-btn" style="display:none;">DELETE</button>
+                <button id="cancel-btn">CANCEL</button>
+                <button id="save-btn">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+        <button id="share">[SHARE]</button>
+    </div>
+
+    <div class="toast" id="toast">LINK COPIED</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <script>
+        let contacts = [];
+        let editIndex = -1;
+
+        const contactsList = document.getElementById('contacts-list');
+        const searchInput = document.getElementById('search');
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const toastEl = document.getElementById('toast');
+        const deleteBtn = document.getElementById('delete-btn');
+
+        const inputName = document.getElementById('input-name');
+        const inputPhone = document.getElementById('input-phone');
+        const inputEmail = document.getElementById('input-email');
+        const inputNotes = document.getElementById('input-notes');
+        let gun, gunNode, user;
+
+        // Initialize Gun
+        const relayUrl = localStorage.getItem('gun-relay-url');
+        if (relayUrl) {
+            gun = Gun({ localStorage: false, peers: [relayUrl] });
+            user = gun.user().recall({ sessionStorage: true });
+
+            if (user.is) {
+                gunNode = user.get('shogun-contacts');
+            } else {
+                gunNode = gun.get('shogun-contacts');
+            }
+
+            gunNode.on(async (data) => {
+                if (data && data.contacts) {
+                    try {
+                        let contactsData = data.contacts;
+                        // Try to decrypt if user is logged in
+                        if (user.is && user._.sea) {
+                            try {
+                                const decrypted = await SEA.decrypt(contactsData, user._.sea);
+                                if (decrypted) contactsData = decrypted;
+                            } catch (e) { /* Not encrypted or wrong key */ }
+                        }
+                        const remoteContacts = JSON.parse(contactsData);
+                        if (JSON.stringify(remoteContacts) !== JSON.stringify(contacts)) {
+                            contacts = remoteContacts;
+                            render();
+                            updateHash();
+                        }
+                    } catch (e) { }
+                }
+            });
+        }
+
+        document.getElementById('add-contact').addEventListener('click', () => {
+            editIndex = -1;
+            modalTitle.textContent = 'ADD CONTACT';
+            deleteBtn.style.display = 'none';
+            clearForm();
+            modal.classList.add('show');
+            inputName.focus();
+        });
+
+        document.getElementById('cancel-btn').addEventListener('click', closeModal);
+
+        document.getElementById('save-btn').addEventListener('click', saveContact);
+
+        document.getElementById('delete-btn').addEventListener('click', () => {
+            if (editIndex >= 0) {
+                contacts.splice(editIndex, 1);
+                closeModal();
+                render();
+                saveData();
             }
         });
-    }
 
-    document.getElementById('add-contact').addEventListener('click', () => {
-        editIndex = -1;
-        modalTitle.textContent = 'ADD CONTACT';
-        deleteBtn.style.display = 'none';
-        clearForm();
-        modal.classList.add('show');
-        inputName.focus();
-    });
+        searchInput.addEventListener('input', render);
 
-    document.getElementById('cancel-btn').addEventListener('click', closeModal);
+        document.getElementById('share').addEventListener('click', async () => {
+            await saveData();
+            try {
+                await navigator.clipboard.writeText(location.href);
+                showToast();
+            } catch (e) {
+                console.error('Copy failed', e);
+            }
+        });
 
-    document.getElementById('save-btn').addEventListener('click', saveContact);
+        function closeModal() {
+            modal.classList.remove('show');
+            clearForm();
+            editIndex = -1;
+        }
 
-    document.getElementById('delete-btn').addEventListener('click', () => {
-        if (editIndex >= 0) {
-            contacts.splice(editIndex, 1);
+        function clearForm() {
+            inputName.value = '';
+            inputPhone.value = '';
+            inputEmail.value = '';
+            inputNotes.value = '';
+        }
+
+        function saveContact() {
+            const name = inputName.value.trim();
+            if (!name) return;
+
+            const contact = {
+                name,
+                phone: inputPhone.value.trim(),
+                email: inputEmail.value.trim(),
+                notes: inputNotes.value.trim()
+            };
+
+            if (editIndex >= 0) {
+                contacts[editIndex] = contact;
+            } else {
+                contacts.push(contact);
+            }
+
+            contacts.sort((a, b) => a.name.localeCompare(b.name));
             closeModal();
             render();
             saveData();
         }
-    });
 
-    searchInput.addEventListener('input', render);
-
-    document.getElementById('share').addEventListener('click', async () => {
-        await saveData();
-        try {
-            await navigator.clipboard.writeText(location.href);
-            showToast();
-        } catch (e) {
-            console.error('Copy failed', e);
-        }
-    });
-
-    function closeModal() {
-        modal.classList.remove('show');
-        clearForm();
-        editIndex = -1;
-    }
-
-    function clearForm() {
-        inputName.value = '';
-        inputPhone.value = '';
-        inputEmail.value = '';
-        inputNotes.value = '';
-    }
-
-    function saveContact() {
-        const name = inputName.value.trim();
-        if (!name) return;
-
-        const contact = {
-            name,
-            phone: inputPhone.value.trim(),
-            email: inputEmail.value.trim(),
-            notes: inputNotes.value.trim()
-        };
-
-        if (editIndex >= 0) {
-            contacts[editIndex] = contact;
-        } else {
-            contacts.push(contact);
+        function editContact(index) {
+            editIndex = index;
+            const contact = contacts[index];
+            modalTitle.textContent = 'EDIT CONTACT';
+            deleteBtn.style.display = 'block';
+            inputName.value = contact.name;
+            inputPhone.value = contact.phone;
+            inputEmail.value = contact.email;
+            inputNotes.value = contact.notes;
+            modal.classList.add('show');
+            inputName.focus();
         }
 
-        contacts.sort((a, b) => a.name.localeCompare(b.name));
-        closeModal();
-        render();
-        saveData();
-    }
+        function callContact(phone) {
+            if (phone) window.location.href = `tel:${phone}`;
+        }
 
-    function editContact(index) {
-        editIndex = index;
-        const contact = contacts[index];
-        modalTitle.textContent = 'EDIT CONTACT';
-        deleteBtn.style.display = 'block';
-        inputName.value = contact.name;
-        inputPhone.value = contact.phone;
-        inputEmail.value = contact.email;
-        inputNotes.value = contact.notes;
-        modal.classList.add('show');
-        inputName.focus();
-    }
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+        }
 
-    function callContact(phone) {
-        if (phone) window.location.href = `tel:${phone}`;
-    }
+        function render() {
+            const query = searchInput.value.toLowerCase();
+            const filtered = contacts.filter(c =>
+                c.name.toLowerCase().includes(query) ||
+                c.phone.includes(query) ||
+                c.email.toLowerCase().includes(query)
+            );
 
-    function getInitials(name) {
-        return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
-    }
-
-    function render() {
-        const query = searchInput.value.toLowerCase();
-        const filtered = contacts.filter(c =>
-            c.name.toLowerCase().includes(query) ||
-            c.phone.includes(query) ||
-            c.email.toLowerCase().includes(query)
-        );
-
-        if (filtered.length === 0) {
-            contactsList.innerHTML = `
+            if (filtered.length === 0) {
+                contactsList.innerHTML = `
         <li class="no-contacts">
           ${contacts.length === 0 ? 'NO CONTACTS SAVED' : 'NO MATCHES FOUND'}
         </li>
       `;
-            return;
-        }
+                return;
+            }
 
-        contactsList.innerHTML = filtered.map((c, i) => {
-            const originalIndex = contacts.indexOf(c);
-            return `
+            contactsList.innerHTML = filtered.map((c, i) => {
+                const originalIndex = contacts.indexOf(c);
+                return `
         <li class="contact-card" onclick="editContact(${originalIndex})">
           <div class="avatar">${getInitials(c.name)}</div>
           <div class="contact-info">
@@ -464,63 +475,68 @@
           ${c.phone ? `<button onclick="event.stopPropagation(); callContact('${c.phone}')" class="call-btn">CALL</button>` : ''}
         </li>
       `;
-        }).join('');
-    }
-
-    async function saveData() {
-        // Sync to Gun
-        if (gunNode) {
-            gunNode.put({ contacts: JSON.stringify(contacts) });
+            }).join('');
         }
-        updateHash();
-    }
 
-    async function updateHash() {
-        const hash = '#' + await compress(JSON.stringify(contacts));
-        if (location.hash !== hash) history.replaceState({}, '', hash);
-        try { localStorage.setItem('contacts-data', JSON.stringify(contacts)); } catch (e) { }
-    }
-
-    async function loadData() {
-        try {
-            if (location.hash && location.hash !== '#') {
-                contacts = JSON.parse(await decompress(location.hash.slice(1)));
-            } else {
-                const stored = localStorage.getItem('contacts-data');
-                if (stored) contacts = JSON.parse(stored);
+        async function saveData() {
+            // Sync to Gun with encryption
+            if (gunNode) {
+                let dataToSave = JSON.stringify(contacts);
+                // Encrypt if user is logged in
+                if (user.is && user._.sea) {
+                    dataToSave = await SEA.encrypt(dataToSave, user._.sea);
+                }
+                gunNode.put({ contacts: dataToSave });
             }
-        } catch (e) { contacts = []; }
-        render();
-    }
+            updateHash();
+        }
 
-    function showToast() {
-        toastEl.classList.add('show');
-        setTimeout(() => toastEl.classList.remove('show'), 2000);
-    }
+        async function updateHash() {
+            const hash = '#' + await compress(JSON.stringify(contacts));
+            if (location.hash !== hash) history.replaceState({}, '', hash);
+            try { localStorage.setItem('contacts-data', JSON.stringify(contacts)); } catch (e) { }
+        }
 
-    async function compress(string) {
-        const byteArray = new TextEncoder().encode(string);
-        const stream = new CompressionStream('deflate-raw');
-        const writer = stream.writable.getWriter();
-        writer.write(byteArray);
-        writer.close();
-        const buffer = await new Response(stream.readable).arrayBuffer();
-        return btoa(String.fromCharCode(...new Uint8Array(buffer)))
-            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    }
+        async function loadData() {
+            try {
+                if (location.hash && location.hash !== '#') {
+                    contacts = JSON.parse(await decompress(location.hash.slice(1)));
+                } else {
+                    const stored = localStorage.getItem('contacts-data');
+                    if (stored) contacts = JSON.parse(stored);
+                }
+            } catch (e) { contacts = []; }
+            render();
+        }
 
-    async function decompress(b64) {
-        const binStr = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
-        const byteArray = new Uint8Array(binStr.length);
-        for (let i = 0; i < binStr.length; i++) byteArray[i] = binStr.charCodeAt(i);
-        const stream = new DecompressionStream('deflate-raw');
-        const writer = stream.writable.getWriter();
-        writer.write(byteArray);
-        writer.close();
-        const buffer = await new Response(stream.readable).arrayBuffer();
-        return new TextDecoder().decode(buffer);
-    }
+        function showToast() {
+            toastEl.classList.add('show');
+            setTimeout(() => toastEl.classList.remove('show'), 2000);
+        }
 
-    addEventListener('DOMContentLoaded', loadData);
-    addEventListener('hashchange', loadData);
-</script>
+        async function compress(string) {
+            const byteArray = new TextEncoder().encode(string);
+            const stream = new CompressionStream('deflate-raw');
+            const writer = stream.writable.getWriter();
+            writer.write(byteArray);
+            writer.close();
+            const buffer = await new Response(stream.readable).arrayBuffer();
+            return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+                .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+
+        async function decompress(b64) {
+            const binStr = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+            const byteArray = new Uint8Array(binStr.length);
+            for (let i = 0; i < binStr.length; i++) byteArray[i] = binStr.charCodeAt(i);
+            const stream = new DecompressionStream('deflate-raw');
+            const writer = stream.writable.getWriter();
+            writer.write(byteArray);
+            writer.close();
+            const buffer = await new Response(stream.readable).arrayBuffer();
+            return new TextDecoder().decode(buffer);
+        }
+
+        addEventListener('DOMContentLoaded', loadData);
+        addEventListener('hashchange', loadData);
+    </script>
