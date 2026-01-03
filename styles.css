@@ -399,6 +399,46 @@ footer a:hover {
   opacity: 0.7;
 }
 
+/* Footer buttons and links */
+.footer-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-family: var(--font-stack);
+  font-size: 10px;
+  padding: 4px 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.footer-btn:hover {
+  background: var(--text-color);
+  color: var(--bg-color);
+}
+
+.footer-btn.install-btn {
+  background: #22c55e;
+  border-color: #22c55e;
+  color: #000;
+  font-weight: bold;
+}
+
+.footer-link {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-family: var(--font-stack);
+  font-size: 10px;
+  cursor: pointer;
+  opacity: 0.7;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.footer-link:hover {
+  opacity: 1;
+}
+
 /* ==================== LIGHT THEME ==================== */
 .light-theme {
   --bg-color: #f5f5f5;

@@ -1,4 +1,4 @@
-# Shogun NoBackend
+# PDOS 01
 
 A suite of **19 minimalist web tools** with real-time sync via GunDB.
 No backend required, privacy-first, 100% shareable.
@@ -32,8 +32,8 @@ docker-compose up -d
 ### Using Docker directly
 
 ```bash
-docker build -t shogun-nobackend .
-docker run -d -p 8765:8765 --name shogun-nobackend shogun-nobackend
+docker build -t pdos-01 .
+docker run -d -p 8765:8765 --name pdos-01 pdos-01
 ```
 
 Access at `http://localhost:8765`
@@ -151,4 +151,4 @@ Additional encryption:
 MIT
 
 ---
-*Part of the [Shogun Ecosystem](https://shogun-eco.xyz)*
+*Part of the [PDOS Ecosystem](https://shogun-eco.xyz)*

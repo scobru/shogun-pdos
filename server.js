@@ -37,7 +37,7 @@ const server = app.listen(port, async () => {
     publicIp = 'Unavailable';
   }
 
-  console.log(`\n> Shogun NoBackend Sync Server`);
+  console.log(`\n> PDOS 01 Sync Server`);
   console.log(`> Local:  http://localhost:${port}`);
   console.log(`> LAN:    http://${lanIp}:${port}`);
   console.log(`> Public: http://${publicIp}:${port}`);

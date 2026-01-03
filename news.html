@@ -18,20 +18,27 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            gap: 10px;
         }
 
-        .source-bar {
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Category tabs */
+        .category-tabs {
             display: flex;
             gap: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             overflow-x: auto;
             padding-bottom: 5px;
         }
 
-        .source-btn {
-            padding: 6px 12px;
-            font-size: 9px;
+        .category-tab {
+            padding: 8px 14px;
+            font-size: 10px;
             border: 1px solid var(--border-color);
             background: transparent;
             color: var(--text-color);
@@ -40,9 +47,40 @@
             font-family: var(--font-stack);
         }
 
+        .category-tab.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .source-bar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            flex-wrap: wrap;
+        }
+
+        .source-btn {
+            padding: 5px 10px;
+            font-size: 8px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: var(--font-stack);
+            opacity: 0.7;
+        }
+
         .source-btn.active {
             background: var(--text-color);
             color: var(--bg-color);
+            opacity: 1;
+        }
+
+        .source-btn.custom {
+            border-style: dashed;
         }
 
         .news-list {
@@ -105,17 +143,17 @@
             border: 1px dashed var(--border-color);
         }
 
-        .refresh-btn {
+        .action-btn {
             background: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 8px 15px;
+            padding: 8px 12px;
             cursor: pointer;
             font-family: var(--font-stack);
             font-size: 10px;
         }
 
-        .refresh-btn:hover {
+        .action-btn:hover {
             background: var(--text-color);
             color: var(--bg-color);
         }
@@ -145,8 +183,136 @@
             background: #f59e0b;
         }
 
-        .cat-general {
+        .cat-culture {
+            background: #ec4899;
+        }
+
+        .cat-science {
+            background: #06b6d4;
+        }
+
+        .cat-gaming {
             background: #8b5cf6;
+        }
+
+        .cat-crypto {
+            background: #f97316;
+        }
+
+        .cat-general {
+            background: #6b7280;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .modal-close {
+            float: right;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+
+        .modal-close:hover {
+            opacity: 1;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            opacity: 0.6;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            font-size: 12px;
+        }
+
+        .custom-feed-list {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+        .custom-feed-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-color);
+            font-size: 11px;
+        }
+
+        .custom-feed-item button {
+            background: transparent;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 9px;
+            font-family: var(--font-stack);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--text-color);
+            color: var(--bg-color);
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-stack);
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -155,21 +321,67 @@
 
     <div class="container">
         <div class="header-bar">
-            <h1>NEWS</h1>
-            <button class="refresh-btn" onclick="loadNews()">↻ REFRESH</button>
+            <h1>📰 NEWS</h1>
+            <div class="header-actions">
+                <button class="action-btn" onclick="openCustomFeedModal()">+ CUSTOM</button>
+                <button class="action-btn" onclick="loadNews()">↻ REFRESH</button>
+            </div>
         </div>
 
-        <div class="source-bar" id="sourceBar">
-            <button class="source-btn active" data-source="all">TUTTI</button>
-            <button class="source-btn" data-source="ansa">ANSA</button>
-            <button class="source-btn" data-source="repubblica">REPUBBLICA</button>
-            <button class="source-btn" data-source="corriere">CORRIERE</button>
-            <button class="source-btn" data-source="sole24ore">SOLE 24 ORE</button>
-            <button class="source-btn" data-source="ilpost">IL POST</button>
+        <!-- Category tabs -->
+        <div class="category-tabs" id="categoryTabs">
+            <button class="category-tab active" data-category="all">ALL</button>
+            <button class="category-tab" data-category="italy">🇮🇹 ITALY</button>
+            <button class="category-tab" data-category="tech">💻 TECH</button>
+            <button class="category-tab" data-category="culture">🎭 CULTURE</button>
+            <button class="category-tab" data-category="science">🔬 SCIENCE</button>
+            <button class="category-tab" data-category="gaming">🎮 GAMING</button>
+            <button class="category-tab" data-category="crypto">₿ CRYPTO</button>
+            <button class="category-tab" data-category="world">🌍 WORLD</button>
+            <button class="category-tab" data-category="custom">⭐ CUSTOM</button>
         </div>
+
+        <!-- Source filters -->
+        <div class="source-bar" id="sourceBar"></div>
 
         <div class="news-list" id="newsList">
             <div class="loading">LOADING NEWS...</div>
+        </div>
+    </div>
+
+    <!-- Custom Feed Modal -->
+    <div class="modal-overlay" id="customFeedModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeCustomFeedModal()">×</button>
+            <h2>➕ ADD CUSTOM RSS FEED</h2>
+
+            <div class="form-group">
+                <label>Feed Name</label>
+                <input type="text" id="feedName" placeholder="My News Source">
+            </div>
+
+            <div class="form-group">
+                <label>RSS Feed URL</label>
+                <input type="url" id="feedUrl" placeholder="https://example.com/feed.xml">
+            </div>
+
+            <div class="form-group">
+                <label>Category</label>
+                <select id="feedCategory">
+                    <option value="general">General</option>
+                    <option value="tech">Technology</option>
+                    <option value="culture">Culture</option>
+                    <option value="science">Science</option>
+                    <option value="gaming">Gaming</option>
+                    <option value="crypto">Crypto</option>
+                    <option value="economy">Economy</option>
+                    <option value="sport">Sport</option>
+                </select>
+            </div>
+
+            <button class="submit-btn" onclick="addCustomFeed()">ADD FEED</button>
+
+            <div class="custom-feed-list" id="customFeedList"></div>
         </div>
     </div>
 
@@ -178,32 +390,132 @@
     </div>
 
     <script>
-        // Italian news RSS feeds
-        const RSS_FEEDS = {
-            ansa: 'https://www.ansa.it/sito/ansait_rss.xml',
-            repubblica: 'https://www.repubblica.it/rss/homepage/rss2.0.xml',
-            corriere: 'https://xml2.corriereobjects.it/rss/homepage.xml',
-            sole24ore: 'https://www.ilsole24ore.com/rss/italia.xml',
-            ilpost: 'https://www.ilpost.it/feed/'
+        // Built-in RSS feeds organized by category
+        const FEEDS_BY_CATEGORY = {
+            italy: {
+                ansa: { url: 'https://www.ansa.it/sito/ansait_rss.xml', name: 'ANSA' },
+                repubblica: { url: 'https://www.repubblica.it/rss/homepage/rss2.0.xml', name: 'REPUBBLICA' },
+                corriere: { url: 'https://xml2.corriereobjects.it/rss/homepage.xml', name: 'CORRIERE' },
+                sole24ore: { url: 'https://www.ilsole24ore.com/rss/italia.xml', name: 'SOLE 24 ORE' },
+                ilpost: { url: 'https://www.ilpost.it/feed/', name: 'IL POST' },
+                fanpage: { url: 'https://www.fanpage.it/feed/', name: 'FANPAGE' }
+            },
+            tech: {
+                theverge: { url: 'https://www.theverge.com/rss/index.xml', name: 'THE VERGE' },
+                arstechnica: { url: 'https://feeds.arstechnica.com/arstechnica/index', name: 'ARS TECHNICA' },
+                wired: { url: 'https://www.wired.com/feed/rss', name: 'WIRED' },
+                techcrunch: { url: 'https://techcrunch.com/feed/', name: 'TECHCRUNCH' },
+                hackernews: { url: 'https://hnrss.org/frontpage', name: 'HACKER NEWS' },
+                slashdot: { url: 'https://rss.slashdot.org/Slashdot/slashdotMain', name: 'SLASHDOT' },
+                tomshardware: { url: 'https://www.tomshardware.com/feeds/all', name: 'TOMS HARDWARE' }
+            },
+            culture: {
+                nytarts: { url: 'https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml', name: 'NYT ARTS' },
+                guardian_culture: { url: 'https://www.theguardian.com/culture/rss', name: 'GUARDIAN CULTURE' },
+                rollingstone: { url: 'https://www.rollingstone.com/feed/', name: 'ROLLING STONE' },
+                pitchfork: { url: 'https://pitchfork.com/feed/feed-news/rss', name: 'PITCHFORK' },
+                letterboxd: { url: 'https://letterboxd.com/browse/posts/feed/', name: 'LETTERBOXD' },
+                openculture: { url: 'https://www.openculture.com/feed', name: 'OPEN CULTURE' }
+            },
+            science: {
+                nature: { url: 'https://www.nature.com/nature.rss', name: 'NATURE' },
+                science_daily: { url: 'https://www.sciencedaily.com/rss/all.xml', name: 'SCIENCE DAILY' },
+                newscientist: { url: 'https://www.newscientist.com/feed/home/', name: 'NEW SCIENTIST' },
+                nasa: { url: 'https://www.nasa.gov/rss/dyn/breaking_news.rss', name: 'NASA' },
+                space: { url: 'https://www.space.com/feeds/all', name: 'SPACE.COM' },
+                phys: { url: 'https://phys.org/rss-feed/', name: 'PHYS.ORG' }
+            },
+            gaming: {
+                ign: { url: 'https://feeds.feedburner.com/ign/all', name: 'IGN' },
+                kotaku: { url: 'https://kotaku.com/rss', name: 'KOTAKU' },
+                polygon: { url: 'https://www.polygon.com/rss/index.xml', name: 'POLYGON' },
+                pcgamer: { url: 'https://www.pcgamer.com/rss/', name: 'PC GAMER' },
+                gamerant: { url: 'https://gamerant.com/feed/', name: 'GAME RANT' },
+                rockpapershotgun: { url: 'https://www.rockpapershotgun.com/feed', name: 'RPS' }
+            },
+            crypto: {
+                coindesk: { url: 'https://www.coindesk.com/arc/outboundfeeds/rss/', name: 'COINDESK' },
+                cointelegraph: { url: 'https://cointelegraph.com/rss', name: 'COINTELEGRAPH' },
+                decrypt: { url: 'https://decrypt.co/feed', name: 'DECRYPT' },
+                theblock: { url: 'https://www.theblock.co/rss.xml', name: 'THE BLOCK' },
+                bitcoinmagazine: { url: 'https://bitcoinmagazine.com/feed', name: 'BITCOIN MAG' }
+            },
+            world: {
+                bbc: { url: 'https://feeds.bbci.co.uk/news/world/rss.xml', name: 'BBC WORLD' },
+                reuters: { url: 'https://www.reutersagency.com/feed/', name: 'REUTERS' },
+                guardian: { url: 'https://www.theguardian.com/world/rss', name: 'GUARDIAN' },
+                aljazeera: { url: 'https://www.aljazeera.com/xml/rss/all.xml', name: 'AL JAZEERA' },
+                nyt: { url: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml', name: 'NYT WORLD' },
+                dw: { url: 'https://rss.dw.com/xml/rss-en-all', name: 'DW' }
+            }
         };
 
-        // RSS to JSON proxy (free, no key needed)
+        // RSS to JSON proxy
         const PROXY_URL = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
+        let currentCategory = 'all';
         let currentSource = 'all';
         let allNews = [];
+        let customFeeds = JSON.parse(localStorage.getItem('customRssFeeds') || '[]');
 
-        // Source switching
-        document.querySelectorAll('.source-btn').forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll('.source-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentSource = btn.dataset.source;
+        // Category switching
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.onclick = () => {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentCategory = tab.dataset.category;
+                currentSource = 'all';
+                updateSourceBar();
                 renderNews();
             };
         });
 
-        async function fetchFeed(source, url) {
+        function updateSourceBar() {
+            const bar = document.getElementById('sourceBar');
+            let sources = [];
+
+            if (currentCategory === 'all') {
+                // Get all sources from all categories
+                Object.values(FEEDS_BY_CATEGORY).forEach(cat => {
+                    Object.entries(cat).forEach(([key, val]) => {
+                        sources.push({ key, name: val.name, custom: false });
+                    });
+                });
+                // Add custom feeds
+                customFeeds.forEach(f => {
+                    sources.push({ key: f.id, name: f.name, custom: true });
+                });
+            } else if (currentCategory === 'custom') {
+                // Only custom feeds
+                sources = customFeeds.map(f => ({ key: f.id, name: f.name, custom: true }));
+            } else {
+                // Specific category
+                const cat = FEEDS_BY_CATEGORY[currentCategory];
+                if (cat) {
+                    Object.entries(cat).forEach(([key, val]) => {
+                        sources.push({ key, name: val.name, custom: false });
+                    });
+                }
+            }
+
+            let html = `<button class="source-btn ${currentSource === 'all' ? 'active' : ''}" data-source="all">ALL</button>`;
+            sources.forEach(s => {
+                html += `<button class="source-btn ${s.custom ? 'custom' : ''} ${currentSource === s.key ? 'active' : ''}" data-source="${s.key}">${s.name}</button>`;
+            });
+            bar.innerHTML = html;
+
+            // Re-attach click handlers
+            bar.querySelectorAll('.source-btn').forEach(btn => {
+                btn.onclick = () => {
+                    bar.querySelectorAll('.source-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentSource = btn.dataset.source;
+                    renderNews();
+                };
+            });
+        }
+
+        async function fetchFeed(sourceKey, url, sourceName, feedCategory) {
             try {
                 const res = await fetch(PROXY_URL + encodeURIComponent(url));
                 if (!res.ok) return [];
@@ -212,16 +524,17 @@
                 if (data.status !== 'ok') return [];
 
                 return data.items.map(item => ({
-                    source: source.toUpperCase(),
-                    sourceKey: source,
+                    source: sourceName.toUpperCase(),
+                    sourceKey: sourceKey,
+                    feedCategory: feedCategory,
                     title: item.title,
                     excerpt: stripHtml(item.description || item.content || ''),
                     link: item.link,
                     date: new Date(item.pubDate),
-                    category: detectCategory(item.title + ' ' + (item.description || ''))
+                    category: detectCategory(item.title + ' ' + (item.description || ''), feedCategory)
                 }));
             } catch (e) {
-                console.error(`Error fetching ${source}:`, e);
+                console.error(`Error fetching ${sourceName}:`, e);
                 return [];
             }
         }
@@ -232,12 +545,21 @@
             return tmp.textContent || tmp.innerText || '';
         }
 
-        function detectCategory(text) {
+        function detectCategory(text, feedCategory) {
+            // If feed has explicit category, use it
+            if (feedCategory && feedCategory !== 'general') {
+                return feedCategory;
+            }
+
             const lower = text.toLowerCase();
-            if (lower.includes('tecnolog') || lower.includes('tech') || lower.includes('digital') || lower.includes('intelligenza artificiale')) return 'tech';
+            if (lower.includes('crypto') || lower.includes('bitcoin') || lower.includes('ethereum') || lower.includes('blockchain')) return 'crypto';
+            if (lower.includes('game') || lower.includes('gaming') || lower.includes('playstation') || lower.includes('xbox') || lower.includes('nintendo')) return 'gaming';
+            if (lower.includes('tecnolog') || lower.includes('tech') || lower.includes('digital') || lower.includes('intelligenza artificiale') || lower.includes('ai') || lower.includes('software')) return 'tech';
             if (lower.includes('politic') || lower.includes('governo') || lower.includes('parlamento') || lower.includes('ministro')) return 'politics';
             if (lower.includes('econom') || lower.includes('borsa') || lower.includes('finanz') || lower.includes('mercati')) return 'economy';
             if (lower.includes('calcio') || lower.includes('sport') || lower.includes('serie a') || lower.includes('champions')) return 'sport';
+            if (lower.includes('science') || lower.includes('research') || lower.includes('study') || lower.includes('nasa') || lower.includes('space')) return 'science';
+            if (lower.includes('art') || lower.includes('music') || lower.includes('film') || lower.includes('cultura') || lower.includes('movie')) return 'culture';
             return 'general';
         }
 
@@ -246,21 +568,51 @@
             const diff = now - date;
             const hours = Math.floor(diff / (1000 * 60 * 60));
 
-            if (hours < 1) return 'Adesso';
-            if (hours < 24) return `${hours}h fa`;
+            if (hours < 1) return 'Now';
+            if (hours < 24) return `${hours}h ago`;
 
             const days = Math.floor(hours / 24);
-            if (days === 1) return 'Ieri';
-            return `${days}g fa`;
+            if (days === 1) return 'Yesterday';
+            return `${days}d ago`;
         }
 
         async function loadNews() {
             const list = document.getElementById('newsList');
-            list.innerHTML = '<div class="loading">CARICAMENTO...</div>';
+            list.innerHTML = '<div class="loading">LOADING...</div>';
 
-            const promises = Object.entries(RSS_FEEDS).map(([source, url]) =>
-                fetchFeed(source, url)
-            );
+            const promises = [];
+
+            // Fetch feeds based on current category
+            if (currentCategory === 'all') {
+                // Fetch from all categories
+                Object.entries(FEEDS_BY_CATEGORY).forEach(([catName, feeds]) => {
+                    Object.entries(feeds).forEach(([key, feed]) => {
+                        promises.push(fetchFeed(key, feed.url, feed.name, catName));
+                    });
+                });
+                // Also fetch custom feeds
+                customFeeds.forEach(f => {
+                    promises.push(fetchFeed(f.id, f.url, f.name, f.category));
+                });
+            } else if (currentCategory === 'custom') {
+                // Only custom feeds
+                customFeeds.forEach(f => {
+                    promises.push(fetchFeed(f.id, f.url, f.name, f.category));
+                });
+            } else {
+                // Specific category
+                const cat = FEEDS_BY_CATEGORY[currentCategory];
+                if (cat) {
+                    Object.entries(cat).forEach(([key, feed]) => {
+                        promises.push(fetchFeed(key, feed.url, feed.name, currentCategory));
+                    });
+                }
+            }
+
+            if (promises.length === 0) {
+                list.innerHTML = '<div class="error">No feeds configured. Add custom feeds to get started!</div>';
+                return;
+            }
 
             const results = await Promise.all(promises);
             allNews = results.flat();
@@ -268,6 +620,7 @@
             // Sort by date (newest first)
             allNews.sort((a, b) => b.date - a.date);
 
+            updateSourceBar();
             renderNews();
         }
 
@@ -275,29 +628,110 @@
             const list = document.getElementById('newsList');
 
             let filtered = allNews;
+
+            // Filter by source if not "all"
             if (currentSource !== 'all') {
                 filtered = allNews.filter(n => n.sourceKey === currentSource);
             }
 
             if (filtered.length === 0) {
-                list.innerHTML = '<div class="error">Nessuna notizia trovata. Riprova più tardi.</div>';
+                list.innerHTML = '<div class="error">No news found. Try refreshing or add more feeds.</div>';
                 return;
             }
 
-            // Show top 30 news
-            list.innerHTML = filtered.slice(0, 30).map(news => `
+            // Show top 50 news
+            list.innerHTML = filtered.slice(0, 50).map(news => `
                 <article class="news-item" onclick="window.open('${news.link}', '_blank')">
                     <div class="news-source">
                         <span><span class="category-dot cat-${news.category}"></span>${news.source}</span>
                         <span class="news-date">${formatDate(news.date)}</span>
                     </div>
-                    <div class="news-title">${news.title}</div>
-                    <div class="news-excerpt">${news.excerpt.substring(0, 150)}${news.excerpt.length > 150 ? '...' : ''}</div>
+                    <div class="news-title">${escapeHtml(news.title)}</div>
+                    <div class="news-excerpt">${escapeHtml(news.excerpt.substring(0, 150))}${news.excerpt.length > 150 ? '...' : ''}</div>
                 </article>
             `).join('');
         }
 
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Custom feed modal functions
+        function openCustomFeedModal() {
+            document.getElementById('customFeedModal').classList.add('active');
+            renderCustomFeedList();
+        }
+
+        function closeCustomFeedModal() {
+            document.getElementById('customFeedModal').classList.remove('active');
+        }
+
+        function addCustomFeed() {
+            const name = document.getElementById('feedName').value.trim();
+            const url = document.getElementById('feedUrl').value.trim();
+            const category = document.getElementById('feedCategory').value;
+
+            if (!name || !url) {
+                alert('Please fill in both name and URL');
+                return;
+            }
+
+            // Validate URL
+            try {
+                new URL(url);
+            } catch {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            const id = 'custom_' + Date.now();
+            customFeeds.push({ id, name, url, category });
+            localStorage.setItem('customRssFeeds', JSON.stringify(customFeeds));
+
+            // Clear form
+            document.getElementById('feedName').value = '';
+            document.getElementById('feedUrl').value = '';
+            document.getElementById('feedCategory').value = 'general';
+
+            renderCustomFeedList();
+            loadNews(); // Reload to include new feed
+        }
+
+        function removeCustomFeed(id) {
+            customFeeds = customFeeds.filter(f => f.id !== id);
+            localStorage.setItem('customRssFeeds', JSON.stringify(customFeeds));
+            renderCustomFeedList();
+            loadNews();
+        }
+
+        function renderCustomFeedList() {
+            const list = document.getElementById('customFeedList');
+            if (customFeeds.length === 0) {
+                list.innerHTML = '<p style="font-size: 11px; opacity: 0.5; margin-top: 10px;">No custom feeds added yet.</p>';
+                return;
+            }
+
+            list.innerHTML = '<h3 style="font-size: 11px; margin-bottom: 10px;">YOUR FEEDS</h3>' +
+                customFeeds.map(f => `
+                    <div class="custom-feed-item">
+                        <div>
+                            <strong>${escapeHtml(f.name)}</strong>
+                            <div style="font-size: 9px; opacity: 0.5; margin-top: 2px;">${escapeHtml(f.url.substring(0, 40))}...</div>
+                        </div>
+                        <button onclick="removeCustomFeed('${f.id}')">✕</button>
+                    </div>
+                `).join('');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('customFeedModal').onclick = (e) => {
+            if (e.target.id === 'customFeedModal') closeCustomFeedModal();
+        };
+
         // Initial load
+        updateSourceBar();
         loadNews();
 
         // Auto-refresh every 5 minutes

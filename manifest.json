@@ -1,6 +1,6 @@
 {
-  "name": "Shogun NoBackend",
-  "short_name": "Shogun",
+  "name": "PDOS 01",
+  "short_name": "PDOS 01",
   "description": "Privacy-first web tools with real-time sync",
   "start_url": "/index.html",
   "scope": "/",

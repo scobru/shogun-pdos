@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>SHOGUN</title>
+  <title>PDOS 01</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
@@ -65,8 +65,10 @@
           d="M23.7,-34.6C34.4,-34.8,49.4,-36,53.2,-30.4C57,-24.8,49.5,-12.4,41.3,-4.7C33.2,3,24.4,6,18.2,7.4C12.1,8.8,8.5,8.6,5.9,8C3.2,7.4,1.6,6.4,-2.7,11.1C-7.1,15.8,-14.1,26.3,-14.2,25.4C-14.3,24.6,-7.5,12.5,-17.5,6.3C-27.5,0.2,-54.3,0.1,-55.5,-0.7C-56.7,-1.5,-32.2,-2.9,-19.9,-5.2C-7.7,-7.4,-7.6,-10.3,-6.4,-15.5C-5.1,-20.8,-2.5,-28.3,2,-31.7C6.5,-35.1,13,-34.4,23.7,-34.6Z"
           transform="translate(100 100) scale(2)" />
       </svg>
-      <h1>SHOGUN</h1>
-      <div class="subtitle">NO BACKEND TOOLS</div>
+      <h1>PDOS 01</h1>
+      <div class="subtitle">POST DISASTER OPERATIVE SYSTEM</div>
+      <input type="text" id="appSearch" placeholder="SEARCH APPS..."
+        style="background: transparent; border: none; border-bottom: 1px solid var(--border-color); width: 200px; text-align: center; color: var(--text-color); font-family: inherit; font-size: 12px; padding: 8px; outline: none; text-transform: uppercase;">
     </header>
 
     <div class="grid">
@@ -82,6 +84,10 @@
       <a href="chat.html" class="card">
         <div class="card-name">CHAT</div>
         <div class="card-desc">ROOMS</div>
+      </a>
+      <a href="sms.html" class="card">
+        <div class="card-name">SMS</div>
+        <div class="card-desc">PRIVATE</div>
       </a>
       <a href="pass.html" class="card">
         <div class="card-name">PASS</div>
@@ -222,36 +228,28 @@
     <footer style="display:flex; flex-direction:column; gap:12px;">
       <div id="auth-status" style="display:flex; gap:8px; align-items:center; justify-content:center;">
         <span id="user-display" style="font-size:12px; opacity:0.7;">NOT LOGGED IN</span>
-        <button id="auth-btn"
-          style="background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; font-size:10px; padding:4px 12px; cursor:pointer;">LOGIN</button>
+        <button id="auth-btn" class="footer-btn">LOGIN</button>
       </div>
       <div style="display:flex; gap:8px; align-items:center; justify-content:center;">
         <span style="font-size:10px; opacity:0.5;">SYNC SERVER:</span>
         <input id="gun-url" type="text" placeholder="http://localhost:4000/gun"
-          style="background:transparent; border:none; border-bottom:1px solid #666; color:#fff; font-family:inherit; font-size:10px; width:180px; text-transform:lowercase; text-align:center;">
+          style="background:transparent; border:none; border-bottom:1px solid currentColor; color:inherit; font-family:inherit; font-size:10px; width:180px; text-transform:lowercase; text-align:center; opacity:0.7;">
       </div>
       <div style="display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap;">
-        <button id="theme-toggle"
-          style="background:transparent; border:1px solid #555; color:#fff; font-family:inherit; font-size:10px; padding:4px 10px; cursor:pointer;">☀
-          LIGHT</button>
-        <button id="export-btn"
-          style="background:transparent; border:1px solid #555; color:#fff; font-family:inherit; font-size:10px; padding:4px 10px; cursor:pointer;">↓
-          EXPORT</button>
-        <button id="import-btn"
-          style="background:transparent; border:1px solid #555; color:#fff; font-family:inherit; font-size:10px; padding:4px 10px; cursor:pointer;">↑
-          IMPORT</button>
-        <button id="install-btn"
-          style="display:none; background:#22c55e; border:1px solid #22c55e; color:#000; font-family:inherit; font-size:10px; padding:4px 10px; cursor:pointer; font-weight:bold;">⬇
-          INSTALL</button>
+        <button id="theme-toggle" class="footer-btn">☀ LIGHT</button>
+        <button id="export-btn" class="footer-btn">↓ EXPORT</button>
+        <button id="import-btn" class="footer-btn">↑ IMPORT</button>
+        <button id="install-btn" class="footer-btn install-btn" style="display:none;">⬇ INSTALL</button>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap;">
+        <button id="export-pair-btn" class="footer-btn">🔑 EXPORT KEY</button>
+        <button id="import-pair-btn" class="footer-btn">🔐 IMPORT KEY</button>
       </div>
       <input type="file" id="import-file" accept=".json" style="display:none;">
       <div style="display:flex; gap:16px; align-items:center; justify-content:center;">
-        <button id="about-btn"
-          style="background:transparent; border:none; color:#fff; font-family:inherit; font-size:10px; cursor:pointer; opacity:0.7;">ABOUT</button>
-        <button id="selfhost-btn"
-          style="background:transparent; border:none; color:#fff; font-family:inherit; font-size:10px; cursor:pointer; opacity:0.7;">SELF
-          HOST</button>
-        <a href="https://shogun-eco.xyz" target="_blank">SHOGUN-ECO.XYZ</a>
+        <button id="about-btn" class="footer-link">ABOUT</button>
+        <button id="selfhost-btn" class="footer-link">SELF HOST</button>
+        <a href="https://shogun-eco.xyz" target="_blank" class="footer-link">SHOGUN-ECO.XYZ</a>
       </div>
     </footer>
   </div>
@@ -261,11 +259,11 @@
     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; overflow-y:auto;">
     <div style="background:#000; border:1px solid #fff; padding:32px; width:90%; max-width:480px; margin:20px auto;">
       <h3 style="text-transform:uppercase; font-size:16px; margin-bottom:24px; text-align:center; letter-spacing:2px;">
-        ABOUT SHOGUN</h3>
+        ABOUT PDOS 01</h3>
 
       <div style="font-size:13px; line-height:1.8; opacity:0.9;">
         <p style="margin-bottom:16px;">
-          <strong>SHOGUN</strong> is a <strong>privacy-first</strong> toolkit that works without centralized servers.
+          <strong>PDOS 01</strong> is a <strong>privacy-first</strong> toolkit that works without centralized servers.
         </p>
 
         <p style="margin-bottom:16px;">
@@ -310,7 +308,7 @@
 
       <div style="font-size:12px; line-height:1.7; opacity:0.9;">
         <p style="margin-bottom:16px;">
-          Run your own instance of Shogun NoBackend. Choose your preferred method:
+          Run your own instance of PDOS 01. Choose your preferred method:
         </p>
 
         <div style="margin-bottom:20px;">
@@ -366,6 +364,26 @@
       <button id="auth-toggle"
         style="width:100%; margin-top:12px; background:transparent; border:none; color:#fff; font-family:inherit; padding:8px; cursor:pointer; opacity:0.5; font-size:10px;">NO
         ACCOUNT? REGISTER</button>
+    </div>
+  </div>
+
+  <!-- Import Keypair Modal -->
+  <div id="import-pair-modal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:#000; border:1px solid #fff; padding:24px; width:90%; max-width:400px;">
+      <h3 style="text-transform:uppercase; font-size:14px; margin-bottom:20px; text-align:center;">🔐 IMPORT KEYPAIR
+      </h3>
+      <p style="font-size:11px; opacity:0.6; margin-bottom:16px; line-height:1.5;">Paste your exported keypair JSON to
+        login with your existing identity.</p>
+      <textarea id="import-pair-input" placeholder="Paste keypair JSON here..."
+        style="width:100%; height:150px; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; margin-bottom:16px; resize:none; font-size:11px;"></textarea>
+      <div style="display:flex; gap:12px;">
+        <button id="import-pair-cancel"
+          style="flex:1; background:transparent; border:1px solid #fff; color:#fff; font-family:inherit; padding:12px; cursor:pointer; text-transform:uppercase;">CANCEL</button>
+        <button id="import-pair-submit"
+          style="flex:1; background:#fff; border:1px solid #fff; color:#000; font-family:inherit; padding:12px; cursor:pointer; text-transform:uppercase; font-weight:bold;">IMPORT
+          & LOGIN</button>
+      </div>
     </div>
   </div>
 
@@ -430,6 +448,116 @@
       userDisplay.textContent = alias.toUpperCase();
       authBtn.textContent = 'LOGOUT';
       localStorage.setItem('gun-user-alias', alias);
+    });
+
+    // ==================== KEYPAIR EXPORT/IMPORT ====================
+    const exportPairBtn = document.getElementById('export-pair-btn');
+    const importPairBtn = document.getElementById('import-pair-btn');
+    const importPairModal = document.getElementById('import-pair-modal');
+    const importPairInput = document.getElementById('import-pair-input');
+    const importPairSubmit = document.getElementById('import-pair-submit');
+    const importPairCancel = document.getElementById('import-pair-cancel');
+
+    // Export keypair
+    exportPairBtn.addEventListener('click', async () => {
+      if (!user.is) {
+        alert('You must be logged in to export your keypair');
+        return;
+      }
+
+      const pair = user._.sea;
+      if (!pair) {
+        alert('No keypair found');
+        return;
+      }
+
+      const exportData = {
+        pub: pair.pub,
+        priv: pair.priv,
+        epub: pair.epub,
+        epriv: pair.epriv,
+        alias: user.is.alias,
+        exportedAt: new Date().toISOString()
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pdos-01-keypair-${user.is.alias}-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      alert('⚠️ Keep this file safe! Anyone with this keypair can access your account.');
+    });
+
+    // Show import modal
+    importPairBtn.addEventListener('click', () => {
+      if (user.is) {
+        alert('Please logout first before importing a new keypair');
+        return;
+      }
+      importPairModal.style.display = 'flex';
+      importPairInput.focus();
+    });
+
+    // Cancel import
+    importPairCancel.addEventListener('click', () => {
+      importPairModal.style.display = 'none';
+      importPairInput.value = '';
+    });
+
+    // Import and login with keypair
+    importPairSubmit.addEventListener('click', async () => {
+      const jsonStr = importPairInput.value.trim();
+      if (!jsonStr) {
+        alert('Please paste a keypair JSON');
+        return;
+      }
+
+      try {
+        const pair = JSON.parse(jsonStr);
+
+        // Validate keypair structure
+        if (!pair.pub || !pair.priv || !pair.epub || !pair.epriv) {
+          throw new Error('Invalid keypair: missing required fields (pub, priv, epub, epriv)');
+        }
+
+        importPairSubmit.textContent = 'IMPORTING...';
+        importPairSubmit.disabled = true;
+
+        // Authenticate with the imported keypair
+        user.auth(pair, (ack) => {
+          if (ack.err) {
+            alert('Import failed: ' + ack.err);
+            importPairSubmit.textContent = 'IMPORT & LOGIN';
+            importPairSubmit.disabled = false;
+          } else {
+            importPairModal.style.display = 'none';
+            importPairInput.value = '';
+            importPairSubmit.textContent = 'IMPORT & LOGIN';
+            importPairSubmit.disabled = false;
+
+            // Update UI
+            const alias = pair.alias || 'USER';
+            userDisplay.textContent = alias.toUpperCase();
+            authBtn.textContent = 'LOGOUT';
+            localStorage.setItem('gun-user-alias', alias);
+
+            alert('Successfully imported and logged in!');
+          }
+        });
+      } catch (e) {
+        alert('Invalid JSON: ' + e.message);
+      }
+    });
+
+    // Close import modal on overlay click
+    importPairModal.addEventListener('click', (e) => {
+      if (e.target === importPairModal) {
+        importPairModal.style.display = 'none';
+        importPairInput.value = '';
+      }
     });
 
     // URL input handler
@@ -585,7 +713,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `shogun-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `pdos-01-backup-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -614,4 +742,25 @@
       reader.readAsText(file);
       importFile.value = ''; // Reset
     });
+
+    // ==================== APP SEARCH ====================
+    const appSearch = document.getElementById('appSearch');
+    const cards = document.querySelectorAll('.card');
+
+    if (appSearch) {
+      appSearch.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase().trim();
+
+        cards.forEach(card => {
+          const name = card.querySelector('.card-name').textContent.toLowerCase();
+          const desc = card.querySelector('.card-desc').textContent.toLowerCase();
+
+          if (name.includes(term) || desc.includes(term)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    }
   </script>

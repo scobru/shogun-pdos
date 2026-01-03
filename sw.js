@@ -1,5 +1,5 @@
-// Shogun NoBackend Service Worker
-const CACHE_NAME = 'shogun-nobackend-v2';
+// PDOS 01 Service Worker
+const CACHE_NAME = 'pdos-01-v1';
 
 // Files to cache
 const STATIC_ASSETS = [
@@ -120,7 +120,7 @@ self.addEventListener('fetch', event => {
 self.addEventListener('push', event => {
   const data = event.data?.json() || {};
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Shogun NoBackend', {
+    self.registration.showNotification(data.title || 'PDOS 01', {
       body: data.body || 'You have a notification',
       icon: '/logo.svg',
       badge: '/logo.svg'
