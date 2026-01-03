@@ -5,7 +5,7 @@ const cors = require('cors');
 const ws = require('gun/lib/ws');
 
 const app = express();
-const port = 8765;
+const port = process.env.PORT || 8765;
 
 app.use(cors());
 
