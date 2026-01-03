@@ -408,8 +408,86 @@ footer a:hover {
 
 .light-theme .matrix-overlay {
   background-image: radial-gradient(#999 1px, transparent 1px);
+  opacity: 0.03;
 }
 
+/* Buttons in light theme */
+.light-theme button,
+.light-theme .btn {
+  background: transparent;
+  border-color: var(--text-color);
+  color: var(--text-color);
+}
+
+.light-theme button:hover,
+.light-theme .btn:hover {
+  background: var(--text-color);
+  color: var(--bg-color);
+}
+
+.light-theme .btn-primary {
+  background: var(--text-color);
+  color: var(--bg-color);
+}
+
+.light-theme .btn-primary:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+/* Cards in light theme */
+.light-theme a.card {
+  border-color: var(--border-color);
+  background: #fff;
+}
+
+.light-theme a.card:hover {
+  background: var(--text-color);
+  color: #fff;
+}
+
+/* Inputs in light theme */
+.light-theme input,
+.light-theme textarea,
+.light-theme select {
+  background: #fff;
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+.light-theme input::placeholder,
+.light-theme textarea::placeholder {
+  color: #666;
+}
+
+/* Toolbar in light theme */
+.light-theme .toolbar {
+  background: var(--bg-color);
+  border-top-color: var(--border-color);
+}
+
+.light-theme .toolbar a,
+.light-theme .toolbar button {
+  color: var(--text-color);
+}
+
+/* Footer in light theme */
+.light-theme footer a {
+  color: var(--text-color);
+}
+
+/* Toast in light theme */
+.light-theme .toast {
+  background: var(--text-color);
+  color: var(--bg-color);
+}
+
+/* Modal in light theme */
+.light-theme .modal-content {
+  background: #fff;
+}
+
+/* Scrollbar */
 .light-theme ::-webkit-scrollbar-thumb {
   background: #ccc;
 }
