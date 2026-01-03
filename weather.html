@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>WEATHER</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .weather-container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .location {
+            font-size: 12px;
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .weather-icon {
+            font-size: 80px;
+            margin: 20px 0;
+        }
+
+        .temperature {
+            font-size: clamp(48px, 15vw, 100px);
+            font-weight: normal;
+            line-height: 1;
+        }
+
+        .temperature .unit {
+            font-size: 0.4em;
+            opacity: 0.5;
+            vertical-align: super;
+        }
+
+        .description {
+            font-size: 14px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 9px;
+            opacity: 0.4;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+        }
+
+        /* Forecast */
+        .forecast {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .forecast-day {
+            text-align: center;
+            flex: 1;
+        }
+
+        .forecast-day .day {
+            font-size: 9px;
+            opacity: 0.5;
+        }
+
+        .forecast-day .icon {
+            font-size: 20px;
+            margin: 8px 0;
+        }
+
+        .forecast-day .temp {
+            font-size: 12px;
+        }
+
+        .forecast-day .temp-low {
+            opacity: 0.4;
+        }
+
+        /* Loading/Error states */
+        .loading,
+        .error {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .error {
+            color: var(--accent-color);
+        }
+
+        .retry-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: var(--font-stack);
+        }
+
+        .retry-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* Unit toggle */
+        .unit-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+        }
+
+        .unit-toggle button {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: var(--font-stack);
+        }
+
+        .unit-toggle button.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="unit-toggle">
+        <button id="unitC" class="active">°C</button>
+        <button id="unitF">°F</button>
+    </div>
+
+    <div class="weather-container" id="content">
+        <div class="loading">LOADING...</div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+    </div>
+
+    <script>
+        // Weather icons mapping
+        const weatherIcons = {
+            'clear': '☀️',
+            'sunny': '☀️',
+            'partly-cloudy': '⛅',
+            'cloudy': '☁️',
+            'overcast': '☁️',
+            'mist': '🌫️',
+            'fog': '🌫️',
+            'rain': '🌧️',
+            'drizzle': '🌧️',
+            'showers': '🌦️',
+            'thunderstorm': '⛈️',
+            'snow': '❄️',
+            'sleet': '🌨️',
+            'default': '🌤️'
+        };
+
+        function getWeatherIcon(code) {
+            // WMO Weather codes: https://open-meteo.com/en/docs
+            if (code === 0) return '☀️';
+            if (code <= 3) return '⛅';
+            if (code <= 49) return '🌫️';
+            if (code <= 59) return '🌧️';
+            if (code <= 69) return '🌨️';
+            if (code <= 79) return '❄️';
+            if (code <= 84) return '🌧️';
+            if (code <= 94) return '❄️';
+            if (code >= 95) return '⛈️';
+            return '🌤️';
+        }
+
+        function getWeatherDesc(code) {
+            if (code === 0) return 'Clear sky';
+            if (code <= 3) return 'Partly cloudy';
+            if (code <= 49) return 'Foggy';
+            if (code <= 59) return 'Drizzle';
+            if (code <= 69) return 'Rain';
+            if (code <= 79) return 'Snow';
+            if (code <= 84) return 'Rain showers';
+            if (code <= 94) return 'Snow showers';
+            if (code >= 95) return 'Thunderstorm';
+            return 'Unknown';
+        }
+
+        const content = document.getElementById('content');
+        let useCelsius = true;
+        let weatherData = null;
+
+        // Unit toggle
+        document.getElementById('unitC').onclick = () => {
+            useCelsius = true;
+            document.getElementById('unitC').classList.add('active');
+            document.getElementById('unitF').classList.remove('active');
+            if (weatherData) renderWeather();
+        };
+
+        document.getElementById('unitF').onclick = () => {
+            useCelsius = false;
+            document.getElementById('unitF').classList.add('active');
+            document.getElementById('unitC').classList.remove('active');
+            if (weatherData) renderWeather();
+        };
+
+        function toF(c) {
+            return Math.round(c * 9 / 5 + 32);
+        }
+
+        function temp(c) {
+            return useCelsius ? Math.round(c) : toF(c);
+        }
+
+        function unit() {
+            return useCelsius ? '°C' : '°F';
+        }
+
+        async function getLocation() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocation not supported'));
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+                    err => reject(err),
+                    { timeout: 10000 }
+                );
+            });
+        }
+
+        async function fetchWeather(lat, lon) {
+            // Using Open-Meteo (free, no API key needed)
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Weather API error');
+            return await res.json();
+        }
+
+        async function getLocationName(lat, lon) {
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+                const data = await res.json();
+                return data.address?.city || data.address?.town || data.address?.village || data.address?.county || 'Unknown';
+            } catch {
+                return `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+            }
+        }
+
+        function renderWeather() {
+            const current = weatherData.current;
+            const daily = weatherData.daily;
+            const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+            let forecastHTML = '';
+            for (let i = 1; i < 5; i++) {
+                const date = new Date(daily.time[i]);
+                forecastHTML += `
+                    <div class="forecast-day">
+                        <div class="day">${days[date.getDay()]}</div>
+                        <div class="icon">${getWeatherIcon(daily.weather_code[i])}</div>
+                        <div class="temp">
+                            <span>${temp(daily.temperature_2m_max[i])}</span>
+                            <span class="temp-low">${temp(daily.temperature_2m_min[i])}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = `
+                <div class="location">${weatherData.locationName}</div>
+                <div class="weather-icon">${getWeatherIcon(current.weather_code)}</div>
+                <div class="temperature">${temp(current.temperature_2m)}<span class="unit">${unit()}</span></div>
+                <div class="description">${getWeatherDesc(current.weather_code)}</div>
+                
+                <div class="details">
+                    <div class="detail-item">
+                        <div class="detail-label">Humidity</div>
+                        <div class="detail-value">${current.relative_humidity_2m}%</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Wind</div>
+                        <div class="detail-value">${Math.round(current.wind_speed_10m)} km/h</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Today</div>
+                        <div class="detail-value">${temp(daily.temperature_2m_max[0])}/${temp(daily.temperature_2m_min[0])}</div>
+                    </div>
+                </div>
+
+                <div class="forecast">${forecastHTML}</div>
+            `;
+        }
+
+        async function loadWeather() {
+            content.innerHTML = '<div class="loading">LOCATING...</div>';
+
+            try {
+                const loc = await getLocation();
+                content.innerHTML = '<div class="loading">FETCHING WEATHER...</div>';
+
+                weatherData = await fetchWeather(loc.lat, loc.lon);
+                weatherData.locationName = await getLocationName(loc.lat, loc.lon);
+
+                renderWeather();
+            } catch (err) {
+                content.innerHTML = `
+                    <div class="error">
+                        <div>⚠️ ${err.message || 'Failed to load weather'}</div>
+                        <div style="font-size:10px; margin-top:10px; opacity:0.5;">Enable location access to see weather</div>
+                        <button class="retry-btn" onclick="loadWeather()">RETRY</button>
+                    </div>
+                `;
+            }
+        }
+
+        loadWeather();
+    </script>
+
+</body>
+
+</html>

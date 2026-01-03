@@ -38,17 +38,21 @@ docker run -d -p 8765:8765 --name shogun-nobackend shogun-nobackend
 
 Access at `http://localhost:8765`
 
+
 ## Tools
 
 ### Productivity
 | Tool | Description |
 |------|-------------|
-| **Note** | Minimal text editor with real-time sync |
+| **Notes** | Multi-note manager with sidebar |
+| **Pad** | Distraction-free single page text editor |
 | **List** | Task/checklist manager |
 | **Calendar** | Event calendar with date picker |
 | **Contacts** | Address book / directory |
 | **Collect** | Bookmark/link collection manager |
 | **Snippet** | Code snippet editor with syntax preview |
+| **Habit** | Daily habit tracker with streaks |
+| **Kanban** | Drag-and-drop task board |
 
 ### Communication
 | Tool | Description |
@@ -67,6 +71,8 @@ Access at `http://localhost:8765`
 |------|-------------|
 | **Pic** | Image viewer/sharer (Base64 encoded) |
 | **QR** | QR code generator and scanner |
+| **Amp** | Audio player with local library |
+| **Drive** | File manager with cloud sync |
 
 ### Utilities
 | Tool | Description |
@@ -77,6 +83,22 @@ Access at `http://localhost:8765`
 | **Timer** | Stopwatch and countdown |
 | **Wheel** | Random decision wheel |
 | **Where** | GPS location sharing |
+| **Stocks** | Crypto & stock price tracker |
+
+### Games
+| Tool | Description |
+|------|-------------|
+| **Chess** | Two-player chess |
+| **Dino** | Chrome dino runner clone |
+| **Battle** | Turn-based RPG (vs CPU or Player) |
+
+## Features
+
+- **PWA Support**: Install as app, works offline via Service Worker
+- **Export/Import**: Backup all data as JSON
+- **Theme Toggle**: Dark/Light mode
+- **Real-time Sync**: GunDB with E2E encryption
+
 
 ## Architecture
 

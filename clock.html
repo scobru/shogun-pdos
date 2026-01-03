@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>CLOCK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .clock-container {
+            text-align: center;
+        }
+
+        .time {
+            font-size: clamp(48px, 15vw, 120px);
+            font-weight: normal;
+            letter-spacing: 4px;
+            line-height: 1;
+        }
+
+        .seconds {
+            font-size: clamp(24px, 5vw, 40px);
+            opacity: 0.4;
+            margin-left: 5px;
+        }
+
+        .date {
+            font-size: clamp(12px, 3vw, 18px);
+            opacity: 0.5;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .timezone {
+            font-size: 10px;
+            opacity: 0.3;
+            margin-top: 10px;
+        }
+
+        /* Stopwatch */
+        .stopwatch {
+            margin-top: 40px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .stopwatch-display {
+            font-size: clamp(28px, 8vw, 48px);
+            text-align: center;
+            margin-bottom: 20px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stopwatch-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .sw-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .sw-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .sw-btn.active {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="clock-container">
+        <div class="time">
+            <span id="hours">--</span>:<span id="minutes">--</span><span class="seconds" id="seconds">--</span>
+        </div>
+        <div class="date" id="date">---</div>
+        <div class="timezone" id="timezone">---</div>
+    </div>
+
+    <div class="stopwatch">
+        <div class="stopwatch-display" id="swDisplay">00:00.00</div>
+        <div class="stopwatch-controls">
+            <button class="sw-btn" id="swStart">▶</button>
+            <button class="sw-btn" id="swReset">↺</button>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+    </div>
+
+    <script>
+        // --- Clock ---
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        const dateEl = document.getElementById('date');
+        const timezoneEl = document.getElementById('timezone');
+
+        const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+        const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+        function updateClock() {
+            const now = new Date();
+
+            hoursEl.textContent = String(now.getHours()).padStart(2, '0');
+            minutesEl.textContent = String(now.getMinutes()).padStart(2, '0');
+            secondsEl.textContent = String(now.getSeconds()).padStart(2, '0');
+
+            dateEl.textContent = `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const offset = -now.getTimezoneOffset() / 60;
+            const sign = offset >= 0 ? '+' : '';
+            timezoneEl.textContent = `${tz} (UTC${sign}${offset})`;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // --- Stopwatch ---
+        const swDisplay = document.getElementById('swDisplay');
+        const swStart = document.getElementById('swStart');
+        const swReset = document.getElementById('swReset');
+
+        let swRunning = false;
+        let swStartTime = 0;
+        let swElapsed = 0;
+        let swInterval = null;
+
+        function formatSW(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const centis = Math.floor((ms % 1000) / 10);
+            return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(centis).padStart(2, '0')}`;
+        }
+
+        function updateSW() {
+            const now = Date.now();
+            const total = swElapsed + (now - swStartTime);
+            swDisplay.textContent = formatSW(total);
+        }
+
+        swStart.onclick = () => {
+            if (swRunning) {
+                // Pause
+                swRunning = false;
+                swElapsed += Date.now() - swStartTime;
+                clearInterval(swInterval);
+                swStart.textContent = '▶';
+                swStart.classList.remove('active');
+            } else {
+                // Start
+                swRunning = true;
+                swStartTime = Date.now();
+                swInterval = setInterval(updateSW, 10);
+                swStart.textContent = '⏸';
+                swStart.classList.add('active');
+            }
+        };
+
+        swReset.onclick = () => {
+            swRunning = false;
+            clearInterval(swInterval);
+            swElapsed = 0;
+            swDisplay.textContent = '00:00.00';
+            swStart.textContent = '▶';
+            swStart.classList.remove('active');
+        };
+    </script>
+
+</body>
+
+</html>

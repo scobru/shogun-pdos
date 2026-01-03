@@ -1,0 +1,38 @@
+{
+  "name": "Shogun NoBackend",
+  "short_name": "Shogun",
+  "description": "Privacy-first web tools with real-time sync",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Notes",
+      "url": "/notes.html",
+      "description": "Quick notes"
+    },
+    {
+      "name": "Calculator",
+      "url": "/calc.html",
+      "description": "Calculator"
+    },
+    {
+      "name": "Timer",
+      "url": "/timer.html",
+      "description": "Timer & Stopwatch"
+    }
+  ]
+}

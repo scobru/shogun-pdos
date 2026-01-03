@@ -2,6 +2,8 @@ const express = require('express');
 const Gun = require('gun');
 const cors = require('cors');
 
+const ws = require('gun/lib/ws');
+
 const app = express();
 const port = 8765;
 

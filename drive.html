@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>DRIVE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <script src="storage.js"></script>
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .header-bar {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .file-item {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-color);
+        }
+
+        .file-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sync-icon {
+            font-size: 10px;
+            color: #0f0;
+        }
+
+        .file-meta {
+            font-size: 10px;
+            opacity: 0.5;
+            text-transform: uppercase;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: var(--font-stack);
+        }
+
+        .action-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.5;
+            border: 1px dashed var(--border-color);
+            font-size: 12px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .filter-btn {
+            padding: 5px 10px;
+            font-size: 10px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-btn.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        #uploadInput {
+            display: none;
+        }
+
+        /* Sync Panel */
+        .sync-panel {
+            background: #111;
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sync-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sync-status {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        .sync-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .sync-toggle input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .sync-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .sync-actions button {
+            font-size: 10px;
+            padding: 6px 10px;
+        }
+
+        .sync-log {
+            font-size: 10px;
+            color: #0f0;
+            max-height: 60px;
+            overflow-y: auto;
+            background: #000;
+            padding: 5px;
+            border: 1px solid #333;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .progress-container.active {
+            display: flex;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #333;
+            border: 1px solid #444;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0f0, #0a0);
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+
+        .progress-fill.error {
+            background: linear-gradient(90deg, #f00, #a00);
+        }
+
+        .sync-error {
+            color: #f66;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header-bar">
+            <h1>DRIVE</h1>
+            <button id="uploadBtn" class="btn" style="padding: 8px;">+ UPLOAD</button>
+            <input type="file" id="uploadInput" multiple>
+        </div>
+
+        <!-- Sync Panel -->
+        <div class="sync-panel" id="syncPanel">
+            <div class="sync-header">
+                <label class="sync-toggle">
+                    <input type="checkbox" id="syncToggle">
+                    <span>CLOUD SYNC</span>
+                </label>
+                <span class="sync-status" id="syncStatus">NOT LOGGED IN</span>
+            </div>
+            <div class="sync-actions">
+                <button id="syncAllBtn" class="btn" disabled>SYNC ALL ↑</button>
+                <button id="fetchBtn" class="btn" disabled>FETCH ↓</button>
+            </div>
+            <div class="sync-log" id="syncLog">Waiting for login...</div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-info">
+                    <span id="progressFile">-</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">ALL</button>
+            <button class="filter-btn" data-filter="audio">AUDIO</button>
+            <button class="filter-btn" data-filter="image">IMAGES</button>
+            <button class="filter-btn" data-filter="other">OTHER</button>
+        </div>
+
+        <div id="fileList" class="file-list">
+            <div class="empty-state">LOADING...</div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+        <button id="cleanBtn">[CLEAN ALL]</button>
+    </div>
+
+    <script>
+        // --- GunDB Setup ---
+        const defaultRelay = 'http://localhost:4000/gun';
+        const relayUrl = localStorage.getItem('gun-relay-url') || defaultRelay;
+        const gun = Gun({ peers: [relayUrl], localStorage: false });
+        const user = gun.user().recall({ sessionStorage: true });
+
+        // Initialize store with Gun
+        store.initGun(gun, user);
+
+        // --- Elements ---
+        const fileListEl = document.getElementById('fileList');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadInput = document.getElementById('uploadInput');
+        const cleanBtn = document.getElementById('cleanBtn');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const syncToggle = document.getElementById('syncToggle');
+        const syncStatus = document.getElementById('syncStatus');
+        const syncAllBtn = document.getElementById('syncAllBtn');
+        const fetchBtn = document.getElementById('fetchBtn');
+        const syncLog = document.getElementById('syncLog');
+
+        let currentFilter = 'all';
+
+        // --- Auth Check ---
+        gun.on('auth', () => {
+            const alias = user.is?.alias || 'USER';
+            syncStatus.textContent = 'LOGGED IN: ' + alias.toUpperCase();
+            syncAllBtn.disabled = false;
+            fetchBtn.disabled = false;
+            logSync('Ready to sync as ' + alias);
+
+            // Restore sync preference
+            if (localStorage.getItem('drive-sync-enabled') === 'true') {
+                syncToggle.checked = true;
+                enableSync();
+            }
+        });
+
+        // Check current login status
+        setTimeout(() => {
+            if (!user.is) {
+                syncStatus.textContent = 'NOT LOGGED IN';
+                logSync('Login from home page to enable sync');
+            }
+        }, 1000);
+
+        // --- Sync Controls ---
+        syncToggle.onchange = () => {
+            if (syncToggle.checked) {
+                if (!store.isLoggedIn()) {
+                    syncToggle.checked = false;
+                    logSync('ERROR: Login first!');
+                    return;
+                }
+                enableSync();
+            } else {
+                store.disableSync();
+                localStorage.setItem('drive-sync-enabled', 'false');
+                logSync('Sync disabled');
+            }
+        };
+
+        function enableSync() {
+            const success = store.enableSync(
+                // Sync update callback
+                (action, name, errorMsg) => {
+                    if (action === 'error') {
+                        logSync(`ERROR: ${name} - ${errorMsg}`, true);
+                    } else {
+                        logSync(`${action.toUpperCase()}: ${name}`);
+                    }
+                    refreshList();
+                },
+                // Progress callback
+                (progress) => {
+                    updateProgress(progress);
+                }
+            );
+
+            if (success) {
+                localStorage.setItem('drive-sync-enabled', 'true');
+                logSync('Sync enabled - listening for changes...');
+            }
+        }
+
+        // Progress bar UI
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFile = document.getElementById('progressFile');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressFill = document.getElementById('progressFill');
+
+        function updateProgress(progress) {
+            if (!progress) {
+                progressContainer.classList.remove('active');
+                return;
+            }
+
+            progressContainer.classList.add('active');
+            progressFile.textContent = progress.fileName;
+            progressPercent.textContent = progress.percent + '%';
+            progressFill.style.width = progress.percent + '%';
+            progressFill.classList.remove('error');
+
+            if (progress.phase === 'complete') {
+                setTimeout(() => {
+                    progressContainer.classList.remove('active');
+                }, 2000);
+            } else if (progress.phase === 'error') {
+                progressFill.classList.add('error');
+                setTimeout(() => {
+                    progressContainer.classList.remove('active');
+                }, 3000);
+            }
+        }
+
+        syncAllBtn.onclick = async () => {
+            if (!store.isLoggedIn()) return;
+            syncAllBtn.disabled = true;
+            syncAllBtn.textContent = 'SYNCING...';
+
+            const count = await store.syncAllToCloud();
+            logSync(`Synced ${count} file(s) to cloud`);
+
+            syncAllBtn.textContent = 'SYNC ALL ↑';
+            syncAllBtn.disabled = false;
+            refreshList();
+        };
+
+        fetchBtn.onclick = async () => {
+            logSync('Fetching from cloud... (auto via listener)');
+            // The listener in storage.js handles this automatically
+            // This button is more of a manual trigger / status check
+        };
+
+        function logSync(msg, isError = false) {
+            const time = new Date().toLocaleTimeString();
+            const cssClass = isError ? 'sync-error' : '';
+            syncLog.innerHTML = `<span class="${cssClass}">[${time}] ${msg}</span><br>` + syncLog.innerHTML;
+        }
+
+        // --- File List ---
+        async function refreshList() {
+            const files = await store.getAll(currentFilter === 'all' ? null : currentFilter);
+
+            fileListEl.innerHTML = '';
+            if (files.length === 0) {
+                fileListEl.innerHTML = '<div class="empty-state">NO FILES STORED</div>';
+                return;
+            }
+
+            files.forEach(file => {
+                const size = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+                const date = new Date(file.date).toLocaleDateString();
+                const syncIcon = file.synced ? '<span class="sync-icon">☁️</span>' : '';
+
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                div.innerHTML = `
+                <div class="file-info">
+                    <div class="file-name" title="${file.name}">${syncIcon}${file.name}</div>
+                    <div class="file-meta">${file.type} • ${size} • ${date}</div>
+                </div>
+                <div class="file-actions">
+                    <button class="action-btn" title="Download" onclick="downloadFile('${file.id}')">⬇</button>
+                    <button class="action-btn" title="Delete" style="color:var(--accent-color); border-color:var(--accent-color);" onclick="deleteFile('${file.id}')">X</button>
+                </div>
+            `;
+                fileListEl.appendChild(div);
+            });
+        }
+
+        // --- Actions ---
+        window.downloadFile = async (id) => {
+            const file = await store.get(id);
+            if (!file) return;
+
+            const url = URL.createObjectURL(file.data);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+
+        window.deleteFile = async (id) => {
+            if (confirm('Delete this file?')) {
+                await store.delete(id);
+                refreshList();
+                logSync('File deleted');
+            }
+        };
+
+        // --- Listeners ---
+        uploadBtn.onclick = () => uploadInput.click();
+
+        uploadInput.onchange = async () => {
+            if (uploadInput.files.length === 0) return;
+
+            for (const file of uploadInput.files) {
+                let type = 'other';
+                if (file.type.startsWith('audio/')) type = 'audio';
+                if (file.type.startsWith('image/')) type = 'image';
+
+                await store.save(file, type);
+                logSync(`Imported: ${file.name}`);
+            }
+
+            uploadInput.value = '';
+            refreshList();
+        };
+
+        cleanBtn.onclick = async () => {
+            if (confirm('WARNING: THIS WILL DELETE ALL LOCAL FILES FOREVER.\nContinue?')) {
+                const req = indexedDB.deleteDatabase('shogun-db');
+                req.onsuccess = () => location.reload();
+            }
+        };
+
+        filterBtns.forEach(btn => {
+            btn.onclick = () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                refreshList();
+            };
+        });
+
+        // Init
+        refreshList();
+
+    </script>
+
+</body>
+
+</html>

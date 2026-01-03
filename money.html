@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>MONEY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .balance-label {
+            font-size: 10px;
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            margin: 10px 0;
+        }
+
+        .balance-amount.positive {
+            color: #10b981;
+        }
+
+        .balance-amount.negative {
+            color: #ef4444;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 9px;
+            opacity: 0.4;
+            margin-bottom: 4px;
+        }
+
+        .summary-value {
+            font-size: 14px;
+        }
+
+        .summary-value.income {
+            color: #10b981;
+        }
+
+        .summary-value.expense {
+            color: #ef4444;
+        }
+
+        /* Quick actions */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-btn {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: var(--font-stack);
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .quick-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .quick-btn .icon {
+            font-size: 20px;
+        }
+
+        /* Period filter */
+        .period-filter {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .period-btn {
+            padding: 6px 12px;
+            font-size: 10px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: var(--font-stack);
+        }
+
+        .period-btn.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* Transaction list */
+        .transactions-header {
+            font-size: 10px;
+            opacity: 0.5;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 8px;
+        }
+
+        .tx-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .tx-category {
+            font-size: 12px;
+        }
+
+        .tx-date {
+            font-size: 9px;
+            opacity: 0.4;
+        }
+
+        .tx-amount {
+            font-size: 14px;
+        }
+
+        .tx-amount.income {
+            color: #10b981;
+        }
+
+        .tx-amount.expense {
+            color: #ef4444;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            opacity: 0.5;
+            font-size: 12px;
+            border: 1px dashed var(--border-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #000;
+            border: 1px solid var(--text-color);
+            padding: 24px;
+            width: 90%;
+            max-width: 320px;
+        }
+
+        .modal-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            opacity: 0.5;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            font-size: 14px;
+        }
+
+        .type-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: var(--font-stack);
+        }
+
+        .type-btn.active.income {
+            background: #10b981;
+            border-color: #10b981;
+            color: #000;
+        }
+
+        .type-btn.active.expense {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: #000;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            cursor: pointer;
+            font-family: var(--font-stack);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-save {
+            background: var(--text-color);
+            border: 1px solid var(--text-color);
+            color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header-bar">
+            <h1>MONEY</h1>
+            <span id="monthLabel" style="font-size:12px; opacity:0.7;">-</span>
+        </div>
+
+        <div class="balance-card">
+            <div class="balance-label">Current Balance</div>
+            <div class="balance-amount" id="balance">€0.00</div>
+            <div class="summary-row">
+                <div class="summary-item">
+                    <div class="summary-label">Income</div>
+                    <div class="summary-value income" id="totalIncome">+€0</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Expenses</div>
+                    <div class="summary-value expense" id="totalExpense">-€0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <button class="quick-btn" onclick="openModal('income')">
+                <span class="icon">↓</span>
+                <span>INCOME</span>
+            </button>
+            <button class="quick-btn" onclick="openModal('expense')">
+                <span class="icon">↑</span>
+                <span>EXPENSE</span>
+            </button>
+        </div>
+
+        <div class="period-filter">
+            <button class="period-btn active" data-period="month">THIS MONTH</button>
+            <button class="period-btn" data-period="week">THIS WEEK</button>
+            <button class="period-btn" data-period="all">ALL TIME</button>
+        </div>
+
+        <div class="transactions-header">RECENT TRANSACTIONS</div>
+        <div id="transactionList">
+            <div class="empty-state">NO TRANSACTIONS YET</div>
+        </div>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div class="modal" id="txModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">ADD TRANSACTION</div>
+
+            <div class="type-toggle">
+                <button class="type-btn income" id="typeIncome" onclick="setType('income')">+ INCOME</button>
+                <button class="type-btn expense" id="typeExpense" onclick="setType('expense')">- EXPENSE</button>
+            </div>
+
+            <div class="form-group">
+                <label>Amount (€)</label>
+                <input type="number" id="txAmount" placeholder="0.00" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label>Category</label>
+                <select id="txCategory">
+                    <option value="salary">💼 Salary</option>
+                    <option value="freelance">💻 Freelance</option>
+                    <option value="investment">📈 Investment</option>
+                    <option value="food">🍕 Food</option>
+                    <option value="transport">🚗 Transport</option>
+                    <option value="shopping">🛒 Shopping</option>
+                    <option value="bills">📄 Bills</option>
+                    <option value="entertainment">🎮 Entertainment</option>
+                    <option value="health">💊 Health</option>
+                    <option value="other">📦 Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Note (optional)</label>
+                <input type="text" id="txNote" placeholder="Description...">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">CANCEL</button>
+                <button class="btn-save" onclick="saveTransaction()">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+        <button onclick="clearAll()">[CLEAR ALL]</button>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'money-transactions';
+        let transactions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        let currentType = 'expense';
+        let currentPeriod = 'month';
+
+        const categoryIcons = {
+            salary: '💼', freelance: '💻', investment: '📈',
+            food: '🍕', transport: '🚗', shopping: '🛒',
+            bills: '📄', entertainment: '🎮', health: '💊', other: '📦'
+        };
+
+        // Update month label
+        const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+        const now = new Date();
+        document.getElementById('monthLabel').textContent = `${months[now.getMonth()]} ${now.getFullYear()}`;
+
+        // Period filter
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentPeriod = btn.dataset.period;
+                updateUI();
+            };
+        });
+
+        function openModal(type = 'expense') {
+            setType(type);
+            document.getElementById('txModal').classList.add('active');
+            document.getElementById('txAmount').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('txModal').classList.remove('active');
+            document.getElementById('txAmount').value = '';
+            document.getElementById('txNote').value = '';
+        }
+
+        function setType(type) {
+            currentType = type;
+            document.getElementById('typeIncome').classList.toggle('active', type === 'income');
+            document.getElementById('typeExpense').classList.toggle('active', type === 'expense');
+        }
+
+        function saveTransaction() {
+            const amount = parseFloat(document.getElementById('txAmount').value);
+            if (!amount || amount <= 0) return;
+
+            const tx = {
+                id: Date.now(),
+                type: currentType,
+                amount: amount,
+                category: document.getElementById('txCategory').value,
+                note: document.getElementById('txNote').value,
+                date: new Date().toISOString()
+            };
+
+            transactions.unshift(tx);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+            closeModal();
+            updateUI();
+        }
+
+        function deleteTransaction(id) {
+            if (!confirm('Delete this transaction?')) return;
+            transactions = transactions.filter(tx => tx.id !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+            updateUI();
+        }
+
+        function getFilteredTransactions() {
+            const now = new Date();
+
+            return transactions.filter(tx => {
+                const txDate = new Date(tx.date);
+
+                if (currentPeriod === 'week') {
+                    const weekAgo = new Date(now);
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    return txDate >= weekAgo;
+                } else if (currentPeriod === 'month') {
+                    return txDate.getMonth() === now.getMonth() &&
+                        txDate.getFullYear() === now.getFullYear();
+                }
+                return true; // all
+            });
+        }
+
+        function formatAmount(amount, type) {
+            const sign = type === 'income' ? '+' : '-';
+            return `${sign}€${amount.toFixed(2)}`;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            return `${day} ${month}`;
+        }
+
+        function updateUI() {
+            const filtered = getFilteredTransactions();
+
+            // Calculate totals
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            filtered.forEach(tx => {
+                if (tx.type === 'income') totalIncome += tx.amount;
+                else totalExpense += tx.amount;
+            });
+
+            const balance = totalIncome - totalExpense;
+
+            // Update display
+            const balanceEl = document.getElementById('balance');
+            balanceEl.textContent = `€${balance.toFixed(2)}`;
+            balanceEl.className = 'balance-amount ' + (balance >= 0 ? 'positive' : 'negative');
+
+            document.getElementById('totalIncome').textContent = `+€${totalIncome.toFixed(2)}`;
+            document.getElementById('totalExpense').textContent = `-€${totalExpense.toFixed(2)}`;
+
+            // Transaction list
+            const list = document.getElementById('transactionList');
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state">NO TRANSACTIONS YET</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.slice(0, 20).map(tx => `
+                <div class="transaction" onclick="deleteTransaction(${tx.id})">
+                    <div class="tx-info">
+                        <div class="tx-category">${categoryIcons[tx.category] || '📦'} ${tx.note || tx.category.toUpperCase()}</div>
+                        <div class="tx-date">${formatDate(tx.date)}</div>
+                    </div>
+                    <div class="tx-amount ${tx.type}">${formatAmount(tx.amount, tx.type)}</div>
+                </div>
+            `).join('');
+        }
+
+        function clearAll() {
+            if (!confirm('Delete ALL transactions? This cannot be undone.')) return;
+            transactions = [];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+            updateUI();
+        }
+
+        // Initialize
+        updateUI();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>CHESS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 100px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .status-panel {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            background: var(--bg-color);
+            text-align: center;
+        }
+
+        .status-text {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .turn-indicator {
+            font-size: 10px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            word-break: break-all;
+        }
+
+        .room-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        /* Override chessboard styles for dark theme integration */
+        .board-b72b1 {
+            border: 2px solid var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="status-panel">
+            <div class="room-controls">
+                <button id="copyLinkBtn" class="btn">[COPY INVITE LINK]</button>
+            </div>
+            <div class="status-text" id="status">Connecting...</div>
+            <div class="turn-indicator" id="fen"></div>
+        </div>
+
+        <div id="myBoard" style="width: 100%"></div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+        <button id="resetBtn">[RESET GAME]</button>
+        <button id="flipBtn">[FLIP BOARD]</button>
+    </div>
+
+    <!-- Dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <!-- GunDB -->
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+
+    <script>
+        // --- GunDB Setup ---
+        const defaultRelay = 'http://localhost:4000/gun';
+        const relayUrl = localStorage.getItem('gun-relay-url') || defaultRelay;
+        const gun = Gun({
+            peers: [relayUrl],
+            localStorage: false
+        });
+
+        // Room Management
+        let roomId = window.location.hash.replace('#', '');
+        if (!roomId) {
+            roomId = Math.random().toString(36).substring(2, 9);
+            window.location.hash = roomId;
+        }
+        const gameNode = gun.get('shogun-chess').get(roomId);
+
+        // --- Chess Game Logic ---
+        var board = null
+        var game = new Chess()
+        var $status = $('#status')
+        var $fen = $('#fen')
+        var $copyBtn = $('#copyLinkBtn')
+        var isInternalUpdate = false; // Flag to prevent feedback loops
+
+        function onDragStart(source, piece, position, orientation) {
+            // do not pick up pieces if the game is over
+            if (game.game_over()) return false
+
+            // In this sandbox mode, anyone can move for the current turn color
+            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                return false
+            }
+        }
+
+        function onDrop(source, target) {
+            // see if the move is legal
+            var move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q' // NOTE: always promote to a queen for example simplicity
+            })
+
+            // illegal move
+            if (move === null) return 'snapback'
+
+            updateStatus()
+
+            // --- Sync Move to GunDB ---
+            isInternalUpdate = true;
+            gameNode.put({
+                fen: game.fen(),
+                lastMove: { from: source, to: target },
+                timestamp: Date.now()
+            });
+            setTimeout(() => { isInternalUpdate = false; }, 100);
+        }
+
+        function onSnapEnd() {
+            board.position(game.fen())
+        }
+
+        function updateStatus() {
+            var status = ''
+
+            var moveColor = 'White'
+            if (game.turn() === 'b') {
+                moveColor = 'Black'
+            }
+
+            if (game.in_checkmate()) {
+                status = 'Game over, ' + moveColor + ' is in checkmate.'
+            } else if (game.in_draw()) {
+                status = 'Game over, drawn position'
+            } else {
+                status = moveColor + ' to move'
+                if (game.in_check()) {
+                    status += ', ' + moveColor + ' is in check'
+                }
+            }
+
+            $status.html(status)
+            $fen.html(roomId) // Show Room ID in small text
+        }
+
+        var config = {
+            draggable: true,
+            position: 'start',
+            onDragStart: onDragStart,
+            onDrop: onDrop,
+            onSnapEnd: onSnapEnd,
+            pieceTheme: 'https://raw.githubusercontent.com/oakmac/chessboardjs/master/website/img/chesspieces/wikipedia/{piece}.png'
+        }
+        board = Chessboard('myBoard', config)
+
+        // --- GunDB Listeners ---
+        gameNode.on((data) => {
+            if (!data || isInternalUpdate) return;
+
+            // Load FEN
+            if (data.fen && data.fen !== game.fen()) {
+                console.log("Remote update received:", data.fen);
+                game.load(data.fen);
+                board.position(data.fen);
+                updateStatus();
+            }
+        });
+
+        // --- Controls ---
+        $('#resetBtn').on('click', function () {
+            if (confirm("Reset game for everyone?")) {
+                game.reset()
+                board.start()
+                updateStatus()
+                // Sync reset
+                gameNode.put({
+                    fen: game.fen(),
+                    lastMove: null,
+                    timestamp: Date.now()
+                });
+            }
+        })
+
+        $('#flipBtn').on('click', function () {
+            board.flip()
+        })
+
+        $copyBtn.on('click', function () {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                const originalText = $copyBtn.text();
+                $copyBtn.text("COPIED!");
+                setTimeout(() => $copyBtn.text(originalText), 2000);
+            });
+        });
+
+        // Initial Status
+        updateStatus();
+
+        // Resize board on window resize
+        $(window).resize(board.resize)
+    </script>
+
+</body>
+
+</html>

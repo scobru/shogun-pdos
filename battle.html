@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>BATTLE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .arena {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .fighter {
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            position: relative;
+        }
+
+        .fighter.enemy {
+            border-color: var(--accent-color);
+        }
+
+        .fighter.player {
+            border-color: #22c55e;
+        }
+
+        .fighter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .fighter-name {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .fighter-sprite {
+            font-size: 48px;
+            text-align: center;
+            margin: 16px 0;
+        }
+
+        .stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .stat {
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            opacity: 0.5;
+            margin-bottom: 4px;
+        }
+
+        .stat-bar {
+            height: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .stat-fill.hp {
+            background: #22c55e;
+        }
+
+        .stat-fill.mp {
+            background: #3b82f6;
+        }
+
+        .stat-fill.low {
+            background: #ef4444;
+        }
+
+        .stat-value {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 16px;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.3;
+        }
+
+        .action-icon {
+            font-size: 20px;
+        }
+
+        .action-cost {
+            font-size: 9px;
+            opacity: 0.5;
+        }
+
+        .log {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            height: 120px;
+            overflow-y: auto;
+            font-size: 11px;
+            margin-top: 16px;
+        }
+
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .log-entry.player {
+            color: #22c55e;
+        }
+
+        .log-entry.enemy {
+            color: var(--accent-color);
+        }
+
+        .log-entry.system {
+            color: #eab308;
+        }
+
+        .menu-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .menu-title {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .menu-subtitle {
+            font-size: 12px;
+            opacity: 0.5;
+            margin-bottom: 40px;
+        }
+
+        .menu-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .menu-btn {
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .result-screen {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .result-text {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .result-text.victory {
+            color: #22c55e;
+        }
+
+        .result-text.defeat {
+            color: var(--accent-color);
+        }
+
+        .damage-popup {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            animation: popUp 0.8s forwards;
+            pointer-events: none;
+        }
+
+        @keyframes popUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-30px) scale(1.2);
+            }
+        }
+
+        .shake {
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Multiplayer room */
+        .room-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .room-input input {
+            flex: 1;
+        }
+
+        .waiting {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .dots::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+
+            0%,
+            20% {
+                content: '.';
+            }
+
+            40% {
+                content: '..';
+            }
+
+            60%,
+            100% {
+                content: '...';
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="matrix-overlay"></div>
+
+    <div class="container">
+        <div class="header-bar">
+            <h1><span>⚔</span> <span>BATTLE</span></h1>
+            <span class="sync-indicator" id="syncStatus">LOCAL</span>
+        </div>
+
+        <!-- Menu Screen -->
+        <div id="menuScreen" class="menu-screen">
+            <div class="menu-title">⚔ BATTLE</div>
+            <div class="menu-subtitle">TURN-BASED RPG</div>
+            <div class="menu-options">
+                <button class="menu-btn" onclick="startGame('cpu')">🤖 VS CPU</button>
+                <button class="menu-btn" onclick="showMultiplayer()">👥 VS PLAYER</button>
+            </div>
+        </div>
+
+        <!-- Multiplayer Room -->
+        <div id="multiplayerScreen" style="display:none;">
+            <div class="room-input">
+                <input type="text" id="roomCode" placeholder="ROOM CODE" maxlength="8"
+                    style="text-transform:uppercase;">
+                <button onclick="joinRoom()">JOIN</button>
+            </div>
+            <button class="btn-primary w-full" onclick="createRoom()">CREATE NEW ROOM</button>
+            <button style="margin-top:12px; width:100%;" onclick="backToMenu()">← BACK</button>
+        </div>
+
+        <!-- Waiting Screen -->
+        <div id="waitingScreen" style="display:none;" class="waiting">
+            <div style="font-size:14px; margin-bottom:12px;">ROOM: <span id="displayRoom">----</span></div>
+            <div>WAITING FOR OPPONENT<span class="dots"></span></div>
+            <button style="margin-top:20px;" onclick="leaveRoom()">CANCEL</button>
+        </div>
+
+        <!-- Battle Arena -->
+        <div id="battleScreen" style="display:none;">
+            <div class="arena">
+                <!-- Enemy -->
+                <div class="fighter enemy" id="enemyFighter">
+                    <div class="fighter-header">
+                        <span class="fighter-name" id="enemyName">ENEMY</span>
+                        <span style="font-size:10px; opacity:0.5;">LV.5</span>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-label">HP</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill hp" id="enemyHpBar" style="width:100%"></div>
+                                <span class="stat-value" id="enemyHpText">100/100</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fighter-sprite" id="enemySprite">👹</div>
+                </div>
+
+                <!-- Player -->
+                <div class="fighter player" id="playerFighter">
+                    <div class="fighter-header">
+                        <span class="fighter-name" id="playerName">YOU</span>
+                        <span style="font-size:10px; opacity:0.5;">LV.5</span>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-label">HP</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill hp" id="playerHpBar" style="width:100%"></div>
+                                <span class="stat-value" id="playerHpText">100/100</span>
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">MP</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill mp" id="playerMpBar" style="width:100%"></div>
+                                <span class="stat-value" id="playerMpText">50/50</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fighter-sprite">🧙</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions" id="actions">
+                <button class="action-btn" id="attackBtn" onclick="doAction('attack')">
+                    <span class="action-icon">⚔</span>
+                    <span>ATTACK</span>
+                    <span class="action-cost">FREE</span>
+                </button>
+                <button class="action-btn" id="defendBtn" onclick="doAction('defend')">
+                    <span class="action-icon">🛡</span>
+                    <span>DEFEND</span>
+                    <span class="action-cost">FREE</span>
+                </button>
+                <button class="action-btn" id="restBtn" onclick="doAction('rest')">
+                    <span class="action-icon">💤</span>
+                    <span>REST</span>
+                    <span class="action-cost">+15 MP</span>
+                </button>
+                <button class="action-btn" id="healBtn" onclick="doAction('heal')">
+                    <span class="action-icon">💚</span>
+                    <span>HEAL</span>
+                    <span class="action-cost">20 MP</span>
+                </button>
+                <button class="action-btn" id="fireBtn" onclick="doAction('fire')">
+                    <span class="action-icon">🔥</span>
+                    <span>FIRE</span>
+                    <span class="action-cost">15 MP</span>
+                </button>
+                <button class="action-btn" id="thunderBtn" onclick="doAction('thunder')">
+                    <span class="action-icon">⚡</span>
+                    <span>THUNDER</span>
+                    <span class="action-cost">25 MP</span>
+                </button>
+                <button class="action-btn" id="iceBtn" onclick="doAction('ice')">
+                    <span class="action-icon">❄</span>
+                    <span>ICE</span>
+                    <span class="action-cost">20 MP</span>
+                </button>
+                <button class="action-btn" id="ultimaBtn" onclick="doAction('ultima')">
+                    <span class="action-icon">💫</span>
+                    <span>ULTIMA</span>
+                    <span class="action-cost">40 MP</span>
+                </button>
+            </div>
+
+            <!-- Battle Log -->
+            <div class="log" id="battleLog"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultScreen" style="display:none;" class="result-screen">
+            <div class="result-text" id="resultText">VICTORY!</div>
+            <div style="font-size:12px; opacity:0.5; margin-bottom:30px;" id="resultSub"></div>
+            <button class="menu-btn" onclick="backToMenu()">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <script>
+        // Game State
+        let gameMode = null; // 'cpu' or 'pvp'
+        let roomId = null;
+        let isMyTurn = true;
+        let isDefending = false;
+        let gun, user;
+
+        // Stats
+        const MAX_HP = 100;
+        const MAX_MP = 50;
+        let player = { hp: MAX_HP, mp: MAX_MP };
+        let enemy = { hp: MAX_HP, mp: MAX_MP };
+
+        // Actions config
+        const ACTIONS = {
+            attack: { damage: [8, 15], mp: 0, heal: 0 },
+            defend: { damage: 0, mp: 0, heal: 0, defense: true },
+            rest: { damage: 0, mp: -15, heal: 0, rest: true },
+            fire: { damage: [15, 25], mp: 15, heal: 0 },
+            thunder: { damage: [20, 35], mp: 25, heal: 0 },
+            ice: { damage: [12, 22], mp: 20, heal: 0, slow: true },
+            heal: { damage: 0, mp: 20, heal: [20, 30] },
+            ultima: { damage: [35, 50], mp: 40, heal: 0 }
+        };
+
+        // CPU names
+        const CPU_NAMES = ['GOBLIN', 'DEMON', 'DRAGON', 'ORC', 'WRAITH', 'LICH'];
+        const CPU_SPRITES = ['👹', '😈', '🐉', '👺', '👻', '💀'];
+
+        // Initialize
+        function init() {
+            initGun();
+            applyTheme();
+        }
+
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('shogun-theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+            }
+        }
+
+        function initGun() {
+            const relayUrl = localStorage.getItem('gun-relay-url') || 'http://localhost:4000/gun';
+            gun = Gun({ localStorage: false, peers: [relayUrl] });
+            user = gun.user().recall({ sessionStorage: true });
+
+            gun.on('auth', () => {
+                document.getElementById('syncStatus').textContent = 'ONLINE';
+                document.getElementById('syncStatus').className = 'sync-indicator synced';
+            });
+        }
+
+        // Screen management
+        function showScreen(id) {
+            ['menuScreen', 'multiplayerScreen', 'waitingScreen', 'battleScreen', 'resultScreen']
+                .forEach(s => document.getElementById(s).style.display = 'none');
+            document.getElementById(id).style.display = '';
+        }
+
+        function backToMenu() {
+            showScreen('menuScreen');
+            leaveRoom();
+        }
+
+        // Start game
+        function startGame(mode) {
+            gameMode = mode;
+            player = { hp: MAX_HP, mp: MAX_MP };
+            enemy = { hp: MAX_HP, mp: MAX_MP };
+            isMyTurn = true;
+            isDefending = false;
+
+            document.getElementById('battleLog').innerHTML = '';
+
+            if (mode === 'cpu') {
+                const idx = Math.floor(Math.random() * CPU_NAMES.length);
+                document.getElementById('enemyName').textContent = CPU_NAMES[idx];
+                document.getElementById('enemySprite').textContent = CPU_SPRITES[idx];
+                document.getElementById('playerName').textContent = 'YOU';
+            }
+
+            updateUI();
+            showScreen('battleScreen');
+            log('Battle Start!', 'system');
+        }
+
+        // Multiplayer
+        function showMultiplayer() {
+            showScreen('multiplayerScreen');
+        }
+
+        function createRoom() {
+            roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('displayRoom').textContent = roomId;
+            showScreen('waitingScreen');
+
+            // Listen for opponent
+            gun.get('battle-' + roomId).on((data) => {
+                if (data && data.joined && data.joined !== getMyId()) {
+                    startPvpMatch(data.joined);
+                }
+            });
+
+            // Announce room
+            gun.get('battle-' + roomId).put({ host: getMyId(), created: Date.now() });
+        }
+
+        function joinRoom() {
+            const code = document.getElementById('roomCode').value.trim().toUpperCase();
+            if (!code) return;
+
+            roomId = code;
+            gun.get('battle-' + roomId).once((data) => {
+                if (data && data.host) {
+                    gun.get('battle-' + roomId).put({ joined: getMyId() });
+                    startPvpMatch(data.host);
+                } else {
+                    alert('Room not found!');
+                }
+            });
+        }
+
+        function startPvpMatch(opponentId) {
+            gameMode = 'pvp';
+            player = { hp: MAX_HP, mp: MAX_MP };
+            enemy = { hp: MAX_HP, mp: MAX_MP };
+
+            document.getElementById('enemyName').textContent = 'OPPONENT';
+            document.getElementById('enemySprite').textContent = '🧙‍♂️';
+            document.getElementById('playerName').textContent = 'YOU';
+
+            // Determine who goes first (host goes first)
+            gun.get('battle-' + roomId).once((data) => {
+                isMyTurn = data.host === getMyId();
+                updateUI();
+                showScreen('battleScreen');
+                log('Battle Start!', 'system');
+                if (!isMyTurn) {
+                    log('Waiting for opponent...', 'system');
+                    listenForOpponentAction();
+                }
+            });
+        }
+
+        function leaveRoom() {
+            if (roomId) {
+                gun.get('battle-' + roomId).off();
+                roomId = null;
+            }
+        }
+
+        function getMyId() {
+            return localStorage.getItem('battle-id') || (() => {
+                const id = Math.random().toString(36).substring(2, 10);
+                localStorage.setItem('battle-id', id);
+                return id;
+            })();
+        }
+
+        // Combat
+        function doAction(action) {
+            if (!isMyTurn) return;
+
+            const cfg = ACTIONS[action];
+
+            // Check MP
+            if (cfg.mp > 0 && player.mp < cfg.mp) {
+                log('Not enough MP!', 'system');
+                return;
+            }
+
+            isDefending = cfg.defense || false;
+
+            // Handle MP cost (negative = gain)
+            if (cfg.mp < 0) {
+                player.mp = Math.min(MAX_MP, player.mp - cfg.mp);
+            } else {
+                player.mp -= cfg.mp;
+            }
+
+            if (cfg.rest) {
+                log(`You REST and recover 15 MP!`, 'player');
+            } else if (cfg.heal) {
+                const heal = randomRange(cfg.heal);
+                player.hp = Math.min(MAX_HP, player.hp + heal);
+                log(`You cast HEAL! +${heal} HP`, 'player');
+            } else if (cfg.damage) {
+                let damage = randomRange(cfg.damage);
+                enemy.hp = Math.max(0, enemy.hp - damage);
+                log(`You use ${action.toUpperCase()}! ${damage} damage!`, 'player');
+                showDamage('enemyFighter', damage);
+            } else if (cfg.defense) {
+                log('You DEFEND! Damage reduced next turn.', 'player');
+            }
+
+            updateUI();
+
+            // Check win
+            if (enemy.hp <= 0) {
+                endGame(true);
+                return;
+            }
+
+            // Enemy turn
+            isMyTurn = false;
+            if (gameMode === 'cpu') {
+                setTimeout(cpuTurn, 1000);
+            } else {
+                // PvP: send action and wait
+                sendAction(action);
+            }
+        }
+
+        function cpuTurn() {
+            // Simple AI
+            const actions = ['attack', 'attack', 'attack', 'fire', 'defend'];
+            if (enemy.hp < 30) actions.push('heal');
+
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const cfg = ACTIONS[action];
+
+            // Check if CPU can afford action
+            if (cfg.mp > enemy.mp) {
+                executeEnemyAction('attack');
+            } else {
+                executeEnemyAction(action);
+            }
+        }
+
+        function executeEnemyAction(action) {
+            const cfg = ACTIONS[action];
+            enemy.mp -= cfg.mp;
+
+            if (cfg.heal) {
+                const heal = randomRange(cfg.heal);
+                enemy.hp = Math.min(MAX_HP, enemy.hp + heal);
+                log(`Enemy casts HEAL! +${heal} HP`, 'enemy');
+            } else if (cfg.damage) {
+                let damage = randomRange(cfg.damage);
+                if (isDefending) {
+                    damage = Math.floor(damage / 2);
+                    log('Your defense reduces damage!', 'system');
+                }
+                player.hp = Math.max(0, player.hp - damage);
+                log(`Enemy uses ${action.toUpperCase()}! ${damage} damage!`, 'enemy');
+                showDamage('playerFighter', damage);
+            } else if (cfg.defense) {
+                log('Enemy DEFENDS!', 'enemy');
+            }
+
+            isDefending = false;
+            updateUI();
+
+            // Check lose
+            if (player.hp <= 0) {
+                endGame(false);
+                return;
+            }
+
+            // MP regen
+            player.mp = Math.min(MAX_MP, player.mp + 5);
+            enemy.mp = Math.min(MAX_MP, enemy.mp + 5);
+
+            isMyTurn = true;
+            updateUI();
+        }
+
+        // PvP sync
+        function sendAction(action) {
+            gun.get('battle-' + roomId).get('moves').set({
+                player: getMyId(),
+                action: action,
+                time: Date.now()
+            });
+            listenForOpponentAction();
+        }
+
+        function listenForOpponentAction() {
+            gun.get('battle-' + roomId).get('moves').map().once((move) => {
+                if (move && move.player !== getMyId()) {
+                    executeEnemyAction(move.action);
+                }
+            });
+        }
+
+        // Utilities
+        function randomRange(arr) {
+            return Math.floor(Math.random() * (arr[1] - arr[0] + 1)) + arr[0];
+        }
+
+        function showDamage(fighterId, damage) {
+            const fighter = document.getElementById(fighterId);
+            fighter.classList.add('shake');
+            setTimeout(() => fighter.classList.remove('shake'), 300);
+
+            const popup = document.createElement('div');
+            popup.className = 'damage-popup';
+            popup.textContent = '-' + damage;
+            popup.style.color = '#ef4444';
+            popup.style.left = '50%';
+            popup.style.top = '40%';
+            fighter.appendChild(popup);
+            setTimeout(() => popup.remove(), 800);
+        }
+
+        function log(message, type = '') {
+            const logEl = document.getElementById('battleLog');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.textContent = message;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function updateUI() {
+            // Player stats
+            const playerHpPct = (player.hp / MAX_HP) * 100;
+            const playerMpPct = (player.mp / MAX_MP) * 100;
+            document.getElementById('playerHpBar').style.width = playerHpPct + '%';
+            document.getElementById('playerHpBar').className = 'stat-fill hp' + (playerHpPct < 25 ? ' low' : '');
+            document.getElementById('playerHpText').textContent = `${player.hp}/${MAX_HP}`;
+            document.getElementById('playerMpBar').style.width = playerMpPct + '%';
+            document.getElementById('playerMpText').textContent = `${player.mp}/${MAX_MP}`;
+
+            // Enemy stats
+            const enemyHpPct = (enemy.hp / MAX_HP) * 100;
+            document.getElementById('enemyHpBar').style.width = enemyHpPct + '%';
+            document.getElementById('enemyHpBar').className = 'stat-fill hp' + (enemyHpPct < 25 ? ' low' : '');
+            document.getElementById('enemyHpText').textContent = `${enemy.hp}/${MAX_HP}`;
+
+            // Enable/disable actions based on MP and turn
+            document.getElementById('attackBtn').disabled = !isMyTurn;
+            document.getElementById('defendBtn').disabled = !isMyTurn;
+            document.getElementById('restBtn').disabled = !isMyTurn || player.mp >= MAX_MP;
+            document.getElementById('fireBtn').disabled = !isMyTurn || player.mp < 15;
+            document.getElementById('healBtn').disabled = !isMyTurn || player.mp < 20;
+            document.getElementById('thunderBtn').disabled = !isMyTurn || player.mp < 25;
+            document.getElementById('iceBtn').disabled = !isMyTurn || player.mp < 20;
+            document.getElementById('ultimaBtn').disabled = !isMyTurn || player.mp < 40;
+        }
+
+        function endGame(victory) {
+            setTimeout(() => {
+                const resultText = document.getElementById('resultText');
+                const resultSub = document.getElementById('resultSub');
+
+                if (victory) {
+                    resultText.textContent = 'VICTORY!';
+                    resultText.className = 'result-text victory';
+                    resultSub.textContent = 'You defeated the enemy!';
+                } else {
+                    resultText.textContent = 'DEFEAT';
+                    resultText.className = 'result-text defeat';
+                    resultSub.textContent = 'You have fallen in battle...';
+                }
+
+                showScreen('resultScreen');
+                leaveRoom();
+            }, 1000);
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+
+</html>

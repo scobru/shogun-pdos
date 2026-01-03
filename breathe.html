@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>BREATHE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .breathe-container {
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .circle-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 30px auto;
+        }
+
+        .breathe-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 4s ease-in-out, border-color 0.5s;
+        }
+
+        .breathe-circle.inhale {
+            transform: scale(1.2);
+            border-color: #3b82f6;
+        }
+
+        .breathe-circle.hold {
+            border-color: #f59e0b;
+        }
+
+        .breathe-circle.exhale {
+            transform: scale(0.8);
+            border-color: #10b981;
+        }
+
+        .instruction {
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .timer {
+            font-size: 48px;
+            margin-top: 10px;
+            font-weight: normal;
+        }
+
+        .session-info {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 9px;
+            opacity: 0.4;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 18px;
+        }
+
+        .controls {
+            margin-top: 40px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-stack);
+        }
+
+        .control-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .control-btn.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* Pattern selector */
+        .patterns {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .pattern-title {
+            font-size: 10px;
+            opacity: 0.5;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .pattern-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .pattern-btn {
+            padding: 8px 12px;
+            font-size: 10px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: var(--font-stack);
+        }
+
+        .pattern-btn.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .guide {
+            margin-top: 20px;
+            font-size: 10px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="breathe-container">
+        <h2 style="font-size: 14px; letter-spacing: 2px; opacity: 0.7;">BREATHING EXERCISE</h2>
+
+        <div class="circle-container">
+            <div class="breathe-circle" id="breatheCircle">
+                <div>
+                    <div class="instruction" id="instruction">READY</div>
+                    <div class="timer" id="timer">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="session-info">
+            <div class="info-item">
+                <div class="info-label">Cycles</div>
+                <div class="info-value" id="cycles">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Time</div>
+                <div class="info-value" id="elapsed">0:00</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" id="startBtn" onclick="toggleSession()">▶</button>
+            <button class="control-btn" id="resetBtn" onclick="resetSession()">↺</button>
+        </div>
+
+        <div class="patterns">
+            <div class="pattern-title">Pattern</div>
+            <div class="pattern-options">
+                <button class="pattern-btn active" data-pattern="4-4-4-4">4-4-4-4</button>
+                <button class="pattern-btn" data-pattern="4-7-8">4-7-8</button>
+                <button class="pattern-btn" data-pattern="5-5">5-5</button>
+                <button class="pattern-btn" data-pattern="6-6">6-6</button>
+            </div>
+        </div>
+
+        <div class="guide" id="guide">Box breathing: Inhale 4s, Hold 4s, Exhale 4s, Hold 4s</div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+    </div>
+
+    <script>
+        // Patterns: [inhale, hold1, exhale, hold2]
+        const PATTERNS = {
+            '4-4-4-4': { times: [4, 4, 4, 4], name: 'Box breathing: Inhale 4s, Hold 4s, Exhale 4s, Hold 4s' },
+            '4-7-8': { times: [4, 7, 8, 0], name: 'Relaxing breath: Inhale 4s, Hold 7s, Exhale 8s' },
+            '5-5': { times: [5, 0, 5, 0], name: 'Simple: Inhale 5s, Exhale 5s' },
+            '6-6': { times: [6, 0, 6, 0], name: 'Deep: Inhale 6s, Exhale 6s' }
+        };
+
+        let currentPattern = '4-4-4-4';
+        let isRunning = false;
+        let cycles = 0;
+        let startTime = null;
+        let phaseIndex = 0;
+        let phaseTimer = 0;
+        let intervalId = null;
+        let elapsedId = null;
+
+        const phases = ['INHALE', 'HOLD', 'EXHALE', 'HOLD'];
+
+        const circle = document.getElementById('breatheCircle');
+        const instruction = document.getElementById('instruction');
+        const timer = document.getElementById('timer');
+        const cyclesEl = document.getElementById('cycles');
+        const elapsedEl = document.getElementById('elapsed');
+        const startBtn = document.getElementById('startBtn');
+        const guide = document.getElementById('guide');
+
+        // Pattern selection
+        document.querySelectorAll('.pattern-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.pattern-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentPattern = btn.dataset.pattern;
+                guide.textContent = PATTERNS[currentPattern].name;
+                if (isRunning) {
+                    resetSession();
+                }
+            };
+        });
+
+        function toggleSession() {
+            if (isRunning) {
+                pauseSession();
+            } else {
+                startSession();
+            }
+        }
+
+        function startSession() {
+            isRunning = true;
+            startBtn.textContent = '⏸';
+            startBtn.classList.add('active');
+
+            if (!startTime) {
+                startTime = Date.now();
+            }
+
+            runPhase();
+
+            elapsedId = setInterval(updateElapsed, 1000);
+        }
+
+        function pauseSession() {
+            isRunning = false;
+            startBtn.textContent = '▶';
+            startBtn.classList.remove('active');
+            clearInterval(intervalId);
+            clearInterval(elapsedId);
+        }
+
+        function resetSession() {
+            pauseSession();
+            cycles = 0;
+            phaseIndex = 0;
+            phaseTimer = 0;
+            startTime = null;
+
+            cyclesEl.textContent = '0';
+            elapsedEl.textContent = '0:00';
+            instruction.textContent = 'READY';
+            timer.textContent = '-';
+            circle.className = 'breathe-circle';
+        }
+
+        function runPhase() {
+            const pattern = PATTERNS[currentPattern].times;
+            const phaseDuration = pattern[phaseIndex];
+
+            // Skip phases with 0 duration
+            if (phaseDuration === 0) {
+                nextPhase();
+                return;
+            }
+
+            phaseTimer = phaseDuration;
+
+            // Update UI
+            const phaseName = phases[phaseIndex];
+            instruction.textContent = phaseName;
+            timer.textContent = phaseTimer;
+
+            // Update circle class
+            circle.className = 'breathe-circle';
+            if (phaseIndex === 0) circle.classList.add('inhale');
+            else if (phaseIndex === 1 || phaseIndex === 3) circle.classList.add('hold');
+            else if (phaseIndex === 2) circle.classList.add('exhale');
+
+            intervalId = setInterval(() => {
+                phaseTimer--;
+                timer.textContent = phaseTimer;
+
+                if (phaseTimer <= 0) {
+                    clearInterval(intervalId);
+                    nextPhase();
+                }
+            }, 1000);
+        }
+
+        function nextPhase() {
+            phaseIndex++;
+
+            if (phaseIndex >= 4) {
+                phaseIndex = 0;
+                cycles++;
+                cyclesEl.textContent = cycles;
+            }
+
+            if (isRunning) {
+                runPhase();
+            }
+        }
+
+        function updateElapsed() {
+            if (!startTime) return;
+
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            elapsedEl.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
+        }
+    </script>
+
+</body>
+
+</html>

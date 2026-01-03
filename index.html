@@ -3,7 +3,10 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>SHOGUN</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,6 +51,7 @@
       padding-top: 20px;
     }
   </style>
+  <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
@@ -96,6 +100,14 @@
         <div class="card-name">TIMER</div>
         <div class="card-desc">CHRONO</div>
       </a>
+      <a href="clock.html" class="card">
+        <div class="card-name">CLOCK</div>
+        <div class="card-desc">TIME</div>
+      </a>
+      <a href="weather.html" class="card">
+        <div class="card-name">WEATHER</div>
+        <div class="card-desc">FORECAST</div>
+      </a>
 
       <!-- Utilities -->
       <a href="notes.html" class="card">
@@ -123,7 +135,64 @@
         <div class="card-desc">SCAN</div>
       </a>
 
+      <!-- Health & Lifestyle -->
+      <a href="moon.html" class="card">
+        <div class="card-name">MOON</div>
+        <div class="card-desc">PHASE</div>
+      </a>
+      <a href="water.html" class="card">
+        <div class="card-name">H₂O</div>
+        <div class="card-desc">HYDRATE</div>
+      </a>
+      <a href="breathe.html" class="card">
+        <div class="card-name">BREATHE</div>
+        <div class="card-desc">RELAX</div>
+      </a>
+      <a href="money.html" class="card">
+        <div class="card-name">MONEY</div>
+        <div class="card-desc">FINANCE</div>
+      </a>
+      <a href="stocks.html" class="card">
+        <div class="card-name">STOCKS</div>
+        <div class="card-desc">CRYPTO</div>
+      </a>
+      <a href="news.html" class="card">
+        <div class="card-name">NEWS</div>
+        <div class="card-desc">RSS</div>
+      </a>
+
       <!-- Misc -->
+      <a href="chess.html" class="card">
+        <div class="card-name">CHESS</div>
+        <div class="card-desc">GAME</div>
+      </a>
+      <a href="dino.html" class="card">
+        <div class="card-name">DINO</div>
+        <div class="card-desc">RUNNER</div>
+      </a>
+      <a href="battle.html" class="card">
+        <div class="card-name">BATTLE</div>
+        <div class="card-desc">RPG</div>
+      </a>
+
+      <!-- Productivity -->
+      <a href="habit.html" class="card">
+        <div class="card-name">HABIT</div>
+        <div class="card-desc">TRACK</div>
+      </a>
+      <a href="kanban.html" class="card">
+        <div class="card-name">KANBAN</div>
+        <div class="card-desc">BOARD</div>
+      </a>
+
+      <a href="drive.html" class="card">
+        <div class="card-name">DRIVE</div>
+        <div class="card-desc">FILES</div>
+      </a>
+      <a href="amp.html" class="card">
+        <div class="card-name">AMP</div>
+        <div class="card-desc">MUSIC</div>
+      </a>
       <a href="pic.html" class="card">
         <div class="card-name">PIC</div>
         <div class="card-desc">IMAGE</div>
@@ -161,6 +230,21 @@
         <input id="gun-url" type="text" placeholder="http://localhost:4000/gun"
           style="background:transparent; border:none; border-bottom:1px solid #666; color:#fff; font-family:inherit; font-size:10px; width:180px; text-transform:lowercase; text-align:center;">
       </div>
+      <div style="display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap;">
+        <button id="theme-toggle"
+          style="background:transparent; border:1px solid #555; color:#fff; font-family:inherit; font-size:10px; padding:4px 10px; cursor:pointer;">☀
+          LIGHT</button>
+        <button id="export-btn"
+          style="background:transparent; border:1px solid #555; color:#fff; font-family:inherit; font-size:10px; padding:4px 10px; cursor:pointer;">↓
+          EXPORT</button>
+        <button id="import-btn"
+          style="background:transparent; border:1px solid #555; color:#fff; font-family:inherit; font-size:10px; padding:4px 10px; cursor:pointer;">↑
+          IMPORT</button>
+        <button id="install-btn"
+          style="display:none; background:#22c55e; border:1px solid #22c55e; color:#000; font-family:inherit; font-size:10px; padding:4px 10px; cursor:pointer; font-weight:bold;">⬇
+          INSTALL</button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none;">
       <div style="display:flex; gap:16px; align-items:center; justify-content:center;">
         <button id="about-btn"
           style="background:transparent; border:none; color:#fff; font-family:inherit; font-size:10px; cursor:pointer; opacity:0.7;">ABOUT</button>
@@ -433,5 +517,101 @@
     // Enter key to submit
     authPass.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') authSubmit.click();
+    });
+
+    // ==================== SERVICE WORKER ====================
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('[SW] Registered:', reg.scope))
+        .catch(err => console.log('[SW] Registration failed:', err));
+    }
+
+    // ==================== PWA INSTALL ====================
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-block';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log('[PWA] Install outcome:', outcome);
+      deferredPrompt = null;
+      installBtn.style.display = 'none';
+    });
+
+    // ==================== THEME TOGGLE ====================
+    const themeToggle = document.getElementById('theme-toggle');
+
+    function applyTheme(isLight) {
+      if (isLight) {
+        document.body.classList.add('light-theme');
+        themeToggle.textContent = '🌙 DARK';
+      } else {
+        document.body.classList.remove('light-theme');
+        themeToggle.textContent = '☀ LIGHT';
+      }
+    }
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('shogun-theme');
+    applyTheme(savedTheme === 'light');
+
+    themeToggle.addEventListener('click', () => {
+      const isLight = !document.body.classList.contains('light-theme');
+      applyTheme(isLight);
+      localStorage.setItem('shogun-theme', isLight ? 'light' : 'dark');
+    });
+
+    // ==================== EXPORT / IMPORT ====================
+    const exportBtn = document.getElementById('export-btn');
+    const importBtn = document.getElementById('import-btn');
+    const importFile = document.getElementById('import-file');
+
+    // Export all localStorage data
+    exportBtn.addEventListener('click', () => {
+      const data = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        data[key] = localStorage.getItem(key);
+      }
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `shogun-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Import from file
+    importBtn.addEventListener('click', () => importFile.click());
+
+    importFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          let count = 0;
+          for (const [key, value] of Object.entries(data)) {
+            localStorage.setItem(key, value);
+            count++;
+          }
+          alert(`Imported ${count} items successfully! Refresh to apply.`);
+        } catch (err) {
+          alert('Import failed: Invalid JSON file');
+        }
+      };
+      reader.readAsText(file);
+      importFile.value = ''; // Reset
     });
   </script>

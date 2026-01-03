@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>STOCKS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 8px 15px;
+            font-size: 11px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: var(--font-stack);
+        }
+
+        .tab.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .price-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .price-card {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .asset-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .asset-icon {
+            font-size: 24px;
+        }
+
+        .asset-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .asset-name {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .asset-symbol {
+            font-size: 10px;
+            opacity: 0.5;
+        }
+
+        .price-info {
+            text-align: right;
+        }
+
+        .price {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .change {
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .change.positive {
+            color: #10b981;
+        }
+
+        .change.negative {
+            color: #ef4444;
+        }
+
+        .last-update {
+            font-size: 9px;
+            opacity: 0.4;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.5;
+        }
+
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: var(--accent-color);
+            font-size: 12px;
+        }
+
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            cursor: pointer;
+            font-family: var(--font-stack);
+            font-size: 10px;
+        }
+
+        .refresh-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* Watchlist */
+        .watchlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .add-btn {
+            font-size: 10px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header-bar">
+            <h1>STOCKS</h1>
+            <button class="refresh-btn" onclick="refreshData()">↻ REFRESH</button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="crypto">CRYPTO</button>
+            <button class="tab" data-tab="stocks">STOCKS</button>
+        </div>
+
+        <div id="cryptoSection">
+            <div class="price-list" id="cryptoList">
+                <div class="loading">LOADING PRICES...</div>
+            </div>
+        </div>
+
+        <div id="stocksSection" style="display:none;">
+            <div class="price-list" id="stockList">
+                <div class="loading">LOADING PRICES...</div>
+            </div>
+        </div>
+
+        <div class="last-update" id="lastUpdate">-</div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+    </div>
+
+    <script>
+        // Crypto icons
+        const cryptoIcons = {
+            bitcoin: '₿', ethereum: '⟠', tether: '₮', binancecoin: '◈',
+            ripple: '✕', cardano: '₳', solana: '◎', dogecoin: 'Ð',
+            polkadot: '●', 'shiba-inu': '🐕', litecoin: 'Ł', chainlink: '⬡'
+        };
+
+        // Stock icons
+        const stockIcons = {
+            AAPL: '🍎', MSFT: '🪟', GOOGL: '🔍', AMZN: '📦',
+            TSLA: '⚡', META: '📘', NVDA: '🎮', NFLX: '🎬',
+            AMD: '💻', INTC: '💠'
+        };
+
+        // Watchlist
+        const cryptoList = ['bitcoin', 'ethereum', 'solana', 'cardano', 'dogecoin', 'ripple', 'polkadot', 'chainlink'];
+        const stockList = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA'];
+
+        let currentTab = 'crypto';
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.onclick = () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+
+                document.getElementById('cryptoSection').style.display = currentTab === 'crypto' ? 'block' : 'none';
+                document.getElementById('stocksSection').style.display = currentTab === 'stocks' ? 'block' : 'none';
+            };
+        });
+
+        async function fetchCrypto() {
+            try {
+                const ids = cryptoList.join(',');
+                const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
+                if (!res.ok) throw new Error('API Error');
+                return await res.json();
+            } catch (e) {
+                console.error('Crypto fetch error:', e);
+                return null;
+            }
+        }
+
+        async function fetchStocks() {
+            // Note: Yahoo Finance API doesn't support CORS, so we use mock data
+            // In production, you'd proxy this through your own backend
+            try {
+                // Simulated stock data (real API would require a backend proxy)
+                return stockList.map(symbol => ({
+                    symbol,
+                    shortName: {
+                        'AAPL': 'Apple Inc.',
+                        'MSFT': 'Microsoft Corp.',
+                        'GOOGL': 'Alphabet Inc.',
+                        'AMZN': 'Amazon.com Inc.',
+                        'TSLA': 'Tesla Inc.',
+                        'META': 'Meta Platforms',
+                        'NVDA': 'NVIDIA Corp.'
+                    }[symbol] || symbol,
+                    regularMarketPrice: parseFloat((100 + Math.random() * 400).toFixed(2)),
+                    regularMarketChangePercent: parseFloat((Math.random() * 10 - 5).toFixed(2))
+                }));
+            } catch (e) {
+                console.error('Stock fetch error:', e);
+                return [];
+            }
+        }
+
+        function formatPrice(price, isCrypto = true) {
+            // Ensure price is a number
+            const numPrice = typeof price === 'number' ? price : parseFloat(price) || 0;
+            if (numPrice >= 1000) {
+                return '$' + numPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            return '$' + numPrice.toFixed(numPrice < 1 ? 4 : 2);
+        }
+
+        function renderCrypto(data) {
+            const list = document.getElementById('cryptoList');
+
+            if (!data) {
+                list.innerHTML = '<div class="error">⚠️ Failed to load crypto prices. Check connection.</div>';
+                return;
+            }
+
+            list.innerHTML = cryptoList.map(id => {
+                const coin = data[id];
+                if (!coin) return '';
+
+                const change = coin.usd_24h_change || 0;
+                const changeClass = change >= 0 ? 'positive' : 'negative';
+                const changeSign = change >= 0 ? '+' : '';
+
+                return `
+                    <div class="price-card">
+                        <div class="asset-info">
+                            <div class="asset-icon">${cryptoIcons[id] || '●'}</div>
+                            <div class="asset-details">
+                                <div class="asset-name">${id.charAt(0).toUpperCase() + id.slice(1)}</div>
+                                <div class="asset-symbol">${id.toUpperCase()}</div>
+                            </div>
+                        </div>
+                        <div class="price-info">
+                            <div class="price">${formatPrice(coin.usd)}</div>
+                            <div class="change ${changeClass}">${changeSign}${change.toFixed(2)}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderStocks(data) {
+            const list = document.getElementById('stockList');
+
+            if (!data || data.length === 0) {
+                list.innerHTML = '<div class="error">⚠️ Failed to load stock prices.</div>';
+                return;
+            }
+
+            list.innerHTML = data.map(stock => {
+                const price = stock.regularMarketPrice || 0;
+                const change = stock.regularMarketChangePercent || 0;
+                const changeClass = change >= 0 ? 'positive' : 'negative';
+                const changeSign = change >= 0 ? '+' : '';
+
+                return `
+                    <div class="price-card">
+                        <div class="asset-info">
+                            <div class="asset-icon">${stockIcons[stock.symbol] || '📈'}</div>
+                            <div class="asset-details">
+                                <div class="asset-name">${stock.shortName || stock.symbol}</div>
+                                <div class="asset-symbol">${stock.symbol}</div>
+                            </div>
+                        </div>
+                        <div class="price-info">
+                            <div class="price">${formatPrice(price, false)}</div>
+                            <div class="change ${changeClass}">${changeSign}${parseFloat(change).toFixed(2)}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function refreshData() {
+            document.getElementById('cryptoList').innerHTML = '<div class="loading">LOADING...</div>';
+            document.getElementById('stockList').innerHTML = '<div class="loading">LOADING...</div>';
+
+            const [cryptoData, stockData] = await Promise.all([
+                fetchCrypto(),
+                fetchStocks()
+            ]);
+
+            renderCrypto(cryptoData);
+            renderStocks(stockData);
+
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = `Last update: ${now.toLocaleTimeString()}`;
+        }
+
+        // Initial load
+        refreshData();
+
+        // Auto-refresh every 60 seconds
+        setInterval(refreshData, 60000);
+    </script>
+
+</body>
+
+</html>

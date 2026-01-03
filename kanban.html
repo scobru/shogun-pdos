@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>KANBAN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            min-height: 60vh;
+        }
+
+        @media (max-width: 700px) {
+            .board {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .column {
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-header {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .column-count {
+            opacity: 0.5;
+            font-weight: normal;
+        }
+
+        .column-cards {
+            flex: 1;
+            padding: 8px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .column-cards.drag-over {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .card {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            cursor: grab;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .card:active {
+            cursor: grabbing;
+        }
+
+        .card.dragging {
+            opacity: 0.5;
+        }
+
+        .card-title {
+            margin-bottom: 6px;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            opacity: 0.5;
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: none;
+        }
+
+        .card:hover .card-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .card-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 2px 6px;
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        .card-btn:hover {
+            opacity: 1;
+        }
+
+        .card-btn.delete {
+            color: var(--accent-color);
+        }
+
+        .add-card-btn {
+            width: 100%;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: auto;
+        }
+
+        .add-card-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Priority colors */
+        .card.priority-high {
+            border-left: 3px solid #ef4444;
+        }
+
+        .card.priority-medium {
+            border-left: 3px solid #eab308;
+        }
+
+        .card.priority-low {
+            border-left: 3px solid #22c55e;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            width: 90%;
+            max-width: 360px;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        select {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            padding: 12px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="matrix-overlay"></div>
+
+    <div class="container" style="max-width: 900px;">
+        <div class="header-bar">
+            <h1><span>☰</span> <span>KANBAN</span></h1>
+            <span class="sync-indicator" id="syncStatus">LOCAL</span>
+        </div>
+
+        <div class="board" id="board">
+            <div class="column" data-column="todo">
+                <div class="column-header">
+                    <span>📋 TO DO</span>
+                    <span class="column-count" id="count-todo">0</span>
+                </div>
+                <div class="column-cards" id="cards-todo"></div>
+                <button class="add-card-btn" onclick="showAddModal('todo')">+ ADD CARD</button>
+            </div>
+
+            <div class="column" data-column="progress">
+                <div class="column-header">
+                    <span>⚡ IN PROGRESS</span>
+                    <span class="column-count" id="count-progress">0</span>
+                </div>
+                <div class="column-cards" id="cards-progress"></div>
+                <button class="add-card-btn" onclick="showAddModal('progress')">+ ADD CARD</button>
+            </div>
+
+            <div class="column" data-column="done">
+                <div class="column-header">
+                    <span>✓ DONE</span>
+                    <span class="column-count" id="count-done">0</span>
+                </div>
+                <div class="column-cards" id="cards-done"></div>
+                <button class="add-card-btn" onclick="showAddModal('done')">+ ADD CARD</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+    </div>
+
+    <!-- Add/Edit Card Modal -->
+    <div class="modal" id="cardModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">NEW CARD</h3>
+            <div class="field">
+                <label>TITLE</label>
+                <input type="text" id="cardTitle" placeholder="Task title...">
+            </div>
+            <div class="field">
+                <label>DESCRIPTION</label>
+                <textarea id="cardDesc" rows="3" placeholder="Optional description..."></textarea>
+            </div>
+            <div class="field">
+                <label>PRIORITY</label>
+                <select id="cardPriority">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <input type="hidden" id="cardColumn">
+            <input type="hidden" id="cardId">
+            <div class="modal-buttons">
+                <button onclick="hideModal()">CANCEL</button>
+                <button class="btn-primary" onclick="saveCard()">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <script>
+        // State
+        let cards = { todo: [], progress: [], done: [] };
+        let gun, user;
+        let draggedCard = null;
+
+        // Initialize
+        function init() {
+            loadFromStorage();
+            initGun();
+            initDragDrop();
+            applyTheme();
+        }
+
+        // Theme support
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('shogun-theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+            }
+        }
+
+        // Gun initialization
+        function initGun() {
+            const relayUrl = localStorage.getItem('gun-relay-url') || 'http://localhost:4000/gun';
+            gun = Gun({ localStorage: false, peers: [relayUrl] });
+            user = gun.user().recall({ sessionStorage: true });
+
+            gun.on('auth', () => {
+                document.getElementById('syncStatus').textContent = 'SYNCED';
+                document.getElementById('syncStatus').className = 'sync-indicator synced';
+                loadFromGun();
+            });
+        }
+
+        // Local storage
+        function loadFromStorage() {
+            const stored = localStorage.getItem('shogun-kanban');
+            if (stored) {
+                cards = JSON.parse(stored);
+                render();
+            }
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('shogun-kanban', JSON.stringify(cards));
+        }
+
+        // Gun sync
+        function loadFromGun() {
+            if (!user.is) return;
+            user.get('kanban').once(async (data) => {
+                if (data) {
+                    try {
+                        const decrypted = await SEA.decrypt(data, user._.sea);
+                        if (decrypted) {
+                            cards = JSON.parse(decrypted);
+                            render();
+                        }
+                    } catch (e) {
+                        console.error('Failed to decrypt kanban:', e);
+                    }
+                }
+            });
+        }
+
+        async function saveToGun() {
+            if (!user.is) return;
+            try {
+                const encrypted = await SEA.encrypt(JSON.stringify(cards), user._.sea);
+                user.get('kanban').put(encrypted);
+            } catch (e) {
+                console.error('Failed to save to Gun:', e);
+            }
+        }
+
+        // Drag and Drop
+        function initDragDrop() {
+            document.querySelectorAll('.column-cards').forEach(column => {
+                column.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    column.classList.add('drag-over');
+                });
+
+                column.addEventListener('dragleave', () => {
+                    column.classList.remove('drag-over');
+                });
+
+                column.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    column.classList.remove('drag-over');
+
+                    if (!draggedCard) return;
+
+                    const targetColumn = column.id.replace('cards-', '');
+                    const sourceColumn = draggedCard.column;
+                    const cardId = draggedCard.id;
+
+                    if (sourceColumn === targetColumn) return;
+
+                    // Find and move card
+                    const cardIdx = cards[sourceColumn].findIndex(c => c.id === cardId);
+                    if (cardIdx === -1) return;
+
+                    const [card] = cards[sourceColumn].splice(cardIdx, 1);
+                    cards[targetColumn].push(card);
+
+                    saveToStorage();
+                    saveToGun();
+                    render();
+                });
+            });
+        }
+
+        // Render cards
+        function render() {
+            ['todo', 'progress', 'done'].forEach(col => {
+                const container = document.getElementById(`cards-${col}`);
+                const list = cards[col] || [];
+
+                container.innerHTML = list.map(card => `
+                    <div class="card priority-${card.priority || 'low'}" 
+                         draggable="true"
+                         data-id="${card.id}"
+                         data-column="${col}"
+                         ondragstart="onDragStart(event)"
+                         ondragend="onDragEnd(event)">
+                        <div class="card-actions">
+                            <button class="card-btn" onclick="editCard('${col}', '${card.id}')">✎</button>
+                            <button class="card-btn delete" onclick="deleteCard('${col}', '${card.id}')">✕</button>
+                        </div>
+                        <div class="card-title">${escapeHtml(card.title)}</div>
+                        ${card.desc ? `<div class="card-meta">${escapeHtml(card.desc.substring(0, 50))}${card.desc.length > 50 ? '...' : ''}</div>` : ''}
+                    </div>
+                `).join('');
+
+                document.getElementById(`count-${col}`).textContent = list.length;
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Drag handlers
+        function onDragStart(e) {
+            const card = e.target;
+            card.classList.add('dragging');
+            draggedCard = {
+                id: card.dataset.id,
+                column: card.dataset.column
+            };
+        }
+
+        function onDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedCard = null;
+        }
+
+        // Modal functions
+        function showAddModal(column) {
+            document.getElementById('modalTitle').textContent = 'NEW CARD';
+            document.getElementById('cardTitle').value = '';
+            document.getElementById('cardDesc').value = '';
+            document.getElementById('cardPriority').value = 'low';
+            document.getElementById('cardColumn').value = column;
+            document.getElementById('cardId').value = '';
+            document.getElementById('cardModal').classList.add('show');
+            document.getElementById('cardTitle').focus();
+        }
+
+        function editCard(column, id) {
+            const card = cards[column].find(c => c.id === id);
+            if (!card) return;
+
+            document.getElementById('modalTitle').textContent = 'EDIT CARD';
+            document.getElementById('cardTitle').value = card.title;
+            document.getElementById('cardDesc').value = card.desc || '';
+            document.getElementById('cardPriority').value = card.priority || 'low';
+            document.getElementById('cardColumn').value = column;
+            document.getElementById('cardId').value = id;
+            document.getElementById('cardModal').classList.add('show');
+            document.getElementById('cardTitle').focus();
+        }
+
+        function hideModal() {
+            document.getElementById('cardModal').classList.remove('show');
+        }
+
+        function saveCard() {
+            const title = document.getElementById('cardTitle').value.trim();
+            if (!title) return;
+
+            const desc = document.getElementById('cardDesc').value.trim();
+            const priority = document.getElementById('cardPriority').value;
+            const column = document.getElementById('cardColumn').value;
+            const editId = document.getElementById('cardId').value;
+
+            if (editId) {
+                // Edit existing
+                const card = cards[column].find(c => c.id === editId);
+                if (card) {
+                    card.title = title;
+                    card.desc = desc;
+                    card.priority = priority;
+                }
+            } else {
+                // Add new
+                cards[column].push({
+                    id: Date.now().toString(36),
+                    title,
+                    desc,
+                    priority,
+                    created: Date.now()
+                });
+            }
+
+            saveToStorage();
+            saveToGun();
+            render();
+            hideModal();
+        }
+
+        function deleteCard(column, id) {
+            if (!confirm('Delete this card?')) return;
+            cards[column] = cards[column].filter(c => c.id !== id);
+            saveToStorage();
+            saveToGun();
+            render();
+        }
+
+        // Enter key in modal
+        document.getElementById('cardTitle').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') saveCard();
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+
+</html>

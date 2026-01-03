@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>MOON</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .moon-container {
+            text-align: center;
+        }
+
+        .moon {
+            font-size: 120px;
+            margin: 20px 0;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+        }
+
+        .phase-name {
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .illumination {
+            font-size: 48px;
+            font-weight: normal;
+            opacity: 0.8;
+        }
+
+        .illumination .unit {
+            font-size: 0.4em;
+            opacity: 0.5;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            max-width: 300px;
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 9px;
+            opacity: 0.4;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+        }
+
+        /* Phase calendar */
+        .phase-calendar {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .phase-day {
+            text-align: center;
+            opacity: 0.5;
+        }
+
+        .phase-day.today {
+            opacity: 1;
+        }
+
+        .phase-day .date {
+            font-size: 9px;
+            margin-bottom: 4px;
+        }
+
+        .phase-day .icon {
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="moon-container">
+        <div class="moon" id="moonIcon">🌑</div>
+        <div class="phase-name" id="phaseName">-</div>
+        <div class="illumination"><span id="illumination">0</span><span class="unit">%</span></div>
+
+        <div class="details">
+            <div class="detail-item">
+                <div class="detail-label">Age</div>
+                <div class="detail-value" id="moonAge">- days</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Cycle</div>
+                <div class="detail-value">29.5 days</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Next Full</div>
+                <div class="detail-value" id="nextFull">-</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Next New</div>
+                <div class="detail-value" id="nextNew">-</div>
+            </div>
+        </div>
+
+        <div class="phase-calendar" id="phaseCalendar"></div>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+    </div>
+
+    <script>
+        // Moon phase calculation (simplified but accurate)
+        const LUNAR_CYCLE = 29.530588853; // Synodic month in days
+        const KNOWN_NEW_MOON = new Date('2000-01-06T18:14:00Z'); // Known new moon
+
+        function getMoonAge(date = new Date()) {
+            const diff = date - KNOWN_NEW_MOON;
+            const days = diff / (1000 * 60 * 60 * 24);
+            return days % LUNAR_CYCLE;
+        }
+
+        function getMoonPhase(age) {
+            const phase = age / LUNAR_CYCLE;
+
+            if (phase < 0.0625) return { name: 'New Moon', icon: '🌑', illumination: 0 };
+            if (phase < 0.1875) return { name: 'Waxing Crescent', icon: '🌒', illumination: Math.round(phase * 100) };
+            if (phase < 0.3125) return { name: 'First Quarter', icon: '🌓', illumination: 50 };
+            if (phase < 0.4375) return { name: 'Waxing Gibbous', icon: '🌔', illumination: Math.round(phase * 100) };
+            if (phase < 0.5625) return { name: 'Full Moon', icon: '🌕', illumination: 100 };
+            if (phase < 0.6875) return { name: 'Waning Gibbous', icon: '🌖', illumination: Math.round((1 - phase) * 100) };
+            if (phase < 0.8125) return { name: 'Last Quarter', icon: '🌗', illumination: 50 };
+            if (phase < 0.9375) return { name: 'Waning Crescent', icon: '🌘', illumination: Math.round((1 - phase) * 100) };
+            return { name: 'New Moon', icon: '🌑', illumination: 0 };
+        }
+
+        function getNextPhase(targetPhase) {
+            const now = new Date();
+            const age = getMoonAge(now);
+            const currentPhase = age / LUNAR_CYCLE;
+
+            let daysUntil;
+            if (currentPhase < targetPhase) {
+                daysUntil = (targetPhase - currentPhase) * LUNAR_CYCLE;
+            } else {
+                daysUntil = (1 - currentPhase + targetPhase) * LUNAR_CYCLE;
+            }
+
+            const nextDate = new Date(now.getTime() + daysUntil * 24 * 60 * 60 * 1000);
+            return nextDate;
+        }
+
+        function formatDate(date) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${months[date.getMonth()]} ${date.getDate()}`;
+        }
+
+        function updateMoon() {
+            const age = getMoonAge();
+            const phase = getMoonPhase(age);
+
+            document.getElementById('moonIcon').textContent = phase.icon;
+            document.getElementById('phaseName').textContent = phase.name;
+            document.getElementById('illumination').textContent = phase.illumination;
+            document.getElementById('moonAge').textContent = age.toFixed(1) + ' days';
+
+            // Next phases
+            const nextFull = getNextPhase(0.5); // Full moon at 0.5
+            const nextNew = getNextPhase(0); // New moon at 0
+            document.getElementById('nextFull').textContent = formatDate(nextFull);
+            document.getElementById('nextNew').textContent = formatDate(nextNew);
+
+            // Phase calendar (5 days)
+            const calendar = document.getElementById('phaseCalendar');
+            calendar.innerHTML = '';
+
+            for (let i = -2; i <= 2; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+                const dayAge = getMoonAge(date);
+                const dayPhase = getMoonPhase(dayAge);
+
+                const div = document.createElement('div');
+                div.className = 'phase-day' + (i === 0 ? ' today' : '');
+                div.innerHTML = `
+                    <div class="date">${date.getDate()}</div>
+                    <div class="icon">${dayPhase.icon}</div>
+                `;
+                calendar.appendChild(div);
+            }
+        }
+
+        updateMoon();
+        // Update every hour
+        setInterval(updateMoon, 60 * 60 * 1000);
+    </script>
+
+</body>
+
+</html>

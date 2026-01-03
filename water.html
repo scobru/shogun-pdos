@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>H₂O</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .water-container {
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .water-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+        }
+
+        .progress-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .progress-ring .bg {
+            stroke: var(--border-color);
+        }
+
+        .progress-ring .progress {
+            stroke: #3b82f6;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .current-amount {
+            font-size: 36px;
+            font-weight: normal;
+        }
+
+        .goal-amount {
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        .glass-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        .glass-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-color);
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-stack);
+        }
+
+        .glass-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .glass-btn .icon {
+            font-size: 18px;
+        }
+
+        .glass-btn .label {
+            font-size: 8px;
+            margin-top: 2px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            opacity: 0.4;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+        }
+
+        .history {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .history-title {
+            font-size: 10px;
+            opacity: 0.5;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .history-bar {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .history-day {
+            width: 30px;
+            text-align: center;
+        }
+
+        .history-day .bar {
+            height: 40px;
+            background: var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-day .fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: #3b82f6;
+            transition: height 0.3s ease;
+        }
+
+        .history-day .day-label {
+            font-size: 8px;
+            opacity: 0.5;
+            margin-top: 4px;
+        }
+
+        .reset-btn {
+            margin-top: 20px;
+            font-size: 10px;
+            opacity: 0.5;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .goal-setting {
+            margin-top: 15px;
+            font-size: 10px;
+        }
+
+        .goal-setting input {
+            width: 50px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 4px;
+            text-align: center;
+            font-family: var(--font-stack);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="water-container">
+        <div class="water-icon">💧</div>
+
+        <div class="progress-ring">
+            <svg width="200" height="200">
+                <circle class="bg" cx="100" cy="100" r="90"></circle>
+                <circle class="progress" id="progressCircle" cx="100" cy="100" r="90" stroke-dasharray="565.48"
+                    stroke-dashoffset="565.48"></circle>
+            </svg>
+            <div class="progress-text">
+                <div class="current-amount"><span id="current">0</span><span style="font-size:0.5em;">ml</span></div>
+                <div class="goal-amount">/ <span id="goalDisplay">2000</span>ml</div>
+            </div>
+        </div>
+
+        <div class="glass-buttons">
+            <button class="glass-btn" onclick="addWater(150)">
+                <span class="icon">🥤</span>
+                <span class="label">150ml</span>
+            </button>
+            <button class="glass-btn" onclick="addWater(250)">
+                <span class="icon">🥛</span>
+                <span class="label">250ml</span>
+            </button>
+            <button class="glass-btn" onclick="addWater(500)">
+                <span class="icon">🍶</span>
+                <span class="label">500ml</span>
+            </button>
+            <button class="glass-btn" onclick="addWater(-250)">
+                <span class="icon">↩</span>
+                <span class="label">UNDO</span>
+            </button>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">Remaining</div>
+                <div class="stat-value" id="remaining">2000ml</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Glasses</div>
+                <div class="stat-value" id="glasses">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Streak</div>
+                <div class="stat-value" id="streak">0 days</div>
+            </div>
+        </div>
+
+        <div class="history">
+            <div class="history-title">Last 7 Days</div>
+            <div class="history-bar" id="historyBar"></div>
+        </div>
+
+        <div class="goal-setting">
+            Goal: <input type="number" id="goalInput" value="2000" step="100" onchange="setGoal(this.value)"> ml
+        </div>
+
+        <button class="reset-btn" onclick="resetToday()">↺ RESET TODAY</button>
+    </div>
+
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'h2o-data';
+        const CIRCUMFERENCE = 2 * Math.PI * 90; // 565.48
+
+        let data = loadData();
+
+        function loadData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            return {
+                goal: 2000,
+                history: {}, // { 'YYYY-MM-DD': amount }
+                streak: 0
+            };
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function getToday() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function getTodayAmount() {
+            return data.history[getToday()] || 0;
+        }
+
+        function addWater(amount) {
+            const today = getToday();
+            const current = data.history[today] || 0;
+            data.history[today] = Math.max(0, current + amount);
+            saveData();
+            updateUI();
+        }
+
+        function setGoal(goal) {
+            data.goal = parseInt(goal) || 2000;
+            saveData();
+            updateUI();
+        }
+
+        function resetToday() {
+            data.history[getToday()] = 0;
+            saveData();
+            updateUI();
+        }
+
+        function calculateStreak() {
+            let streak = 0;
+            const today = new Date();
+
+            for (let i = 0; i < 365; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const key = date.toISOString().split('T')[0];
+                const amount = data.history[key] || 0;
+
+                if (i === 0 && amount < data.goal) {
+                    // Today doesn't count yet if not reached
+                    continue;
+                }
+
+                if (amount >= data.goal) {
+                    streak++;
+                } else if (i > 0) {
+                    break;
+                }
+            }
+
+            return streak;
+        }
+
+        function updateUI() {
+            const current = getTodayAmount();
+            const percent = Math.min(1, current / data.goal);
+            const offset = CIRCUMFERENCE * (1 - percent);
+
+            document.getElementById('current').textContent = current;
+            document.getElementById('goalDisplay').textContent = data.goal;
+            document.getElementById('goalInput').value = data.goal;
+            document.getElementById('remaining').textContent = Math.max(0, data.goal - current) + 'ml';
+            document.getElementById('glasses').textContent = Math.floor(current / 250);
+            document.getElementById('streak').textContent = calculateStreak() + ' days';
+
+            document.getElementById('progressCircle').style.strokeDashoffset = offset;
+
+            // History bars
+            const historyBar = document.getElementById('historyBar');
+            historyBar.innerHTML = '';
+            const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const key = date.toISOString().split('T')[0];
+                const amount = data.history[key] || 0;
+                const fillPercent = Math.min(100, (amount / data.goal) * 100);
+
+                const div = document.createElement('div');
+                div.className = 'history-day';
+                div.innerHTML = `
+                    <div class="bar"><div class="fill" style="height:${fillPercent}%"></div></div>
+                    <div class="day-label">${days[date.getDay()]}</div>
+                `;
+                historyBar.appendChild(div);
+            }
+        }
+
+        updateUI();
+    </script>
+
+</body>
+
+</html>

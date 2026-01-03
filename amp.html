@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>AMP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="storage.js"></script>
+    <style>
+        :root {
+            --winamp-bg: #1a1a1a;
+            --winamp-text: #0f0;
+            /* Classic Green */
+            --winamp-border: #444;
+        }
+
+        body {
+            background-color: #000;
+            color: var(--winamp-text);
+            font-family: 'Courier New', monospace;
+            /* Bitmap feel */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .player-stack {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Module Box */
+        .module {
+            background: var(--winamp-bg);
+            border: 2px solid var(--winamp-border);
+            padding: 2px;
+            position: relative;
+        }
+
+        .title-bar {
+            background: #222;
+            color: #fff;
+            padding: 4px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Visualizer */
+        .vis-container {
+            height: 100px;
+            background: #000;
+            margin: 5px;
+            border: 1px solid #333;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .btn-transport {
+            background: #333;
+            border: 1px solid #555;
+            color: #ddd;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-transport:active {
+            background: #555;
+        }
+
+        .main-display {
+            background: #000;
+            color: var(--winamp-text);
+            padding: 10px;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            margin: 5px;
+            border: 1px inset #333;
+        }
+
+        /* Playlist */
+        .playlist {
+            height: 200px;
+            background: #000;
+            color: #0f0;
+            font-size: 12px;
+            overflow-y: auto;
+            margin: 5px;
+            border: 1px inset #333;
+            list-style: none;
+            padding: 5px;
+        }
+
+        .track {
+            padding: 4px;
+            cursor: pointer;
+            border-bottom: 1px solid #111;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track:hover {
+            background: #111;
+        }
+
+        .track.active {
+            background: var(--winamp-text);
+            color: #000;
+        }
+
+        /* Import Area */
+        .import-btn {
+            width: 100%;
+            padding: 8px;
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+            cursor: pointer;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        input[type=file] {
+            display: none;
+        }
+
+        /* Sync Progress */
+        .sync-bar {
+            background: #111;
+            padding: 5px 10px;
+            margin: 5px;
+            border: 1px solid #333;
+            display: none;
+        }
+
+        .sync-bar.active {
+            display: block;
+        }
+
+        .sync-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .sync-progress {
+            height: 4px;
+            background: #333;
+            overflow: hidden;
+        }
+
+        .sync-progress-fill {
+            height: 100%;
+            background: var(--winamp-text);
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+
+        .sync-progress-fill.error {
+            background: #f00;
+        }
+
+        .sync-notice {
+            font-size: 9px;
+            color: #f66;
+            padding: 5px 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .sync-notice.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="player-stack">
+        <!-- Main Player -->
+        <div class="module">
+            <div class="title-bar">
+                <span>AMP PLAYER</span>
+                <span>X</span>
+            </div>
+
+            <div class="vis-container">
+                <canvas id="visCanvas"></canvas>
+            </div>
+
+            <div class="main-display" id="display">
+                NO TRACK LOADED
+            </div>
+
+            <div class="controls">
+                <button class="btn-transport" id="prevBtn">|&lt;</button>
+                <button class="btn-transport" id="playBtn">&gt;</button>
+                <button class="btn-transport" id="pauseBtn">||</button>
+                <button class="btn-transport" id="stopBtn">[]</button>
+                <button class="btn-transport" id="nextBtn">&gt;|</button>
+            </div>
+
+            <div style="padding: 5px; display:flex; gap:5px;">
+                <span style="font-size:10px;">VOL:</span>
+                <input type="range" id="volSlider" min="0" max="1" step="0.1" value="1" style="width:100px;">
+            </div>
+        </div>
+
+        <!-- Playlist -->
+        <div class="module">
+            <div class="title-bar">PLAYLIST EDITOR</div>
+            <ul class="playlist" id="playlist">
+                <!-- Tracks go here -->
+            </ul>
+            <!-- Sync Progress Bar -->
+            <div class="sync-bar" id="syncBar">
+                <div class="sync-info">
+                    <span id="syncFileName">-</span>
+                    <span id="syncPercent">0%</span>
+                </div>
+                <div class="sync-progress">
+                    <div class="sync-progress-fill" id="syncFill"></div>
+                </div>
+            </div>
+            <div class="sync-notice" id="syncNotice"></div>
+
+            <button class="import-btn" id="addBtn">+ ADD FILES (MP3/WAV)</button>
+            <input type="file" id="fileInput" multiple accept="audio/*">
+        </div>
+    </div>
+
+    <div class="toolbar" style="margin-top:20px;">
+        <a href="index.html" style="color:#666; text-decoration:none;">[HOME]</a>
+    </div>
+
+    <audio id="audioEl"></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <script>
+        // --- GunDB Setup for Sync ---
+        const defaultRelay = 'http://localhost:4000/gun';
+        const relayUrl = localStorage.getItem('gun-relay-url') || defaultRelay;
+        const gun = Gun({ peers: [relayUrl], localStorage: false });
+        const user = gun.user().recall({ sessionStorage: true });
+
+        // Initialize store with Gun
+        store.initGun(gun, user);
+
+        // --- Sync UI Elements ---
+        const syncBar = document.getElementById('syncBar');
+        const syncFileName = document.getElementById('syncFileName');
+        const syncPercent = document.getElementById('syncPercent');
+        const syncFill = document.getElementById('syncFill');
+        const syncNotice = document.getElementById('syncNotice');
+
+        // Progress callback
+        function updateSyncProgress(progress) {
+            if (!progress) {
+                syncBar.classList.remove('active');
+                return;
+            }
+
+            syncBar.classList.add('active');
+            syncFileName.textContent = '☁ ' + progress.fileName;
+            syncPercent.textContent = progress.percent + '%';
+            syncFill.style.width = progress.percent + '%';
+            syncFill.classList.remove('error');
+
+            if (progress.phase === 'complete') {
+                setTimeout(() => syncBar.classList.remove('active'), 2000);
+            } else if (progress.phase === 'error') {
+                syncFill.classList.add('error');
+                setTimeout(() => syncBar.classList.remove('active'), 3000);
+            }
+        }
+
+        // Sync update callback
+        function onSyncUpdate(action, name, errorMsg) {
+            if (action === 'error') {
+                showSyncNotice(name + ': ' + errorMsg);
+            } else if (action === 'upload') {
+                showSyncNotice('☁ Synced: ' + name, false);
+            }
+        }
+
+        function showSyncNotice(msg, isError = true) {
+            syncNotice.textContent = msg;
+            syncNotice.style.color = isError ? '#f66' : '#0f0';
+            syncNotice.classList.add('active');
+            setTimeout(() => syncNotice.classList.remove('active'), 4000);
+        }
+
+        // Enable sync if logged in
+        gun.on('auth', () => {
+            store.enableSync(onSyncUpdate, updateSyncProgress);
+        });
+
+        // --- Audio System ---
+        const audio = document.getElementById('audioEl');
+        const canvas = document.getElementById('visCanvas');
+        const ctx = canvas.getContext('2d');
+        let audioCtx, analyser, source;
+        let isInit = false;
+
+        // --- State ---
+        let tracks = [];
+        let currentIdx = -1;
+
+        // --- UI Elements ---
+        const playlistEl = document.getElementById('playlist');
+        const fileInput = document.getElementById('fileInput');
+        const display = document.getElementById('display');
+        const playBtn = document.getElementById('playBtn');
+
+        // --- Load Store ---
+        async function loadLibrary() {
+            tracks = await store.getAll('audio');
+            renderPlaylist();
+        }
+
+        function renderPlaylist() {
+            playlistEl.innerHTML = '';
+            tracks.forEach((track, i) => {
+                const li = document.createElement('li');
+                li.className = 'track' + (i === currentIdx ? ' active' : '');
+                li.textContent = (i + 1) + ". " + track.name;
+                li.onclick = () => playTrack(i);
+                playlistEl.appendChild(li);
+            });
+        }
+
+        // --- Playback ---
+        async function playTrack(index) {
+            if (!isInit) initAudio();
+
+            currentIdx = index;
+            const track = tracks[index];
+            renderPlaylist(); // update active class
+
+            display.textContent = (index + 1) + ". " + track.name; // Show Loading
+
+            // Get full blob
+            const fullTrack = await store.get(track.id);
+            const url = URL.createObjectURL(fullTrack.data);
+
+            audio.src = url;
+            audio.play();
+            playBtn.textContent = '||'; // actually play btn should become pause icon usually but using separate
+
+            startVisualizer();
+        }
+
+        // --- Visualizer ---
+        function initAudio() {
+            if (isInit) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            source = audioCtx.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            analyser.fftSize = 64; // Low res for retro feel
+            isInit = true;
+        }
+
+        function startVisualizer() {
+            if (!isInit) return;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function draw() {
+                requestAnimationFrame(draw);
+                analyser.getByteFrequencyData(dataArray);
+
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let barHeight;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    barHeight = dataArray[i] / 2; // Scale down
+
+                    ctx.fillStyle = '#0f0'; // Green bars
+                    // Draw as little blocks
+                    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+                    x += barWidth + 1;
+                }
+            }
+            draw();
+        }
+
+        // --- Controls ---
+        document.getElementById('playBtn').onclick = () => { if (audio.paused && tracks.length > 0) { if (currentIdx === -1) playTrack(0); else audio.play(); } };
+        document.getElementById('pauseBtn').onclick = () => audio.pause();
+        document.getElementById('stopBtn').onclick = () => { audio.pause(); audio.currentTime = 0; };
+        document.getElementById('nextBtn').onclick = () => { if (currentIdx < tracks.length - 1) playTrack(currentIdx + 1); };
+        document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) playTrack(currentIdx - 1); };
+
+        document.getElementById('volSlider').oninput = (e) => audio.volume = e.target.value;
+
+        document.getElementById('addBtn').onclick = () => fileInput.click();
+
+        fileInput.onchange = async () => {
+            if (fileInput.files.length === 0) return;
+
+            display.textContent = "IMPORTING...";
+            for (const file of fileInput.files) {
+                await store.save(file, 'audio');
+            }
+            fileInput.value = ''; // reset
+            await loadLibrary();
+            display.textContent = "READY.";
+        };
+
+        audio.onended = () => {
+            if (currentIdx < tracks.length - 1) playTrack(currentIdx + 1);
+        };
+
+        // Init
+        loadLibrary();
+
+    </script>
+
+</body>
+
+</html>

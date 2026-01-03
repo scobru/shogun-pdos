@@ -1,269 +1,355 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PIC</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<style>
-    body {
-        padding: 20px;
-        padding-bottom: 100px;
-        
-        align-items: center;
-    }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>PIC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            padding: 20px;
+            padding-bottom: 100px;
+            align-items: center;
+        }
 
-    .container {
-        width: 100%;
-        max-width: 500px;
-    }
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
 
-    header {
-        text-align: center;
-        margin-bottom: 30px;
-    }.drop-zone {
-        border: 1px dashed var(--border-color);
-        padding: 40px 20px;
-        text-align: center;
-        cursor: pointer;
-        margin-bottom: 20px;
-        text-transform: uppercase;
-    }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-    .drop-zone:hover {
-        background: #111;
-        border-style: solid;
-    }
+        .drop-zone {
+            border: 1px dashed var(--border-color);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
 
-    .drop-zone p {
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
+        .drop-zone:hover {
+            background: #111;
+            border-style: solid;
+        }
 
-    .drop-zone small {
-        font-size: 10px;
-        opacity: 0.5;
-    }
+        .drop-zone p {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
 
-    input[type=file] {
-        display: none;
-    }
+        .drop-zone small {
+            font-size: 10px;
+            opacity: 0.5;
+        }
 
-    img {
-        max-width: 100%;
-        border: 1px solid var(--border-color);
-        margin-bottom: 16px;
-        display: block;
-    }
+        input[type=file] {
+            display: none;
+        }
 
-    button {
-        width: 100%;
-        padding: 14px;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        text-transform: uppercase;
-        cursor: pointer;
-        margin-bottom: 12px;
-        font-weight: bold;
-    }
+        img {
+            max-width: 100%;
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
+            display: block;
+        }
 
-    button:hover {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
 
-    .caption-input {
-        width: 100%;
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-color);
-        font-family: var(--font-stack);
-        padding: 12px;
-        margin-bottom: 16px;
-        text-align: center;
-        outline: none;
-    }
+        button:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
 
-    .info {
-        font-size: 10px;
-        text-align: center;
-        opacity: 0.5;
-        margin-top: 8px;
-        text-transform: uppercase;
-    }
+        .caption-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            padding: 12px;
+            margin-bottom: 16px;
+            text-align: center;
+            outline: none;
+        }
 
-    /* Toolbar */
-    .toolbar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: var(--bg-color);
-        border-top: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-around;
-        padding: 16px;
-    }
+        .info {
+            font-size: 10px;
+            text-align: center;
+            opacity: 0.5;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
 
-    .toolbar a {
-        color: var(--text-color);
-        text-decoration: none;
-        font-family: var(--font-stack);
-        font-size: 14px;
-        text-transform: uppercase;
-    }
+        /* Toolbar */
+        .toolbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 16px;
+        }
 
-    .warning {
-        color: var(--accent-color);
-        border: 1px solid var(--accent-color);
-        padding: 10px;
-        text-align: center;
-        font-size: 12px;
-        margin-bottom: 16px;
-        display: none;
-        text-transform: uppercase;
-    }
+        .toolbar a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-family: var(--font-stack);
+            font-size: 14px;
+            text-transform: uppercase;
+        }
 
-    
-</style>
+        .warning {
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            margin-bottom: 16px;
+            display: none;
+            text-transform: uppercase;
+        }
+    </style>
 
-<div class="container">
-    <header>
-        <h1>PIC</h1>
-    </header>
+    <div class="container">
+        <header>
+            <h1>PIC</h1>
+        </header>
 
-    <div id="upload-view">
-        <div class="drop-zone" id="drop-zone">
-            <p>[UPLOAD IMAGE]</p>
-            <small>MAX ~100KB FOR URL</small>
+        <div id="upload-view">
+            <div class="drop-zone" id="drop-zone">
+                <p>[UPLOAD IMAGE]</p>
+                <small>MAX ~100KB FOR URL</small>
+            </div>
+            <input type="file" id="file-input" accept="image/*">
+            <div class="warning" id="warning">[!] LARGE FILE - COMPRESSING</div>
         </div>
-        <input type="file" id="file-input" accept="image/*">
-        <div class="warning" id="warning">[!] LARGE FILE - COMPRESSING</div>
+
+        <div id="preview-view" style="display:none">
+            <img id="preview">
+            <input type="text" class="caption-input" id="caption" placeholder="CAPTION...">
+            <button id="share">SHARE URL</button>
+            <!-- Save to Library Button will be injected here or hardcoded below -->
+            <button id="save-lib">SAVE TO LIBRARY</button>
+            <button id="download">DOWNLOAD</button>
+            <button id="new-pic">NEW IMAGE</button>
+            <div class="info" id="size-info"></div>
+        </div>
+
+        <div id="view-mode" style="display:none">
+            <img id="shared-img">
+            <div class="caption-input" style="border:none;" id="shared-caption"></div>
+            <button id="dl-shared">DOWNLOAD</button>
+            <button id="save-lib-shared">SAVE TO LIBRARY</button>
+        </div>
     </div>
 
-    <div id="preview-view" style="display:none">
-        <img id="preview">
-        <input type="text" class="caption-input" id="caption" placeholder="CAPTION...">
-        <button id="share">SHARE URL</button>
-        <button id="download">DOWNLOAD</button>
-        <button id="new-pic">NEW IMAGE</button>
-        <div class="info" id="size-info"></div>
+    <div class="toolbar">
+        <a href="index.html">[HOME]</a>
+        <button id="open-lib-btn"
+            style="background:transparent; border:none; color:var(--text-color); font-family:inherit; font-size:14px; text-transform:uppercase; cursor:pointer;">[LIBRARY]</button>
     </div>
 
-    <div id="view-mode" style="display:none">
-        <img id="shared-img">
-        <div class="caption-input" style="border:none;" id="shared-caption"></div>
-        <button id="dl-shared">DOWNLOAD</button>
+    <div class="toast" id="toast">LINK COPIED</div>
+
+    <!-- Library Modal -->
+    <div id="lib-modal" class="modal">
+        <div class="modal-content">
+            <h3>LOCAL LIBRARY</h3>
+            <div id="lib-list"
+                style="max-height:200px; overflow-y:auto; margin-bottom:15px; border:1px solid #333; padding:5px;">
+            </div>
+            <div class="modal-buttons">
+                <button id="lib-close">CLOSE</button>
+            </div>
+        </div>
     </div>
-</div>
 
-<div class="toolbar">
-    <a href="index.html">[HOME]</a>
-</div>
+    <script src="storage.js"></script>
+    <script>
+        const toast = document.getElementById('toast'),
+            dropZone = document.getElementById('drop-zone'),
+            fileInput = document.getElementById('file-input'),
+            preview = document.getElementById('preview');
 
-<div class="toast" id="toast">LINK COPIED</div>
+        let imageData = '', caption = '';
 
-<script>
-    const toast = document.getElementById('toast'),
-        dropZone = document.getElementById('drop-zone'),
-        fileInput = document.getElementById('file-input'),
-        preview = document.getElementById('preview');
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.background = '#111'; });
+        dropZone.addEventListener('dragleave', () => dropZone.style.background = 'transparent');
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.style.background = 'transparent';
+            handleFile(e.dataTransfer.files[0]);
+        });
 
-    let imageData = '', caption = '';
+        fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
+        document.getElementById('caption').addEventListener('input', e => { caption = e.target.value; saveToUrl(); });
 
-    dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.background = '#111'; });
-    dropZone.addEventListener('dragleave', () => dropZone.style.background = 'transparent');
-    dropZone.addEventListener('drop', e => {
-        e.preventDefault();
-        dropZone.style.background = 'transparent';
-        handleFile(e.dataTransfer.files[0]);
-    });
+        document.getElementById('share').addEventListener('click', async () => {
+            try { await navigator.clipboard.writeText(location.href); showToast("LINK COPIED"); } catch { }
+        });
 
-    fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
-    document.getElementById('caption').addEventListener('input', e => { caption = e.target.value; saveToUrl(); });
+        document.getElementById('download').addEventListener('click', () => downloadImage(imageData, 'pic.png'));
+        document.getElementById('dl-shared').addEventListener('click', () => downloadImage(document.getElementById('shared-img').src, 'pic.png'));
+        document.getElementById('new-pic').addEventListener('click', () => { location.hash = ''; location.reload(); });
 
-    document.getElementById('share').addEventListener('click', async () => {
-        try { await navigator.clipboard.writeText(location.href); showToast(); } catch { }
-    });
+        // --- Storage Integration ---
+        document.getElementById('save-lib').onclick = async () => saveToLibrary(imageData);
+        document.getElementById('save-lib-shared').onclick = async () => saveToLibrary(document.getElementById('shared-img').src);
 
-    document.getElementById('download').addEventListener('click', () => downloadImage(imageData, 'pic.png'));
-    document.getElementById('dl-shared').addEventListener('click', () => downloadImage(document.getElementById('shared-img').src, 'pic.png'));
-    document.getElementById('new-pic').addEventListener('click', () => { location.hash = ''; location.reload(); });
+        async function saveToLibrary(dataUrl) {
+            if (!dataUrl) return;
+            const res = await fetch(dataUrl);
+            const blob = await res.blob();
+            await store.save(blob, 'image', 'pic_' + Date.now() + '.jpg');
+            showToast("SAVED TO DRIVE");
+        }
 
-    async function handleFile(file) {
-        if (!file || !file.type.startsWith('image/')) return;
+        // Library Modal logic
+        const libModal = document.getElementById('lib-modal');
+        const libList = document.getElementById('lib-list');
 
-        const warn = document.getElementById('warning');
-        warn.style.display = file.size > 100000 ? 'block' : 'none';
+        document.getElementById('open-lib-btn').onclick = async () => {
+            libModal.classList.add('show');
+            const files = await store.getAll('image');
+            libList.innerHTML = '';
+            if (files.length === 0) libList.innerHTML = '<div style="text-align:center; opacity:0.5; font-size:10px;">EMPTY</div>';
 
-        const img = new Image();
-        img.onload = async () => {
-            const canvas = document.createElement('canvas');
-            let w = img.width, h = img.height;
-            const maxSize = 800;
-            if (w > maxSize || h > maxSize) {
-                if (w > h) { h = h * maxSize / w; w = maxSize; }
-                else { w = w * maxSize / h; h = maxSize; }
-            }
-            canvas.width = w; canvas.height = h;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, w, h);
-
-            let quality = 0.8;
-            imageData = canvas.toDataURL('image/jpeg', quality);
-            while (imageData.length > 120000 && quality > 0.1) {
-                quality -= 0.1;
-                imageData = canvas.toDataURL('image/jpeg', quality);
-            }
-
-            showPreview();
-            saveToUrl();
+            files.forEach(f => {
+                const div = document.createElement('div');
+                div.style.padding = "8px";
+                div.style.borderBottom = "1px solid #222";
+                div.style.cursor = "pointer";
+                div.style.fontSize = "12px";
+                div.textContent = f.name;
+                div.onclick = async () => {
+                    const file = await store.get(f.id);
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let w = img.width, h = img.height;
+                            const maxSize = 800;
+                            if (w > maxSize || h > maxSize) {
+                                if (w > h) { h = h * maxSize / w; w = maxSize; }
+                                else { w = w * maxSize / h; h = maxSize; }
+                            }
+                            canvas.width = w; canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, w, h);
+                            imageData = canvas.toDataURL('image/jpeg', 0.8);
+                            showPreview();
+                            saveToUrl();
+                            libModal.classList.remove('show');
+                        }
+                        img.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file.data);
+                };
+                libList.appendChild(div);
+            });
         };
-        img.src = URL.createObjectURL(file);
-    }
 
-    function showPreview() {
-        document.getElementById('upload-view').style.display = 'none';
-        document.getElementById('preview-view').style.display = 'block';
-        preview.src = imageData;
-        document.getElementById('size-info').textContent = `SIZE: ~${Math.round(imageData.length / 1024)}KB`;
-    }
+        document.getElementById('lib-close').onclick = () => libModal.classList.remove('show');
 
-    async function saveToUrl() {
-        const data = { img: imageData, cap: caption };
-        const hash = await compress(JSON.stringify(data));
-        history.replaceState({}, '', '#' + hash);
-    }
+        async function handleFile(file) {
+            if (!file || !file.type.startsWith('image/')) return;
 
-    async function loadShared() {
-        try {
-            const data = JSON.parse(await decompress(location.hash.slice(1)));
+            const warn = document.getElementById('warning');
+            warn.style.display = file.size > 100000 ? 'block' : 'none';
+
+            const img = new Image();
+            img.onload = async () => {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                const maxSize = 800;
+                if (w > maxSize || h > maxSize) {
+                    if (w > h) { h = h * maxSize / w; w = maxSize; }
+                    else { w = w * maxSize / h; h = maxSize; }
+                }
+                canvas.width = w; canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+
+                let quality = 0.8;
+                imageData = canvas.toDataURL('image/jpeg', quality);
+                while (imageData.length > 120000 && quality > 0.1) {
+                    quality -= 0.1;
+                    imageData = canvas.toDataURL('image/jpeg', quality);
+                }
+
+                showPreview();
+                saveToUrl();
+            };
+            img.src = URL.createObjectURL(file);
+        }
+
+        function showPreview() {
             document.getElementById('upload-view').style.display = 'none';
-            document.getElementById('view-mode').style.display = 'block';
-            document.getElementById('shared-img').src = data.img;
-            document.getElementById('shared-caption').textContent = data.cap || '';
-            document.title = 'PIC';
-        } catch { }
-    }
+            document.getElementById('preview-view').style.display = 'block';
+            preview.src = imageData;
+            document.getElementById('size-info').textContent = `SIZE: ~${Math.round(imageData.length / 1024)}KB`;
+        }
 
-    function downloadImage(dataUrl, filename) {
-        const a = document.createElement('a');
-        a.href = dataUrl; a.download = filename; a.click();
-    }
+        async function saveToUrl() {
+            const data = { img: imageData, cap: caption };
+            const hash = await compress(JSON.stringify(data));
+            history.replaceState({}, '', '#' + hash);
+        }
 
-    function showToast() {
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2000);
-    }
+        async function loadShared() {
+            try {
+                const data = JSON.parse(await decompress(location.hash.slice(1)));
+                document.getElementById('upload-view').style.display = 'none';
+                document.getElementById('view-mode').style.display = 'block';
+                document.getElementById('shared-img').src = data.img;
+                document.getElementById('shared-caption').textContent = data.cap || '';
+                document.title = 'PIC';
+            } catch { }
+        }
 
-    async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
-    async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()); }
+        function downloadImage(dataUrl, filename) {
+            const a = document.createElement('a');
+            a.href = dataUrl; a.download = filename; a.click();
+        }
 
-    if (location.hash) loadShared();
-</script>
+        function showToast(msg) {
+            toast.textContent = msg || "LINK COPIED";
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        async function compress(s) { const b = new TextEncoder().encode(s), st = new CompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(b); w.close(); return btoa(String.fromCharCode(...new Uint8Array(await new Response(st.readable).arrayBuffer()))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+        async function decompress(b) { const bin = atob(b.replace(/-/g, '+').replace(/_/g, '/')), arr = Uint8Array.from(bin, c => c.charCodeAt(0)), st = new DecompressionStream('deflate-raw'), w = st.writable.getWriter(); w.write(arr); w.close(); return new TextDecoder().decode(await new Response(st.readable).arrayBuffer()); }
+
+        if (location.hash) loadShared();
+    </script>
+    </body>
+
+</html>
