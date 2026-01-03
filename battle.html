@@ -426,7 +426,13 @@
         <div id="resultScreen" style="display:none;" class="result-screen">
             <div class="result-text" id="resultText">VICTORY!</div>
             <div style="font-size:12px; opacity:0.5; margin-bottom:30px;" id="resultSub"></div>
-            <button class="menu-btn" onclick="backToMenu()">PLAY AGAIN</button>
+            <div id="cpuButtons" style="display:none;">
+                <button class="menu-btn" onclick="backToMenu()">PLAY AGAIN</button>
+            </div>
+            <div id="pvpButtons" style="display:none;">
+                <button class="menu-btn" onclick="playAgain()">PLAY AGAIN</button>
+                <button class="menu-btn" style="margin-top:12px;" onclick="backToMenu()">BACK TO MENU</button>
+            </div>
         </div>
     </div>
 
@@ -445,7 +451,7 @@
         let gun, user;
 
         // Stats
-        const MAX_HP = 100;
+        const MAX_HP = 200;
         const MAX_MP = 50;
         let player = { hp: MAX_HP, mp: MAX_MP };
         let enemy = { hp: MAX_HP, mp: MAX_MP };
@@ -500,6 +506,32 @@
         function backToMenu() {
             showScreen('menuScreen');
             leaveRoom();
+            gameMode = null;
+        }
+
+        function playAgain() {
+            if (gameMode !== 'pvp' || !roomId) {
+                backToMenu();
+                return;
+            }
+
+            // Signal ready for rematch
+            gun.get('battle-' + roomId).get('rematch').put({
+                [getMyId()]: Date.now()
+            });
+
+            // Show waiting message
+            document.getElementById('resultSub').textContent = 'Waiting for opponent to be ready...';
+            document.getElementById('pvpButtons').style.display = 'none';
+
+            // Listen for opponent ready
+            gun.get('battle-' + roomId).get('rematch').on((data) => {
+                if (data && Object.keys(data).length >= 2) {
+                    // Both players ready, start new match
+                    gun.get('battle-' + roomId).get('rematch').put(null); // Clear rematch signal
+                    startGame('pvp');
+                }
+            });
         }
 
         // Start game
@@ -794,8 +826,19 @@
                     resultSub.textContent = 'You have fallen in battle...';
                 }
 
+                // Show appropriate buttons based on game mode
+                if (gameMode === 'cpu') {
+                    document.getElementById('cpuButtons').style.display = '';
+                    document.getElementById('pvpButtons').style.display = 'none';
+                } else if (gameMode === 'pvp') {
+                    document.getElementById('cpuButtons').style.display = 'none';
+                    document.getElementById('pvpButtons').style.display = '';
+                }
+
                 showScreen('resultScreen');
-                leaveRoom();
+                if (gameMode === 'cpu') {
+                    leaveRoom();
+                }
             }, 1000);
         }
 
