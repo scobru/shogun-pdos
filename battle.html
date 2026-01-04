@@ -449,6 +449,7 @@
         let isMyTurn = true;
         let isDefending = false;
         let gun, user;
+        let processedMoves = new Set();
 
         // Stats
         const MAX_HP = 200;
@@ -601,6 +602,12 @@
             document.getElementById('enemySprite').textContent = '🧙‍♂️';
             document.getElementById('playerName').textContent = 'YOU';
 
+            // Reset processed moves for new match
+            processedMoves = new Set();
+
+            // Start listening for opponent moves immediately
+            listenForOpponentAction();
+
             // Determine who goes first (host goes first)
             gun.get('battle-' + roomId).once((data) => {
                 isMyTurn = data.host === getMyId();
@@ -609,7 +616,6 @@
                 log('Battle Start!', 'system');
                 if (!isMyTurn) {
                     log('Waiting for opponent...', 'system');
-                    listenForOpponentAction();
                 }
             });
         }
@@ -744,12 +750,12 @@
                 action: action,
                 time: Date.now()
             });
-            listenForOpponentAction();
         }
 
         function listenForOpponentAction() {
-            gun.get('battle-' + roomId).get('moves').map().once((move) => {
-                if (move && move.player !== getMyId()) {
+            gun.get('battle-' + roomId).get('moves').map().on((move, id) => {
+                if (move && move.player !== getMyId() && !processedMoves.has(id)) {
+                    processedMoves.add(id);
                     executeEnemyAction(move.action);
                 }
             });
