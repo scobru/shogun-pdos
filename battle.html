@@ -450,6 +450,7 @@
         let isDefending = false;
         let gun, user;
         let processedMoves = new Set();
+        let myMoves = new Set(); // Track moves we sent ourselves
 
         // Stats
         const MAX_HP = 200;
@@ -604,6 +605,7 @@
 
             // Reset processed moves for new match
             processedMoves = new Set();
+            myMoves = new Set();
 
             // Start listening for opponent moves immediately
             listenForOpponentAction();
@@ -745,16 +747,26 @@
 
         // PvP sync
         function sendAction(action) {
-            gun.get('battle-' + roomId).get('moves').set({
+            const moveData = {
                 player: getMyId(),
                 action: action,
                 time: Date.now()
+            };
+            const moveRef = gun.get('battle-' + roomId).get('moves').set(moveData);
+            // Track our own move to prevent self-processing
+            moveRef.once((data, id) => {
+                if (id) myMoves.add(id);
             });
         }
 
         function listenForOpponentAction() {
             gun.get('battle-' + roomId).get('moves').map().on((move, id) => {
-                if (move && move.player !== getMyId() && !processedMoves.has(id)) {
+                // Skip if already processed, or if we sent this move ourselves
+                if (!move || !move.player || !move.action || processedMoves.has(id) || myMoves.has(id)) {
+                    return;
+                }
+                // Only process moves from the opponent
+                if (move.player !== getMyId()) {
                     processedMoves.add(id);
                     executeEnemyAction(move.action);
                 }
