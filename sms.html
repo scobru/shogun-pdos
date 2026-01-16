@@ -522,7 +522,7 @@
     <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
     <script>
         // Initialize Gun
-        const gunUrl = localStorage.getItem('gun-relay-url') || 'http://localhost:4000/gun';
+        const gunUrl = localStorage.getItem('gun-relay-url') || 'https://shogun-relay.scobrudot.dev/gun';
         const gun = Gun({ localStorage: false, peers: [gunUrl] });
         const user = gun.user().recall({ sessionStorage: true });
 

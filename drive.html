@@ -279,7 +279,7 @@
 
     <script>
         // --- GunDB Setup ---
-        const defaultRelay = 'http://localhost:4000/gun';
+        const defaultRelay = 'https://shogun-relay.scobrudot.dev/gun';
         const relayUrl = localStorage.getItem('gun-relay-url') || defaultRelay;
         const gun = Gun({ peers: [relayUrl], localStorage: false });
         const user = gun.user().recall({ sessionStorage: true });

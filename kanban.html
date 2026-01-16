@@ -298,7 +298,7 @@
 
         // Gun initialization
         function initGun() {
-            const relayUrl = localStorage.getItem('gun-relay-url') || 'http://localhost:4000/gun';
+            const relayUrl = localStorage.getItem('gun-relay-url') || 'https://shogun-relay.scobrudot.dev/gun';
             gun = Gun({ localStorage: false, peers: [relayUrl] });
             user = gun.user().recall({ sessionStorage: true });
 
