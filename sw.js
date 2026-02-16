@@ -1,9 +1,11 @@
 // PDOS 01 Service Worker
-const CACHE_NAME = 'pdos-01-v1';
+const CACHE_NAME = 'pdos-01-v2';
 
 // Files to cache
 const STATIC_ASSETS = [
   '/',
+  '/lib/gun.js',
+  '/lib/sea.js',
   '/index.html',
   '/styles.css',
   '/storage.js',

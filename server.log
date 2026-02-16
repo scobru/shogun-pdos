@@ -1,0 +1,13 @@
+
+> textarea@1.0.0 start
+> node server.js
+
+Hello wonderful person! :) Thanks for using GUN, please ask for help on http://chat.gun.eco if anything takes you longer than 5min to figure out!
+AXE relay enabled!
+Multicast on 233.255.255.255:8765
+
+> PDOS 01 Sync Server
+> Local:  http://localhost:8765
+> LAN:    http://192.168.0.2:8765
+> Public: http://34.46.237.233:8765
+> Gun:    http://localhost:8765/gun
