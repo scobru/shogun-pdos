@@ -282,6 +282,7 @@
     const toast = document.getElementById('toast');
 
     let masterKey = null;
+    let currentSalt = null; // Store current salt for key derivation
     let entries = [];
     let editIndex = -1;
     let gun, gunNode, user;
@@ -327,18 +328,43 @@
         const pass = document.getElementById('master-pass').value;
         if (!pass) { showToast('ENTER PASSWORD'); return; }
 
-        masterKey = await deriveKey(pass);
-
         // Try to load and decrypt existing data
         const stored = localStorage.getItem('pass-vault');
-        if (stored) {
-            try {
-                const decrypted = await decrypt(stored, masterKey);
-                entries = JSON.parse(decrypted);
-            } catch {
-                showToast('WRONG PASSWORD');
-                return;
+
+        try {
+            if (stored) {
+                if (stored.startsWith('V2-')) {
+                    // New Format: V2-{base64(Salt + IV + Ciphertext)}
+                    const raw = atob(stored.slice(3));
+                    const bytes = Uint8Array.from(raw, c => c.charCodeAt(0));
+                    currentSalt = bytes.slice(0, 16);
+                    masterKey = await deriveKey(pass, currentSalt);
+
+                    const decrypted = await decrypt(stored, masterKey);
+                    entries = JSON.parse(decrypted);
+                } else {
+                    // Legacy Format: base64(IV + Ciphertext) with hardcoded salt
+                    currentSalt = new TextEncoder().encode('shogun-pass-salt');
+                    masterKey = await deriveKey(pass, currentSalt);
+
+                    const decrypted = await decrypt(stored, masterKey);
+                    entries = JSON.parse(decrypted);
+
+                    // Automatically migrate to V2 (New random salt)
+                    console.log('Migrating vault to V2...');
+                    currentSalt = crypto.getRandomValues(new Uint8Array(16));
+                    masterKey = await deriveKey(pass, currentSalt); // Re-derive key with new salt
+                    await saveVault(); // Save immediately with new key/salt
+                }
+            } else {
+                // New Vault
+                currentSalt = crypto.getRandomValues(new Uint8Array(16));
+                masterKey = await deriveKey(pass, currentSalt);
             }
+        } catch (e) {
+            console.error(e);
+            showToast('WRONG PASSWORD');
+            return;
         }
 
         // Also try to sync from Gun
@@ -366,6 +392,7 @@
 
     function lock() {
         masterKey = null;
+        currentSalt = null;
         entries = [];
         vaultView.classList.remove('active');
         unlockView.classList.add('active');
@@ -416,7 +443,10 @@
     };
 
     async function saveVault() {
-        const encrypted = await encrypt(JSON.stringify(entries), masterKey);
+        if (!masterKey || !currentSalt) return;
+
+        // Pass currentSalt so it can be bundled into the blob
+        const encrypted = await encrypt(JSON.stringify(entries), masterKey, currentSalt);
         localStorage.setItem('pass-vault', encrypted);
 
         // Sync to Gun
@@ -447,11 +477,11 @@
         `).join('');
     }
 
-    async function deriveKey(password) {
+    async function deriveKey(password, salt) {
         const enc = new TextEncoder();
         const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits', 'deriveKey']);
         return await crypto.subtle.deriveKey(
-            { name: 'PBKDF2', salt: enc.encode('shogun-pass-salt'), iterations: 100000, hash: 'SHA-256' },
+            { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
             keyMaterial,
             { name: 'AES-GCM', length: 256 },
             false,
@@ -459,17 +489,40 @@
         );
     }
 
-    async function encrypt(text, key) {
+    async function encrypt(text, key, salt) {
         const enc = new TextEncoder();
         const iv = crypto.getRandomValues(new Uint8Array(12));
         const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(text));
-        return btoa(String.fromCharCode(...iv, ...new Uint8Array(encrypted)));
+
+        // Format: V2-{base64(Salt + IV + Ciphertext)}
+        const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+        combined.set(salt, 0);
+        combined.set(iv, salt.length);
+        combined.set(new Uint8Array(encrypted), salt.length + iv.length);
+
+        return 'V2-' + btoa(String.fromCharCode(...combined));
     }
 
     async function decrypt(data, key) {
-        const bytes = Uint8Array.from(atob(data), c => c.charCodeAt(0));
-        const iv = bytes.slice(0, 12);
-        const ciphertext = bytes.slice(12);
+        let bytes;
+        let iv;
+        let ciphertext;
+
+        if (data.startsWith('V2-')) {
+            // New Format: V2-{base64(Salt + IV + Ciphertext)}
+            const raw = atob(data.slice(3));
+            bytes = Uint8Array.from(raw, c => c.charCodeAt(0));
+            // Skip salt (16 bytes)
+            iv = bytes.slice(16, 28);
+            ciphertext = bytes.slice(28);
+        } else {
+            // Legacy Format: base64(IV + Ciphertext)
+            const raw = atob(data);
+            bytes = Uint8Array.from(raw, c => c.charCodeAt(0));
+            iv = bytes.slice(0, 12);
+            ciphertext = bytes.slice(12);
+        }
+
         const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
         return new TextDecoder().decode(decrypted);
     }
