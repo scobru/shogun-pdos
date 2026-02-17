@@ -246,17 +246,30 @@ class LocalStore {
                 return { success: false, error: 'no_keypair' };
             }
             
-            // Chunk the blob
-            const chunks = await this._chunkBlob(file.data);
+            // Chunk the blob (using slice to avoid memory issues)
+            const chunks = this._chunkBlob(file.data);
             console.log('[SYNC] Created', chunks.length, 'chunks');
             const totalChunks = chunks.length;
             
             this._reportProgress(file.name, 0, totalChunks, 'uploading');
             
-            // Encrypt and upload each chunk sequentially for progress tracking
+            // Encrypt and upload each chunk sequentially
             let uploadedCount = 0;
             for (let i = 0; i < chunks.length; i++) {
-                const base64 = btoa(String.fromCharCode(...chunks[i]));
+                // Convert Blob chunk to Base64 efficiently
+                const base64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        // Result is "data:application/octet-stream;base64,..."
+                        // We strip the prefix to get pure base64
+                        const result = reader.result;
+                        const b64 = result.split(',')[1];
+                        resolve(b64);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(chunks[i]);
+                });
+
                 const encrypted = await SEA.encrypt(base64, pair);
                 
                 // Upload chunk with promise
@@ -318,15 +331,11 @@ class LocalStore {
         }
     }
 
-    async _chunkBlob(blob) {
-        const buffer = await blob.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
+    _chunkBlob(blob) {
         const chunks = [];
-        
-        for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
-            chunks.push(bytes.slice(i, i + CHUNK_SIZE));
+        for (let i = 0; i < blob.size; i += CHUNK_SIZE) {
+            chunks.push(blob.slice(i, i + CHUNK_SIZE));
         }
-        
         return chunks;
     }
 
