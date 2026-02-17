@@ -195,8 +195,8 @@
         </header>
 
         <div class="input-row">
-            <input type="text" id="input" placeholder="ADD ITEM..." autofocus>
-            <button class="add-btn" id="add">+</button>
+            <input type="text" id="input" placeholder="ADD ITEM..." aria-label="New item content" autofocus>
+            <button class="add-btn" id="add" aria-label="Add item">+</button>
         </div>
 
         <div class="list" id="list"></div>
@@ -289,11 +289,21 @@
             }
         }
 
+        window.handleKey = (id, e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggle(id);
+            }
+        };
+
         window.toggle = id => {
             const i = items.find(x => x.id === id);
             if (i) {
                 i.done = !i.done;
                 render();
+                // Restore focus to the toggled item
+                const el = document.querySelector(`.item[data-id="${id}"]`);
+                if (el) el.focus();
                 save();
             }
         };
@@ -311,10 +321,20 @@
                 return;
             }
             listEl.innerHTML = items.map(i => `
-      <div class="item ${i.done ? 'done' : ''}" onclick="toggle(${i.id})">
-        <div class="check"></div>
+      <div class="item ${i.done ? 'done' : ''}"
+           onclick="toggle(${i.id})"
+           data-id="${i.id}"
+           tabindex="0"
+           role="checkbox"
+           aria-checked="${i.done}"
+           onkeydown="if(event.target === this) handleKey(${i.id}, event)">
+        <div class="check" aria-hidden="true"></div>
         <span>${i.text.replace(/</g, '&lt;')}</span>
-        <button class="del-btn" onclick="del(${i.id}, event)">[X]</button>
+        <button class="del-btn"
+                onclick="del(${i.id}, event)"
+                aria-label="Delete ${i.text.replace(/"/g, '&quot;')}">
+            [X]
+        </button>
       </div>
     `).join('');
         }
