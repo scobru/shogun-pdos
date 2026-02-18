@@ -9,6 +9,46 @@ const port = process.env.PORT || 8765;
 
 app.use(cors());
 
+// Security middleware to block sensitive files
+app.use((req, res, next) => {
+  const path = req.path.toLowerCase();
+
+  const blockedFiles = [
+    '/server.js',
+    '/package.json',
+    '/package-lock.json',
+    '/yarn.lock',
+    '/dockerfile',
+    '/docker-compose.yml',
+    '/vercel.json',
+    '/readme.md',
+    '/agents.md'
+  ];
+
+  const blockedDirs = [
+    '/data',
+    '/node_modules',
+    '/.git'
+  ];
+
+  // Block specific sensitive files
+  if (blockedFiles.includes(path)) {
+    return res.status(403).send('Forbidden');
+  }
+
+  // Block sensitive directories
+  if (blockedDirs.some(dir => path === dir || path.startsWith(dir + '/'))) {
+    return res.status(403).send('Forbidden');
+  }
+
+  // Block dotfiles (files starting with .)
+  if (path.includes('/.')) {
+     return res.status(403).send('Forbidden');
+  }
+
+  next();
+});
+
 // Serve static files from current directory
 app.use(express.static(__dirname));
 
