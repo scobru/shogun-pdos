@@ -247,16 +247,28 @@ class LocalStore {
             }
             
             // Chunk the blob
-            const chunks = await this._chunkBlob(file.data);
-            console.log('[SYNC] Created', chunks.length, 'chunks');
-            const totalChunks = chunks.length;
+            const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+            console.log('[SYNC] Created', totalChunks, 'chunks');
             
             this._reportProgress(file.name, 0, totalChunks, 'uploading');
             
             // Encrypt and upload each chunk sequentially for progress tracking
             let uploadedCount = 0;
-            for (let i = 0; i < chunks.length; i++) {
-                const base64 = btoa(String.fromCharCode(...chunks[i]));
+            for (let i = 0; i < totalChunks; i++) {
+                const start = i * CHUNK_SIZE;
+                const end = Math.min(start + CHUNK_SIZE, file.size);
+                const chunkBlob = file.data.slice(start, end);
+
+                const base64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        // Remove prefix "data:*/*;base64,"
+                        resolve(reader.result.split(',')[1]);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(chunkBlob);
+                });
+
                 const encrypted = await SEA.encrypt(base64, pair);
                 
                 // Upload chunk with promise
@@ -283,7 +295,7 @@ class LocalStore {
                 mime: file.mime,
                 date: file.date,
                 size: file.size,
-                chunkCount: chunks.length
+                chunkCount: totalChunks
             };
             const encryptedMeta = await SEA.encrypt(meta, pair);
             
@@ -316,18 +328,6 @@ class LocalStore {
             }
             return { success: false, error: 'sync_error', message: e.message };
         }
-    }
-
-    async _chunkBlob(blob) {
-        const buffer = await blob.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-        const chunks = [];
-        
-        for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
-            chunks.push(bytes.slice(i, i + CHUNK_SIZE));
-        }
-        
-        return chunks;
     }
 
     async getAll(typeFilter = null) {
