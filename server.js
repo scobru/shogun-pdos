@@ -9,6 +9,29 @@ const port = process.env.PORT || 8765;
 
 app.use(cors());
 
+// Security: Block access to sensitive files and directories
+app.use((req, res, next) => {
+  const sensitiveFiles = [
+    '/server.js',
+    '/package.json',
+    '/yarn.lock',
+    '/Dockerfile',
+    '/docker-compose.yml',
+    '/.env'
+  ];
+  const sensitivePrefixes = [
+    '/.git',
+    '/node_modules',
+    '/data'
+  ];
+
+  if (sensitiveFiles.includes(req.path) ||
+      sensitivePrefixes.some(p => req.path.startsWith(p))) {
+    return res.status(403).send('Forbidden');
+  }
+  next();
+});
+
 // Serve static files from current directory
 app.use(express.static(__dirname));
 
