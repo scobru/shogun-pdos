@@ -195,11 +195,11 @@
         </header>
 
         <div class="input-row">
-            <input type="text" id="input" placeholder="ADD ITEM..." autofocus>
-            <button class="add-btn" id="add">+</button>
+            <input type="text" id="input" placeholder="ADD ITEM..." autofocus aria-label="New item text">
+            <button class="add-btn" id="add" aria-label="Add item">+</button>
         </div>
 
-        <div class="list" id="list"></div>
+        <ul class="list" id="list"></ul>
 
         <div class="actions">
             <button id="share">SHARE LIST</button>
@@ -307,15 +307,20 @@
 
         function render() {
             if (!items.length) {
-                listEl.innerHTML = '<div class="empty">NO ITEMS</div>';
+                listEl.innerHTML = '<li class="empty">NO ITEMS</li>';
                 return;
             }
             listEl.innerHTML = items.map(i => `
-      <div class="item ${i.done ? 'done' : ''}" onclick="toggle(${i.id})">
+      <li class="item ${i.done ? 'done' : ''}"
+          role="checkbox"
+          aria-checked="${i.done}"
+          tabindex="0"
+          onclick="toggle(${i.id})"
+          onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); toggle(${i.id}); }">
         <div class="check"></div>
         <span>${i.text.replace(/</g, '&lt;')}</span>
-        <button class="del-btn" onclick="del(${i.id}, event)">[X]</button>
-      </div>
+        <button class="del-btn" onclick="del(${i.id}, event)" aria-label="Delete item">[X]</button>
+      </li>
     `).join('');
         }
 

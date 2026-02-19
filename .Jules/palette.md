@@ -1,0 +1,3 @@
+## 2024-05-23 - Accessibility in List Tool
+**Learning:** The "List" tool used `<div>` elements for list items, making them inaccessible to keyboard users and screen readers. Semantic `<ul>` and `<li>` elements, along with ARIA roles (`role="checkbox"`, `aria-checked`), are essential for custom interactive lists.
+**Action:** When building custom list components, always ensure they are keyboard accessible (tabindex, keydown handlers) and use proper semantic HTML or ARIA roles to communicate state to assistive technologies. Also, ensure inputs and buttons always have accessible names (aria-label or visible labels).
